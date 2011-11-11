@@ -1,5 +1,6 @@
-import wx 
 import kate
+
+from PyQt4 import QtCore, QtGui
 
 from utils import insertText
 
@@ -42,35 +43,12 @@ class %(class_name)s(models.Model):
 def create_frame(pattern_str='', title='', name_field=''):
     currentDocument = kate.activeDocument()
     view = kate.activeView()
-    app = wx.PySimpleApp()
-    frame = MyFrame(currentDocument=currentDocument, view=view,
-                    pattern_str=pattern_str, title=title,
-                    name_field=name_field)
-    frame.Show(True)
-    app.MainLoop()
-
-
-class MyFrame(wx.Frame):
-
-    def __init__(self, currentDocument, view, pattern_str='', title='', name_field=''):
-        wx.Frame.__init__(self, None, -1, title, size=(300, 60))
-        panel = wx.Panel(self, -1)
-
-        wx.StaticText(panel, -1, name_field, pos=(10, 10), size=(150, 25))
-        self.posCtrl = wx.TextCtrl(panel, -1, "", pos=(100, 10))
-        button = wx.Button(panel, label='Ok', pos=(200, 10),
-                size=(50, 25))
-        self.Bind(wx.EVT_BUTTON, self.OnPressButton, button)
-        self.currentDocument = currentDocument
-        self.view = view
-        self.pattern_str = pattern_str
-
-    def OnPressButton(self, event):
-        class_name = self.posCtrl.GetValue()
+    class_name, ok = QtGui.QInputDialog.getText(view, title, name_field)
+    if ok:
+        class_name = unicode(class_name)
         class_model = class_name.replace('Form', '')
-        text = self.pattern_str % {'class_name': class_name, 'class_model':class_model}
-        self.currentDocument.insertText(self.view.cursorPosition(), text)
-        self.Close(True)
+        text = pattern_str % {'class_name': class_name, 'class_model':class_model}
+        currentDocument.insertText(view.cursorPosition(), text)
 
 
 @kate.action('Create form', shortcut='Ctrl+Alt+F', menu='Edit')
