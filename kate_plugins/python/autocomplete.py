@@ -1,5 +1,17 @@
+# Inspirated in http://code.google.com/p/djangode/source/browse/trunk/djangode/gui/python_editor.py#214
+
 import kate
 from PyQt4 import QtCore, QtGui
+
+
+class AutoCompleter(QtGui.QCompleter):
+
+    def __init__(self, l, view):
+        super(AutoCompleter, self).__init__(l, view)
+        self.view = view
+
+    def auto_insertText(self, text):
+        self.view.insertText('.%s' % text)
 
 
 @kate.action('autopate', shortcut='Ctrl+.', menu='Edit')
@@ -14,7 +26,7 @@ def autoPate():
     for word in word_list:
         string_list.append(word)
 
-    completer = QtGui.QCompleter(QtCore.QStringList(), view)
+    completer = AutoCompleter(QtCore.QStringList(), view)
     completer.setCompletionMode(QtGui.QCompleter.PopupCompletion)
     completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
     completer.setModel(QtGui.QStringListModel(string_list, completer))
@@ -29,6 +41,6 @@ def autoPate():
               + completer.popup().verticalScrollBar().sizeHint().width())
     completer.setWidget(view)
 
-    completer.activated.connect(view.insertText)
+    completer.activated.connect(completer.auto_insertText)
     completer.complete(qr)
 
