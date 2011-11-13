@@ -23,3 +23,7 @@ def ipdb():
     view = currentDocument.activeView()
     currentPosition = view.cursorPosition()
     import ipdb; ipdb.set_trace()
+
+
+def pdb():
+    import pdb; pdb.set_trace()
