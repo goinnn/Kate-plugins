@@ -7,7 +7,7 @@ Kate Plugins
 Information
 ===========
 
-These are plugins to `Kate <http://jquery.com/>`_ editor. Plugins to make coding easier in `Python <http://jquery.com/>`_, `Django <https://docs.djangoproject.com>`_ and JavaScript
+These are plugins to `Kate <http://kate-editor.org  />`_ editor. Plugins to make coding easier in `Python <http://python.org/>`_, `Django <https://docs.djangoproject.com>`_ and JavaScript
 
 Requeriments
 ============
@@ -60,13 +60,13 @@ import views (django)
 Create form (django)
 ----------------------
  * Shortcut: Ctrl+Alt+F
- * Template to class form
+ * Template to form class
 
 
 Create model (django)
 ----------------------
  * Shortcut: Ctrl+Alt+M
- * Template to class model
+ * Template to model class
 
 
 jQuery ready (js)
