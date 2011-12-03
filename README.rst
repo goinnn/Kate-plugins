@@ -44,6 +44,13 @@ insert __init__ (python)
  * Shortcut: Ctrl+-
  * Smart insert a function __init__
 
+insert super (python)
+------------------------
+
+ * Shortcut: Alt+-
+ * Smart insert a call to super of the function
+
+
 
 template urls (django)
 ----------------------
