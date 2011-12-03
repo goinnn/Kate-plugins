@@ -1,7 +1,7 @@
 import kate
 
 
-def insertText(text, strip_line=False, start_in_current_column=False):
+def insertText(text, strip_line=False, start_in_current_column=False, delete_spaces_initial=False):
     currentDocument = kate.activeDocument()
     view = currentDocument.activeView()
     currentPosition = view.cursorPosition()
@@ -11,6 +11,8 @@ def insertText(text, strip_line=False, start_in_current_column=False):
         number_of_spaces = currentPosition.position()[1]
         spaces = ' ' * number_of_spaces
         text = '\n'.join([i > 0 and '%s%s' % (spaces, line) or line for i, line in enumerate(text.splitlines())])
+    if delete_spaces_initial:
+        currentPosition.setColumn(0)
     currentDocument.insertText(currentPosition, text)
 
 
