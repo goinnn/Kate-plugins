@@ -10,6 +10,23 @@ TEXT_INIT =  """
 
 TEXT_SUPER =  """%ssuper(%s, %s).%s(%s)"""
 
+patter_blank = "(?:\ |\t|\n)*"
+patter_espaces = "([\ |\t|\n]*)"
+pattern_class = re.compile("class %s(\w+)\(([\w|.]+)\):" % patter_blank)
+
+patter_params = "([\w|\,|\ |\t|\n|\'|\"|\.|\=]*)"
+def_init = "%(espaces)sdef %(blank)s(\w+)%(blank)s\(%(param)s" % {"blank": patter_blank,
+                                                         "espaces": patter_espaces,
+                                                         "param": patter_params}
+def_finish = "(?:.*)\):"
+pattern_def_init = re.compile(def_init, re.MULTILINE|re.DOTALL)
+pattern_def_finish = re.compile(def_finish, re.MULTILINE|re.DOTALL)
+pattern_def = re.compile("%s\):" % def_init, re.MULTILINE|re.DOTALL)
+
+pattern_param = re.compile("(\w+)%(blank)s=%(blank)s(.*)" % {"blank": patter_blank})
+
+
+
 @kate.action('ipdb', shortcut='Ctrl+I', menu='Edit')
 def insertIPDB():
     insertText("import ipdb; ipdb.set_trace()")
@@ -22,15 +39,21 @@ def insertInit():
     view = currentDocument.activeView()
     currentPosition = view.cursorPosition()
     currentLine = currentPosition.line()
-    pattern = re.compile("class (.*)\((.*)\):")
     while currentLine >= 0:
         text = unicode(currentDocument.line(currentLine))
-        match = pattern.match(text)
+        match = pattern_class.match(text)
         if match:
             class_name = match.groups()[0]
             break
         currentLine = currentLine -1
     insertText(TEXT_INIT % class_name)
+
+
+def change_kwargs(param):
+    match = pattern_param.match(param)
+    if match:
+        return '%s=%s' % (match.groups()[0], match.groups()[0])
+    return param
 
 
 @kate.action('super', shortcut='Alt+-', menu='Edit')
@@ -43,17 +66,24 @@ def insertSuper():
     view = currentDocument.activeView()
     currentPosition = view.cursorPosition()
     currentLine = currentPosition.line()
-    pattern_class = re.compile("class (.*)\((.*)\):")
-    pattern_def = re.compile("( *)def (.*)\((.*)\):")
+    find_finish_def = False
     while currentLine >= 0:
         text = unicode(currentDocument.line(currentLine))
+        if find_finish_def:                        
+            text_def = '%s\n%s' %(text, text_def)
+        else:
+            text_def = text
         if function_name == 'XXX':
-            match = pattern_def.match(text)
-            if match:
+            match_finish = pattern_def_finish.match(text_def)
+            match_init = pattern_def_init.match(text_def)
+            if match_finish and match_init:
+                match = pattern_def.match(text_def)
                 espaces = match.groups()[0] + ' ' * 4
                 function_name = match.groups()[1]
                 params = match.groups()[2].split(',')
-                params = [param.strip() for param in params]
+                params = [change_kwargs(param.strip(' \t')) for param in params]
+            elif match_finish:
+                find_finish_def = True
         match = pattern_class.match(text)
         if match:
             class_name = match.groups()[0]
