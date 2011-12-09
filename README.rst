@@ -91,6 +91,7 @@ Future Plugins
 ==============
 
  * Autocomplete to python
+ * Call recursive
  * `pep8 <http://www.python.org/dev/peps/pep-0008/>`_
  * `pyflakes <http://pypi.python.org/pypi/pyflakes>`_
  * `jslint <http://www.jslint.com/>`_
