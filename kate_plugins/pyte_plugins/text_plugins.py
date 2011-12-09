@@ -60,7 +60,7 @@ def change_kwargs(param):
     if match:
         return '%s%s=%s' % (match.groups()[0],
                             match.groups()[1],
-                            match.groups()[2])
+                            match.groups()[1])
     return param
 
 
