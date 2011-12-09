@@ -1,6 +1,6 @@
 import kate
 import simplejson
-import sys, pprint
+import pprint
 import utils
 
 from simplejson import JSONDecodeError
@@ -14,11 +14,15 @@ def togglePrettyJsonFormat():
     encoding = unicode(currentDocument.encoding())
     source = unicode(view.selectionText(), encoding).encode(encoding)
     if not source:
-        kate.gui.popup('Select a json text', 2, icon='dialog-warning', minTextWidth=200)
+        kate.gui.popup('Select a json text', 2,
+                       icon='dialog-warning',
+                       minTextWidth=200)
     pp = pprint.PrettyPrinter(indent=1)
     try:
         target = pp.pformat(simplejson.loads(source))
         view.removeSelectionText()
         utils.insertText(target)
     except JSONDecodeError:
-        kate.gui.popup('This text is not a valid json text', 2, icon='dialog-warning', minTextWidth=200)
+        kate.gui.popup('This text is not a valid json text', 2,
+                       icon='dialog-warning',
+                       minTextWidth=200)

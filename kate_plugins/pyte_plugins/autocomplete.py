@@ -20,7 +20,8 @@ def autoPate():
     view = currentDocument.activeView()
     currentPosition = view.cursorPosition()
 
-    word_list = ['contrib', 'auth', 'admin', 'forms', 'django.forms import ModelForm']
+    word_list = ['contrib', 'auth', 'admin', 'forms',
+                 'django.forms import ModelForm']
 
     string_list = QtCore.QStringList()
     for word in word_list:
@@ -43,4 +44,3 @@ def autoPate():
 
     completer.activated.connect(completer.auto_insertText)
     completer.complete(qr)
-

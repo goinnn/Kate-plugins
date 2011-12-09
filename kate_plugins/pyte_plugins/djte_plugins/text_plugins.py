@@ -1,5 +1,4 @@
 import kate
-import re
 
 from utils import insertText
 
@@ -17,16 +16,16 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 """
 
+
 @kate.action("template urls", shortcut="Ctrl+Alt+7",  menu='Edit')
 def import_urls():
     currentDocument = kate.activeDocument()
     path = unicode(currentDocument.url().directory())
     path_split = path.split('/')
-    application = path_split[len(path_split)-1]
+    application = path_split[len(path_split) - 1]
     insertText(TEXT_URLS % application)
 
 
 @kate.action("import views", shortcut="Ctrl+Alt+v", menu='Edit')
 def import_views():
     insertText(TEXT_VIEWS)
-

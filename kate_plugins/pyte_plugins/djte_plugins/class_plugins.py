@@ -1,8 +1,6 @@
 import kate
 
-from PyQt4 import QtCore, QtGui
-
-from utils import insertText
+from PyQt4 import QtGui
 
 
 PATTERN_MODEL_FORM = """
@@ -32,7 +30,7 @@ class %(class_name)s(models.Model):
 
     @permalink
     def get_absolute_url(self):
-        pass 
+        pass
 
     class Meta:
         pass
@@ -47,7 +45,8 @@ def create_frame(pattern_str='', title='', name_field=''):
     if ok:
         class_name = unicode(class_name)
         class_model = class_name.replace('Form', '')
-        text = pattern_str % {'class_name': class_name, 'class_model':class_model}
+        text = pattern_str % {'class_name': class_name,
+                              'class_model': class_model}
         currentDocument.insertText(view.cursorPosition(), text)
 
 

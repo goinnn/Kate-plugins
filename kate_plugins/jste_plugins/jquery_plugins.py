@@ -1,4 +1,4 @@
-import kate 
+import kate
 
 from utils import insertText
 
@@ -12,6 +12,7 @@ TEXT_JQUERY = """<script type="text/javascript">
       })(jQuery);
 </script>
 """
+
 
 @kate.action('JQuery Ready', shortcut='Ctrl+J', menu='Edit')
 def insertReady():
