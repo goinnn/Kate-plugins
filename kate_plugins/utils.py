@@ -19,14 +19,15 @@ def insertText(text, strip_line=False,
     currentDocument.insertText(currentPosition, text)
 
 
-def ipdb():
+def ipdb(with_position=True):
     import sys
     sys.path.insert(-1, '/usr/lib/pymodules/python2.6/IPython/Extensions')
     sys.path.insert(-1, '/home/pmartin/.ipython')
     sys.argv = ['/usr/bin/ipython']
-    currentDocument = kate.activeDocument()
-    view = currentDocument.activeView()
-    currentPosition = view.cursorPosition()
+    if with_position:
+        currentDocument = kate.activeDocument()
+        view = currentDocument.activeView()
+        currentPosition = view.cursorPosition()
     import ipdb
     ipdb.set_trace()
 
