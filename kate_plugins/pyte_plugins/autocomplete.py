@@ -13,6 +13,7 @@ class AutoCompleter(QtGui.QCompleter):
     def auto_insertText(self, text):
         self.view.insertText('.%s' % text)
 
+#import utils; utils.ipdb()
 
 @kate.action('autopate', shortcut='Ctrl+.', menu='Edit')
 def autoPate():
@@ -26,7 +27,7 @@ def autoPate():
     # https://launchpad.net/ubuntu/precise/+source/pykde4/4:4.7.97-0ubuntu1/+files/pykde4_4.7.97.orig.tar.bz2
     currentDocument.connect(currentDocument,
                         QtCore.SIGNAL("textInserted (KTextEditor::Document*, const KTextEditor::Range&)"),
-                        update2)
+                        update)
     word_list = ['contrib', 'auth', 'admin', 'forms',
                  'django.forms import ModelForm']
 
