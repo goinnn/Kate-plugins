@@ -10,8 +10,10 @@ import kate
 
 from PyQt4 import QtCore, QtGui
 
+
 global modules_path
 modules_path = {}
+
 
 class AutoCompleter(QtGui.QCompleter):
 
@@ -46,14 +48,26 @@ class AutoCompleter(QtGui.QCompleter):
         return sorted(modules)
 
     @classmethod
-    def get_submodules(self, module_name, submodules=None):
+    def get_submodules(self, module_name, submodules=None, attributes=False):
         module_dir = modules_path[module_name][0]
         submodules = [submodule for submodule in submodules if submodule]
         if submodules:
             submodules = os.sep.join(submodules)
             module_dir = "%s%s%s" % (module_dir, os.sep, submodules)
-        return [module_name for loader, module_name, is_pkg
-                            in pkgutil.walk_packages([module_dir])]
+        modules = []
+        for loader, module_name, is_pkg in pkgutil.walk_packages([module_dir]):
+            modules.append(module_name)
+        if attributes:
+            att_dir = os.sep.join(module_dir.split(os.sep)[:-1])
+            att_module = module_dir.split(os.sep)[-1]
+            importer = pkgutil.get_importer(att_dir)
+            module = importer.find_module(att_module)
+            code = module.get_code()
+            for const in code.co_consts:
+                if getattr(const, 'co_name', None):
+                    print const.co_name
+                    modules.append(const.co_name)
+        return sorted(modules)
 
 
 class ComboBox(QtGui.QComboBox):
@@ -64,7 +78,8 @@ class ComboBox(QtGui.QComboBox):
 
     def keyPressEvent(self, event, *args, **kwargs):
         key = unicode(event.text())
-        if key in unicode(string.ascii_letters) or key == '.':
+        insertCharacters = string.ascii_letters + string.digits + '. ;'
+        if key in unicode(insertCharacters):
             self.main_view.insertText(event.text())
         return super(ComboBox, self).keyPressEvent(event, *args, **kwargs)
 
@@ -92,16 +107,18 @@ def autocompleteDocument(document, qrange, *args, **kwargs):
         prefix = line.split('.')[-1].strip()
         module = line.replace('from ', '').replace('import ', '').split('.')[0]
         top_level_module = modules_path.get(module)
+        attributes = False
         if line.startswith("from ") and not ' import ' in line:
             submodules = line.split(".")[1:-1]
         elif line.startswith("from "):
+            attributes = True
             prefix = prefix.split(" import")[1].strip()
             submodules = line.split(" import")[0].split(".")[1:]
         else:
             submodules = line.split("import ")[1].split(".")[1:-1]
         if top_level_module:
             auto_trigger = True
-            word_list = AutoCompleter.get_submodules(module, submodules)
+            word_list = AutoCompleter.get_submodules(module, submodules, attributes)
 
     if not auto_trigger:
         return
@@ -134,6 +151,7 @@ def createSignalAutocompleteDocument(view, *args, **kwargs):
     # https://launchpad.net/ubuntu/precise/+source/pykde4
     # https://launchpad.net/ubuntu/precise/+source/pykde4/4:4.7.97-0ubuntu1/+files/pykde4_4.7.97.orig.tar.bz2
     view.document().textInserted.connect(autocompleteDocument)
+
 
 windowInterface = kate.application.activeMainWindow()
 windowInterface.connect(windowInterface,
