@@ -77,29 +77,29 @@ class ComboBox(QtGui.QComboBox):
 
     def keyPressEvent(self, event, *args, **kwargs):
         key = unicode(event.text())
-        insertCharacters = string.ascii_letters + string.digits + '. ;_'
+        insertCharacters = string.ascii_letters + string.digits + '. ;_\n'
         if key in unicode(insertCharacters):
             self.main_view.insertText(event.text())
         return super(ComboBox, self).keyPressEvent(event, *args, **kwargs)
 
 
 def autocompleteDocument(document, qrange, *args, **kwargs):
+    if qrange.start().line() != qrange.end().line():
+        return
     line = unicode(document.line(qrange.start().line())).lstrip()
     currentDocument = kate.activeDocument()
     view = currentDocument.activeView()
     currentPosition = view.cursorPosition()
     activate_subfix = ''
     prefix = ''
-    auto_trigger = False
+    word_list = None
     if line.startswith("import ") and not '.' in line:
-        auto_trigger = True
         prefix = line.replace('import ', '').split('.')[-1]
         prefix = prefix.split('.')[-1].strip()
         word_list = AutoCompleter.get_top_level_modules()
     elif line.startswith("from ") and not '.' in line and not 'import' in line:
         prefix = line.replace('from ', '').split('.')[-1]
         prefix = prefix.split('.')[-1].strip()
-        auto_trigger = True
         activate_subfix = '.'
         word_list = AutoCompleter.get_top_level_modules()
     elif "from " in line or "import " in line:
@@ -119,10 +119,10 @@ def autocompleteDocument(document, qrange, *args, **kwargs):
             attributes = True
             prefix = prefix.split(" import")[1].strip()
             submodules = line.split(" import")[0].split(".")[1:]
+            activate_subfix = '\n'
         else:
             submodules = line.split("import ")[1].split(".")[1:-1]
         if top_level_module:
-            auto_trigger = True
             word_list = AutoCompleter.get_submodules(module, submodules, attributes)
     elif '.' in line:
         text = unicode(document.text()).split("\n")
@@ -137,11 +137,9 @@ def autocompleteDocument(document, qrange, *args, **kwargs):
         top_level_module = modules_path.get(module, None)
         attributes = True
         if top_level_module:
-            auto_trigger = True
             word_list = AutoCompleter.get_submodules(module, submodules, attributes)
 
-
-    if not auto_trigger:
+    if not word_list:
         return
 
     string_list = QtCore.QStringList()
