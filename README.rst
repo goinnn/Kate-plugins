@@ -36,6 +36,7 @@ Autocomplete to python (python)
  * Shortcut: Is automatical
  * from and import instruction (alpha)
  * autocomplete into the code (pre-alpha)
+ * Currently working on this plugin
 
 insert IPDB (python)
 --------------------
