@@ -34,7 +34,8 @@ Autocomplete to python (python)
 -------------------------------
 
  * Shortcut: Is automatical
- * Now only to from and import instruction (pre-alpha)
+ * from and import instruction (alpha)
+ * autocomplete into the code (pre-alpha)
 
 insert IPDB (python)
 --------------------
