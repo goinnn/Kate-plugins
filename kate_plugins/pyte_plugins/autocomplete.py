@@ -59,13 +59,12 @@ class AutoCompleter(QtGui.QCompleter):
             modules.append(module_name)
         if attributes:
             att_dir = os.sep.join(module_dir.split(os.sep)[:-1])
-            att_module = module_dir.split(os.sep)[-1]
+            att_module = module_dir.split(os.sep)[-1].replace('.py', '').replace('.pyc', '')
             importer = pkgutil.get_importer(att_dir)
             module = importer.find_module(att_module)
             code = module.get_code()
             for const in code.co_consts:
                 if getattr(const, 'co_name', None):
-                    print const.co_name
                     modules.append(const.co_name)
         return sorted(modules)
 
@@ -78,7 +77,7 @@ class ComboBox(QtGui.QComboBox):
 
     def keyPressEvent(self, event, *args, **kwargs):
         key = unicode(event.text())
-        insertCharacters = string.ascii_letters + string.digits + '. ;'
+        insertCharacters = string.ascii_letters + string.digits + '. ;_'
         if key in unicode(insertCharacters):
             self.main_view.insertText(event.text())
         return super(ComboBox, self).keyPressEvent(event, *args, **kwargs)
@@ -125,6 +124,22 @@ def autocompleteDocument(document, qrange, *args, **kwargs):
         if top_level_module:
             auto_trigger = True
             word_list = AutoCompleter.get_submodules(module, submodules, attributes)
+    elif '.' in line:
+        text = unicode(document.text()).split("\n")
+        raw, column = currentPosition.position()
+        text_raw = text[raw]
+        del text[raw]
+        code = compile('\n'.join(text), "name", "exec")
+        vars_file = {}
+        exec code in globals(), vars_file
+        module = vars_file.get(text_raw.split('.')[0], None).__name__
+        submodules = text_raw.split('.')[1:-1]
+        top_level_module = modules_path.get(module, None)
+        attributes = True
+        if top_level_module:
+            auto_trigger = True
+            word_list = AutoCompleter.get_submodules(module, submodules, attributes)
+
 
     if not auto_trigger:
         return
