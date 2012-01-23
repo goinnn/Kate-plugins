@@ -97,15 +97,21 @@ def autocompleteDocument(document, qrange, *args, **kwargs):
         prefix = line.replace('import ', '').split('.')[-1]
         prefix = prefix.split('.')[-1].strip()
         word_list = AutoCompleter.get_top_level_modules()
-    elif line.startswith("from ") and not '.' in line:
+    elif line.startswith("from ") and not '.' in line and not 'import' in line:
         prefix = line.replace('from ', '').split('.')[-1]
         prefix = prefix.split('.')[-1].strip()
         auto_trigger = True
         activate_subfix = '.'
         word_list = AutoCompleter.get_top_level_modules()
     elif "from " in line or "import " in line:
-        prefix = line.split('.')[-1].strip()
-        module = line.replace('from ', '').replace('import ', '').split('.')[0]
+        separated = '.'
+        if not '.' in line:
+            separated = 'import '
+            prefix = line
+            module = line.replace('from ', '').split(separated)[0].strip()
+        else:
+            prefix = line.split(separated)[-1].strip()
+            module = line.replace('from ', '').replace('import ', '').split(separated)[0].strip()
         top_level_module = modules_path.get(module)
         attributes = False
         if line.startswith("from ") and not ' import ' in line:
