@@ -1,6 +1,8 @@
 # Inspirated in http://code.google.com/p/djangode/source/browse/trunk/djangode/gui/python_editor.py#214
+import compiler
 import os
 import glob
+import pkgutil
 import string
 import sys
 
@@ -8,6 +10,8 @@ import kate
 
 from PyQt4 import QtCore, QtGui
 
+global modules_path
+modules_path = {}
 
 class AutoCompleter(QtGui.QCompleter):
 
@@ -21,10 +25,14 @@ class AutoCompleter(QtGui.QCompleter):
         self.view.insertText('%s%s'% (text, self.activate_subfix))
 
     @classmethod
+    def get_pythonpath(self):
+        return sys.path
+
+    @classmethod
     def get_top_level_modules(self):
         # http://code.google.com/p/djangode/source/browse/trunk/djangode/data/codemodel/codemodel.py#57
         modules = []
-        pythonpath = sys.path
+        pythonpath = self.get_pythonpath()
         for directory in pythonpath:
             for filename in glob.glob(directory + os.sep + "*"):
                 module = None
@@ -34,7 +42,18 @@ class AutoCompleter(QtGui.QCompleter):
                     module = filename.split(os.sep)[-1]
                 if module and not module in modules:
                     modules.append(module)
+                    modules_path[module] = [filename]
         return sorted(modules)
+
+    @classmethod
+    def get_submodules(self, module_name, submodules=None):
+        module_dir = modules_path[module_name][0]
+        submodules = [submodule for submodule in submodules if submodule]
+        if submodules:
+            submodules = os.sep.join(submodules)
+            module_dir = "%s%s%s" % (module_dir, os.sep, submodules)
+        return [module_name for loader, module_name, is_pkg
+                            in pkgutil.walk_packages([module_dir])]
 
 
 class ComboBox(QtGui.QComboBox):
@@ -45,43 +64,47 @@ class ComboBox(QtGui.QComboBox):
 
     def keyPressEvent(self, event, *args, **kwargs):
         key = unicode(event.text())
-        if key in unicode(string.ascii_letters):
+        if key in unicode(string.ascii_letters) or key == '.':
             self.main_view.insertText(event.text())
         return super(ComboBox, self).keyPressEvent(event, *args, **kwargs)
 
 
 def autocompleteDocument(document, qrange, *args, **kwargs):
-    line = unicode(document.line(qrange.start().line()))
+    line = unicode(document.line(qrange.start().line())).lstrip()
     currentDocument = kate.activeDocument()
     view = currentDocument.activeView()
     currentPosition = view.cursorPosition()
     activate_subfix = ''
-    if line.lstrip().startswith("import "):
-        auto_trigger = False
-        #completion_func = setup_module_completion
-    elif line.lstrip().startswith("from ") and " import " in line:
-        auto_trigger = False
-        #completion_func = setup_module_attribute_completion
-    elif line.lstrip().startswith("from "):
+    prefix = ''
+    auto_trigger = False
+    if line.startswith("import ") and not '.' in line:
         auto_trigger = True
-        prefix = line.replace('from ', '')
+        prefix = line.replace('import ', '').split('.')[-1]
+        prefix = prefix.split('.')[-1].strip()
+        word_list = AutoCompleter.get_top_level_modules()
+    elif line.startswith("from ") and not '.' in line:
+        prefix = line.replace('from ', '').split('.')[-1]
+        prefix = prefix.split('.')[-1].strip()
+        auto_trigger = True
         activate_subfix = '.'
-        #completion_func = setup_module_completion
-    #elif event.text() == ".":
-        #auto_trigger = True
-        #completion_func = setup_attribute_completion
-    #elif event.text() == "(":
-        #return display_tooltip(line, event)
-    #elif event.text() == ")":
-        #return hide_tooltip(line, event)
-    else:
-        auto_trigger = False
-        #completion_func = setup_attribute_completion
+        word_list = AutoCompleter.get_top_level_modules()
+    elif "from " in line or "import " in line:
+        prefix = line.split('.')[-1].strip()
+        module = line.replace('from ', '').replace('import ', '').split('.')[0]
+        top_level_module = modules_path.get(module)
+        if line.startswith("from ") and not ' import ' in line:
+            submodules = line.split(".")[1:-1]
+        elif line.startswith("from "):
+            prefix = prefix.split(" import")[1].strip()
+            submodules = line.split(" import")[0].split(".")[1:]
+        else:
+            submodules = line.split("import ")[1].split(".")[1:-1]
+        if top_level_module:
+            auto_trigger = True
+            word_list = AutoCompleter.get_submodules(module, submodules)
 
     if not auto_trigger:
         return
-
-    word_list = AutoCompleter.get_top_level_modules()
 
     string_list = QtCore.QStringList()
     for word in word_list:
