@@ -30,6 +30,11 @@ Installation
 Plugins
 =======
 
+Autocomplete to python (python)
+-------------------------------
+
+ * Shortcut: Is automatical
+ * Now only to from and import instruction (pre-alpha)
 
 insert IPDB (python)
 --------------------
@@ -49,7 +54,6 @@ insert super (python)
 
  * Shortcut: Alt+-
  * Smart insert a call to super of the function
-
 
 
 template urls (django)
@@ -90,7 +94,6 @@ Pretty JSON (js)
 Future Plugins
 ==============
 
- * Autocomplete to python
  * Call recursive
  * `pep8 <http://www.python.org/dev/peps/pep-0008/>`_
  * `pyflakes <http://pypi.python.org/pypi/pyflakes>`_
