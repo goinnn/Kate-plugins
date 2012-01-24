@@ -13,7 +13,8 @@ from PyQt4 import QtCore, QtGui
 
 global modules_path
 modules_path = {}
-
+global python_path
+python_path = []
 
 class AutoCompleter(QtGui.QCompleter):
 
@@ -27,14 +28,24 @@ class AutoCompleter(QtGui.QCompleter):
         self.view.insertText('%s%s'% (text, self.activate_subfix))
 
     @classmethod
-    def get_pythonpath(self):
-        return sys.path
+    def get_pythonpath(cls):
+        global python_path
+        if python_path:
+            return python_path
+        python_path = sys.path
+        try:
+            from pyte_plugins import autocomplete_path
+            python_path = autocomplete_path.path() + python_path
+            sys.path = python_path
+        except ImportError:
+            pass
+        return python_path
 
     @classmethod
-    def get_top_level_modules(self):
+    def get_top_level_modules(cls):
         # http://code.google.com/p/djangode/source/browse/trunk/djangode/data/codemodel/codemodel.py#57
         modules = []
-        pythonpath = self.get_pythonpath()
+        pythonpath = cls.get_pythonpath()
         for directory in pythonpath:
             for filename in glob.glob(directory + os.sep + "*"):
                 module = None
@@ -48,7 +59,7 @@ class AutoCompleter(QtGui.QCompleter):
         return sorted(modules)
 
     @classmethod
-    def get_submodules(self, module_name, submodules=None, attributes=False):
+    def get_submodules(cls, module_name, submodules=None, attributes=False):
         module_dir = modules_path[module_name][0]
         submodules = [submodule for submodule in submodules if submodule]
         if submodules:
@@ -93,6 +104,7 @@ def autocompleteDocument(document, qrange, *args, **kwargs):
     activate_subfix = ''
     prefix = ''
     word_list = None
+    disabled_dynamic_import = True
     if line.startswith("import ") and not '.' in line:
         prefix = line.replace('import ', '').split('.')[-1]
         prefix = prefix.split('.')[-1].strip()
@@ -124,18 +136,27 @@ def autocompleteDocument(document, qrange, *args, **kwargs):
             submodules = line.split("import ")[1].split(".")[1:-1]
         if top_level_module:
             word_list = AutoCompleter.get_submodules(module, submodules, attributes)
-    elif '.' in line:
+    elif '.' in line and not disabled_dynamic_import:
         text = unicode(document.text()).split("\n")
         raw, column = currentPosition.position()
-        text_raw = text[raw]
+        text_line = text[raw]
         del text[raw]
         code = compile('\n'.join(text), "name", "exec")
         vars_file = {}
         exec code in globals(), vars_file
-        module = vars_file.get(text_raw.split('.')[0], None).__name__
-        submodules = text_raw.split('.')[1:-1]
+        var_name = text_line.split('.')[0]
+        module_name = vars_file.get(var_name, None).__name__
+        module = module_name.split('.')[0]
+        submodules = module_name.split('.')[1:]
+        if var_name in text_line:
+            text_line = text_line.replace(var_name, '')
+            submodules_extra = text_line.split('.')
+            for submodule in submodules_extra:
+                if submodule:
+                    submodules.append(submodule)
         top_level_module = modules_path.get(module, None)
         attributes = True
+        top_level_module = modules_path.get(module)
         if top_level_module:
             word_list = AutoCompleter.get_submodules(module, submodules, attributes)
 
@@ -148,7 +169,7 @@ def autocompleteDocument(document, qrange, *args, **kwargs):
 
     completer = AutoCompleter(QtCore.QStringList(), view, activate_subfix)
     completer.setCompletionMode(QtGui.QCompleter.PopupCompletion)
-    completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+    completer.setCaseSensitivity(QtCore.Qt.CaseSensitive)
     completer.setModel(QtGui.QStringListModel(string_list, completer))
     completer.setCompletionPrefix(prefix)
     completer.popup().setCurrentIndex(completer.completionModel().index(0, 0))
@@ -169,6 +190,8 @@ def autocompleteDocument(document, qrange, *args, **kwargs):
 def createSignalAutocompleteDocument(view, *args, **kwargs):
     # https://launchpad.net/ubuntu/precise/+source/pykde4
     # https://launchpad.net/ubuntu/precise/+source/pykde4/4:4.7.97-0ubuntu1/+files/pykde4_4.7.97.orig.tar.bz2
+    #import utils; utils.ipdb()
+    AutoCompleter.get_top_level_modules()
     view.document().textInserted.connect(autocompleteDocument)
 
 
