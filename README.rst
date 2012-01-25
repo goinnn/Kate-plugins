@@ -35,7 +35,7 @@ Autocomplete to python (python)
 
  * Shortcut: Is automatical
  * from and import instruction (alpha)
- * autocomplete into the code (pre-alpha)
+ * autocomplete into the code (pre-alpha) with `pysmell <http://pypi.python.org/pypi/pysmell>`_
  * Currently working on this plugin
 
 insert IPDB (python)

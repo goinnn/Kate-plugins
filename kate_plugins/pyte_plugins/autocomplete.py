@@ -8,6 +8,9 @@ import sys
 
 import kate
 
+from compiler import parse
+
+from pysmell.codefinder import CodeFinder
 from PyQt4 import QtCore, QtGui
 
 
@@ -73,10 +76,11 @@ class AutoCompleter(QtGui.QCompleter):
             att_module = module_dir.split(os.sep)[-1].replace('.py', '').replace('.pyc', '')
             importer = pkgutil.get_importer(att_dir)
             module = importer.find_module(att_module)
-            code = module.get_code()
-            for const in code.co_consts:
-                if getattr(const, 'co_name', None):
-                    modules.append(const.co_name)
+            if module:
+                code = module.get_code()
+                for const in code.co_consts:
+                    if getattr(const, 'co_name', None):
+                        modules.append(const.co_name)
         return sorted(modules)
 
 
@@ -136,28 +140,27 @@ def autocompleteDocument(document, qrange, *args, **kwargs):
             submodules = line.split("import ")[1].split(".")[1:-1]
         if top_level_module:
             word_list = AutoCompleter.get_submodules(module, submodules, attributes)
-    elif '.' in line and not disabled_dynamic_import:
+    elif '.' in line:
         text = unicode(document.text()).split("\n")
         raw, column = currentPosition.position()
         text_line = text[raw]
+        if not text_line:
+            return
+        text_line_split = text_line.split('.')
+        prefix = text_line_split[-1]
+        text_line = '.'.join(text_line_split[:-1])
+        prfx = '__package____module__.'
+        prfx_text_line = '%s%s' %(prfx, text_line)
         del text[raw]
-        code = compile('\n'.join(text), "name", "exec")
-        vars_file = {}
-        exec code in globals(), vars_file
-        var_name = text_line.split('.')[0]
-        module_name = vars_file.get(var_name, None).__name__
-        module = module_name.split('.')[0]
-        submodules = module_name.split('.')[1:]
-        if var_name in text_line:
-            text_line = text_line.replace(var_name, '')
-            submodules_extra = text_line.split('.')
-            for submodule in submodules_extra:
-                if submodule:
-                    submodules.append(submodule)
-        top_level_module = modules_path.get(module, None)
-        attributes = True
-        top_level_module = modules_path.get(module)
-        if top_level_module:
+        code = parse('\n'.join(text))
+        code_walk = compiler.walk(code, CodeFinder())
+        if prfx_text_line in code_walk.modules['CONSTANTS']:
+            return
+        elif code_walk.modules['POINTERS'].get(prfx_text_line, None):
+            module_path = code_walk.modules['POINTERS'].get(prfx_text_line, None)
+            module = module_path.split('.')[0]
+            submodules = module_path.split('.')[1:]
+            attributes = True
             word_list = AutoCompleter.get_submodules(module, submodules, attributes)
 
     if not word_list:
