@@ -22,6 +22,15 @@ Installation
 
 ::
 
+ easy_install Kate-plugins
+ cd ~/.kde/share/apps/kate/pate/
+ ln -s /PATH/OF/THE/EGG/kate_plugins/ .
+
+
+or
+
+::
+
  cd ~/
  git clone git://github.com/goinnn/Kate-plugins.git
  cd ~/.kde/share/apps/kate/pate/
