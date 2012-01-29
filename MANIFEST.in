@@ -2,3 +2,6 @@ include README.rst
 include AUTHORS
 include CHANGES
 include *.py
+recursive-include kate_plugins/jste_plugins *.py
+recursive-include kate_plugins/pyte_plugins *.py
+recursive-include kate_plugins/pyte_plugins/djte_plugins *.py
