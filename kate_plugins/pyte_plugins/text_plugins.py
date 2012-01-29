@@ -13,7 +13,7 @@ TEXT_SUPER = """%ssuper(%s, %s).%s(%s)"""
 str_blank = "(?:\ |\t|\n)*"
 str_espaces = "([\ |\t|\n]*)"
 pattern_espaces = re.compile("%s(.*)" % str_espaces)
-pattern_class = re.compile("class %s(\w+)\(([\w|.]+)\):" % str_blank)
+pattern_class = re.compile("%(str_blank)sclass %(str_blank)s(\w+)\(([\w|.]+)\):" % {'str_blank': str_blank})
 
 str_params = "(.*)"
 str_def_init = "%(espaces)sdef %(blank)s(\w+)%(blank)s\(%(param)s" % {
