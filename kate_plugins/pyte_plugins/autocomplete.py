@@ -3,7 +3,6 @@ import glob
 import os
 import pkgutil
 import re
-import string
 import sys
 
 import kate
@@ -11,7 +10,7 @@ import kate
 from compiler import parse
 
 from PyKDE4.ktexteditor import KTextEditor
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore
 from PyQt4.QtCore import QModelIndex, Qt, QVariant
 from pysmell.codefinder import CodeFinder
 
@@ -99,7 +98,9 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                 submodules = []
             else:
                 submodules = submodules.split('.')[:-1]
-            self.resultList = self.get_submodules(module, submodules)
+            self.resultList = self.get_submodules(module,
+                                                  submodules,
+                                                  attributes=False)
             return True
         mfc = from_complete.match(line)
         if mfc:
@@ -118,29 +119,44 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         text_list = unicode(doc.text()).split("\n")
         raw, column = word.start().position()
         del text_list[raw]
-        text_line_split = line.split('.')
+        text = '\n'.join(text_list)
+        return self.getDynamic(text, line)
+
+    def getDynamic(self, text, code_line):
         try:
-            code = parse('\n'.join(text_list))
+            code = parse(text)
             code_walk = compiler.walk(code, CodeFinder())
-            prefix = text_line_split[0]
+            code_line_split = code_line.split('.')
+            prefix = code_line_split[0]
             prfx = '__package____module__.'
-            prfx_text_line = '%s%s' %(prfx, prefix)
-            if prfx_text_line in code_walk.modules['CONSTANTS']:
-                return
-            elif code_walk.modules['POINTERS'].get(prfx_text_line, None):
-                module_path = code_walk.modules['POINTERS'].get(prfx_text_line, None)
+            prfx_code_line = '%s%s' %(prfx, prefix)
+            if prfx_code_line in code_walk.modules['CONSTANTS']:
+                return False
+            elif code_walk.modules['CLASSES'].get(prfx_code_line, None):
+                class_smell = code_walk.modules['CLASSES'].get(prfx_code_line)
+                resultList = [c[0] for c in class_smell['constructor']]
+                resultList.extend([m[0] for m in class_smell['methods']])
+                resultList.extend(class_smell['properties'])
+                self.resultList = resultList
+                return True
+            elif code_walk.modules['POINTERS'].get(prfx_code_line, None):
+                module_path = code_walk.modules['POINTERS'].get(prfx_code_line, None)
                 module = module_path.split('.')[0]
                 submodules = module_path.split('.')[1:]
-                attributes = True
+                submodules.extend(code_line_split[1:])
                 self.resultList = self.get_submodules(module,
                                                       submodules,
-                                                      attributes)
+                                                      attributes=True)
+                if not self.resultList and len(submodules) >=2:
+                    module_path = modules_path[module][0] + os.sep + os.sep.join(submodules[:-2])
+                    importer = pkgutil.get_importer(module_path)
+                    module = importer.find_module(submodules[-2])
+                    return self.getDynamic(module.get_source(), submodules[-1])
                 return True
         except SyntaxError, e:
             kate.gui.popup('There was a syntax error in this file', 
                             2, icon='dialog-warning', minTextWidth=200)
         return False
-
 
     def index(self, row, column, parent):
         if (row < 0 or row >= len(self.resultList) or
@@ -199,8 +215,8 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                     modules_path[module] = [filename]
         return modules
 
-    @classmethod
-    def get_submodules(cls, module_name, submodules=None, attributes=False):
+    def get_submodules(self, module_name, submodules=None,
+                       attributes=True):
         module_dir = modules_path[module_name][0]
         submodules = [submodule for submodule in submodules if submodule]
         if submodules:
