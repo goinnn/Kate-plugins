@@ -1,8 +1,8 @@
-# Inspirated in http://code.google.com/p/djangode/source/browse/trunk/djangode/gui/python_editor.py#214
 import compiler
-import os
 import glob
+import os
 import pkgutil
+import re
 import string
 import sys
 
@@ -10,25 +10,163 @@ import kate
 
 from compiler import parse
 
-from pysmell.codefinder import CodeFinder
+from PyKDE4.ktexteditor import KTextEditor
 from PyQt4 import QtCore, QtGui
+from PyQt4.QtCore import QModelIndex, Qt, QVariant
+from pysmell.codefinder import CodeFinder
 
 
 global modules_path
-modules_path = {}
 global python_path
+global windowInterface
+global codecompletationmodel
+modules_path = {}
 python_path = []
 
-class AutoCompleter(QtGui.QCompleter):
+_spaces = "(?:\ |\t|\n)*"
+_from = "%sfrom" % _spaces
+_import = "%simport" % _spaces
+_first_module = "(?P<firstmodule>\w+)"
+_other_module = "(?:[.](?P<othermodule>[\w.]+)?)?"
+_import_module = "(?P<importmodule>\w+)"
 
-    def __init__(self, l, view, activate_subfix):
-        super(AutoCompleter, self).__init__(l, view)
-        self.view = view
-        self.activate_subfix = activate_subfix
+_from_begin = "%s%s" %(_from, _spaces)
+_from_first_module = "%s%s" % (_from_begin, _first_module)
+_from_other_modules = "%s%s" %(_from_first_module, _other_module)
+_from_import = "%s%s%s" % (_from_other_modules, _spaces, _import)
+_from_complete = "%s%s%s?" %(_from_import, _spaces, _import_module)
 
-    def auto_insertText(self, text):
-        text = text.replace(self.completionPrefix(), '')
-        self.view.insertText('%s%s'% (text, self.activate_subfix))
+_import_begin = "%s" % _import
+_import_complete = "%s%s%s?" %(_import_begin, _spaces, _import_module)
+
+from_first_module = re.compile(_from_first_module + "?$")
+from_other_modules = re.compile(_from_other_modules + "$")
+from_import = re.compile(_from_import + "$")
+from_complete = re.compile(_from_complete + "$")
+
+import_begin = re.compile(_import_begin + "$")
+import_complete = re.compile(_import_complete + "?$")
+
+
+class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
+
+    def __init__(self, *args, **kwargs):
+        super(PythonCodeCompletionModel, self).__init__(*args, **kwargs)
+        self.resultList = []
+
+    roles = {
+        KTextEditor.CodeCompletionModel.CompletionRole:
+            QVariant(
+                KTextEditor.CodeCompletionModel.FirstProperty |
+                KTextEditor.CodeCompletionModel.Public |
+                KTextEditor.CodeCompletionModel.LastProperty |
+                KTextEditor.CodeCompletionModel.Prefix),
+        KTextEditor.CodeCompletionModel.ScopeIndex:
+            QVariant(0),
+        KTextEditor.CodeCompletionModel.MatchQuality:
+            QVariant(10),
+        KTextEditor.CodeCompletionModel.HighlightingMethod:
+            QVariant(QVariant.Invalid),
+        KTextEditor.CodeCompletionModel.InheritanceDepth:
+            QVariant(0),
+    }
+
+    def completionInvoked(self, view, word, invocationType):
+        is_auto = False
+        line_start = word.start().line()
+        line_end = word.end().line()
+        self.resultList = []
+        if line_start != line_end:
+            return
+        doc = view.document()
+        line = unicode(doc.line(line_start))
+        if not line:
+            return
+        if 'from' in line or 'import' in line:
+            is_auto = self.autoCompleteImport(view, word, line)
+        if not is_auto and '.' in line:
+            is_auto = self.autoCompleteDynamic(view, word, line)
+
+    def autoCompleteImport(self, view, word, line):
+        mfb = from_first_module.match(line) or import_complete.match(line)
+        if mfb:
+            self.resultList = self.get_top_level_modules()
+            return True
+        mfom = from_other_modules.match(line)
+        if mfom:
+            module, submodules = mfom.groups()
+            if not submodules:
+                submodules = []
+            else:
+                submodules = submodules.split('.')[:-1]
+            self.resultList = self.get_submodules(module, submodules)
+            return True
+        mfc = from_complete.match(line)
+        if mfc:
+            module, submodules, import_module = mfc.groups()
+            submodules = submodules.split('.')
+            self.resultList = self.get_submodules(module,
+                                                  submodules,
+                                                  attributes=True)
+            return True
+        return False
+
+    def autoCompleteDynamic(self, view, word, line):
+        last_dot = line.rindex('.')
+        line = line[:last_dot]
+        doc = view.document()
+        text_list = unicode(doc.text()).split("\n")
+        raw, column = word.start().position()
+        del text_list[raw]
+        text_line_split = line.split('.')
+        try:
+            code = parse('\n'.join(text_list))
+            code_walk = compiler.walk(code, CodeFinder())
+            prefix = text_line_split[0]
+            prfx = '__package____module__.'
+            prfx_text_line = '%s%s' %(prfx, prefix)
+            if prfx_text_line in code_walk.modules['CONSTANTS']:
+                return
+            elif code_walk.modules['POINTERS'].get(prfx_text_line, None):
+                module_path = code_walk.modules['POINTERS'].get(prfx_text_line, None)
+                module = module_path.split('.')[0]
+                submodules = module_path.split('.')[1:]
+                attributes = True
+                self.resultList = self.get_submodules(module,
+                                                      submodules,
+                                                      attributes)
+                return True
+        except SyntaxError, e:
+            kate.gui.popup('There was a syntax error in this file', 
+                            2, icon='dialog-warning', minTextWidth=200)
+        return False
+
+
+    def index(self, row, column, parent):
+        if (row < 0 or row >= len(self.resultList) or
+            column < 0 or column >= KTextEditor.CodeCompletionModel.ColumnCount or
+            parent.isValid()):
+            return QModelIndex()
+        return self.createIndex(row, column)
+
+    def rowCount(self, parent):
+        if parent.isValid():
+            return 0 # Do not make the model look hierarchical
+        else:
+            return len(self.resultList)
+
+    def data(self, index, role):
+        if index.column() == KTextEditor.CodeCompletionModel.Name:
+            if role == Qt.DisplayRole:
+                return QVariant(self.resultList[index.row()])
+            try:
+                return self.roles[role]
+            except KeyError:
+                pass
+        return QVariant()
+
+    def executeCompletionItem(self, doc, word, row):
+        return super(PythonCodeCompletionModel, self).executeCompletionItem(doc, word, row)
 
     @classmethod
     def get_pythonpath(cls):
@@ -59,7 +197,7 @@ class AutoCompleter(QtGui.QCompleter):
                 if module and not module in modules:
                     modules.append(module)
                     modules_path[module] = [filename]
-        return sorted(modules)
+        return modules
 
     @classmethod
     def get_submodules(cls, module_name, submodules=None, attributes=False):
@@ -84,121 +222,20 @@ class AutoCompleter(QtGui.QCompleter):
         return sorted(modules)
 
 
-class ComboBox(QtGui.QComboBox):
-
-    def __init__(self, view, *args, **kwargs):
-        super(ComboBox, self).__init__(view, *args, **kwargs)
-        self.main_view = view
-
-    def keyPressEvent(self, event, *args, **kwargs):
-        key = unicode(event.text())
-        insertCharacters = string.ascii_letters + string.digits + '. ;_\n'
-        if key in unicode(insertCharacters):
-            self.main_view.insertText(event.text())
-        return super(ComboBox, self).keyPressEvent(event, *args, **kwargs)
-
-
-def autocompleteDocument(document, qrange, *args, **kwargs):
-    if qrange.start().line() != qrange.end().line():
-        return
-    line = unicode(document.line(qrange.start().line())).lstrip()
-    currentDocument = kate.activeDocument()
-    view = currentDocument.activeView()
-    currentPosition = view.cursorPosition()
-    activate_subfix = ''
-    prefix = ''
-    word_list = None
-    disabled_dynamic_import = True
-    if line.startswith("import ") and not '.' in line:
-        prefix = line.replace('import ', '').split('.')[-1]
-        prefix = prefix.split('.')[-1].strip()
-        word_list = AutoCompleter.get_top_level_modules()
-    elif line.startswith("from ") and not '.' in line and not 'import' in line:
-        prefix = line.replace('from ', '').split('.')[-1]
-        prefix = prefix.split('.')[-1].strip()
-        activate_subfix = '.'
-        word_list = AutoCompleter.get_top_level_modules()
-    elif "from " in line or "import " in line:
-        separated = '.'
-        if not '.' in line:
-            separated = 'import '
-            prefix = line
-            module = line.replace('from ', '').split(separated)[0].strip()
-        else:
-            prefix = line.split(separated)[-1].strip()
-            module = line.replace('from ', '').replace('import ', '').split(separated)[0].strip()
-        top_level_module = modules_path.get(module)
-        attributes = False
-        if line.startswith("from ") and not ' import ' in line:
-            submodules = line.split(".")[1:-1]
-        elif line.startswith("from "):
-            attributes = True
-            prefix = prefix.split(" import")[1].strip()
-            submodules = line.split(" import")[0].split(".")[1:]
-            activate_subfix = '\n'
-        else:
-            submodules = line.split("import ")[1].split(".")[1:-1]
-        if top_level_module:
-            word_list = AutoCompleter.get_submodules(module, submodules, attributes)
-    elif '.' in line:
-        text = unicode(document.text()).split("\n")
-        raw, column = currentPosition.position()
-        text_line = text[raw]
-        if not text_line:
-            return
-        text_line_split = text_line.split('.')
-        prefix = text_line_split[-1]
-        text_line = '.'.join(text_line_split[:-1])
-        prfx = '__package____module__.'
-        prfx_text_line = '%s%s' %(prfx, text_line)
-        del text[raw]
-        code = parse('\n'.join(text))
-        code_walk = compiler.walk(code, CodeFinder())
-        if prfx_text_line in code_walk.modules['CONSTANTS']:
-            return
-        elif code_walk.modules['POINTERS'].get(prfx_text_line, None):
-            module_path = code_walk.modules['POINTERS'].get(prfx_text_line, None)
-            module = module_path.split('.')[0]
-            submodules = module_path.split('.')[1:]
-            attributes = True
-            word_list = AutoCompleter.get_submodules(module, submodules, attributes)
-
-    if not word_list:
-        return
-
-    string_list = QtCore.QStringList()
-    for word in word_list:
-        string_list.append(word)
-
-    completer = AutoCompleter(QtCore.QStringList(), view, activate_subfix)
-    completer.setCompletionMode(QtGui.QCompleter.PopupCompletion)
-    completer.setCaseSensitivity(QtCore.Qt.CaseSensitive)
-    completer.setModel(QtGui.QStringListModel(string_list, completer))
-    completer.setCompletionPrefix(prefix)
-    completer.popup().setCurrentIndex(completer.completionModel().index(0, 0))
-
-    point = view.cursorToCoordinate(currentPosition)
-    point.setY((point.y() - 80))
-
-    qr = QtCore.QRect(point, QtCore.QSize(100, 100))
-    qr.setWidth(completer.popup().sizeHintForColumn(0)
-              + completer.popup().verticalScrollBar().sizeHint().width())
-
-    qcombo = ComboBox(view)
-    completer.setWidget(qcombo)
-    completer.activated.connect(completer.auto_insertText)
-    completer.complete(qr)
-
-
-def createSignalAutocompleteDocument(view, *args, **kwargs):
+def createSignalAutocompleteDocument(view, *args, **kwargs): 
     # https://launchpad.net/ubuntu/precise/+source/pykde4
     # https://launchpad.net/ubuntu/precise/+source/pykde4/4:4.7.97-0ubuntu1/+files/pykde4_4.7.97.orig.tar.bz2
-    #import utils; utils.ipdb()
-    AutoCompleter.get_top_level_modules()
-    view.document().textInserted.connect(autocompleteDocument)
-
+    #http://doc.trolltech.com/4.6/qabstractitemmodel.html
+    #http://gitorious.org/kate/kate/blobs/a17eb928f8133528a6194b7e788ab7a425ef5eea/ktexteditor/codecompletionmodel.cpp
+    #http://code.google.com/p/lilykde/source/browse/trunk/frescobaldi/python/frescobaldi_app/mainapp.py#1391
+    #http://api.kde.org/4.0-api/kdelibs-apidocs/kate/html/katecompletionmodel_8cpp_source.html
+    #https://svn.reviewboard.kde.org/r/1640/diff/?expand=1
+    PythonCodeCompletionModel.get_top_level_modules()
+    cci = view.codeCompletionInterface()
+    cci.registerCompletionModel(codecompletationmodel)
 
 windowInterface = kate.application.activeMainWindow()
+codecompletationmodel = PythonCodeCompletionModel(windowInterface)
 windowInterface.connect(windowInterface,
                 QtCore.SIGNAL('viewCreated(KTextEditor::View*)'),
                 createSignalAutocompleteDocument)
