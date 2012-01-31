@@ -31,7 +31,7 @@ _from = "%sfrom" % _spaces
 _import = "%simport" % _spaces
 _first_module = "(?P<firstmodule>\w+)"
 _other_module = "(?:[.](?P<othermodule>[\w.]+)?)?"
-_import_module = "(?P<importmodule>\w+)"
+_import_module = "(?:\w+,(?:\ |\t|\n)*)*(?P<importmodule>\w+)"
 
 _from_begin = "%s%s" %(_from, _spaces)
 _from_first_module = "%s%s" % (_from_begin, _first_module)
