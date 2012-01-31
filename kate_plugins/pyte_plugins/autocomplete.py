@@ -11,7 +11,7 @@ from compiler import parse
 
 from PyKDE4.ktexteditor import KTextEditor
 from PyKDE4.kdeui import KIcon
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore
 from PyQt4.QtCore import QSize
 from PyQt4.QtCore import QModelIndex, Qt, QVariant
 from pysmell.codefinder import CodeFinder
@@ -33,14 +33,14 @@ _first_module = "(?P<firstmodule>\w+)"
 _other_module = "(?:[.](?P<othermodule>[\w.]+)?)?"
 _import_module = "(?:\w+,(?:\ |\t|\n)*)*(?P<importmodule>\w+)"
 
-_from_begin = "%s%s" %(_from, _spaces)
+_from_begin = "%s%s" % (_from, _spaces)
 _from_first_module = "%s%s" % (_from_begin, _first_module)
-_from_other_modules = "%s%s" %(_from_first_module, _other_module)
+_from_other_modules = "%s%s" % (_from_first_module, _other_module)
 _from_import = "%s%s%s" % (_from_other_modules, _spaces, _import)
-_from_complete = "%s%s%s?" %(_from_import, _spaces, _import_module)
+_from_complete = "%s%s%s?" % (_from_import, _spaces, _import_module)
 
 _import_begin = "%s" % _import
-_import_complete = "%s%s%s?" %(_import_begin, _spaces, _import_module)
+_import_complete = "%s%s%s?" % (_import_begin, _spaces, _import_module)
 
 from_first_module = re.compile(_from_first_module + "?$")
 from_other_modules = re.compile(_from_other_modules + "$")
@@ -102,7 +102,7 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
 
     def rowCount(self, parent):
         if parent.isValid():
-            return 0 # Do not make the model look hierarchical
+            return 0  # Do not make the model look hierarchical
         else:
             return len(self.resultList)
 
@@ -242,7 +242,7 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
             code_walk = compiler.walk(code, CodeFinder())
             code_line_split = code_line.split('.')
             prefix = code_line_split[0]
-            prfx_code_line = '%s%s' %(PYSMELL_PREFIX, prefix)
+            prfx_code_line = '%s%s' % (PYSMELL_PREFIX, prefix)
             if prfx_code_line in code_walk.modules['CONSTANTS']:
                 return False
             elif code_walk.modules['CLASSES'].get(prfx_code_line, None) and not code_line_split[1:]:
@@ -268,7 +268,7 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                 if text_info:
                     return self.getTextInfo(text, self.resultList)
         except SyntaxError, e:
-            kate.gui.popup('There was a syntax error in this file', 
+            kate.gui.popup('There was a syntax error in this file',
                             2, icon='dialog-warning', minTextWidth=200)
         return False
 
@@ -321,11 +321,11 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
 
             classes = modules['CLASSES']
             for cls in classes.items():
-              list_autocomplete.append(self.treatment_pysmell_cls(cls))
+                list_autocomplete.append(self.treatment_pysmell_cls(cls))
 
             is_auto = len(list_autocomplete) > 0
             if not is_auto and line:
-                line = "%s%s" %(PYSMELL_PREFIX, line.strip())
+                line = "%s%s" % (PYSMELL_PREFIX, line.strip())
                 for pointer in modules['POINTERS'].keys():
                     if pointer.startswith(line):
                         is_auto = is_auto or self.getDynamic(text,
@@ -333,7 +333,7 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                                         text_info=False)
             return is_auto
         except SyntaxError, e:
-            kate.gui.popup('There was a syntax error in this file', 
+            kate.gui.popup('There was a syntax error in this file',
                             2, icon='dialog-warning', minTextWidth=200)
         return False
 
@@ -372,7 +372,7 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
             resultList.append(self.treatment_pysmell_const(m))
 
 
-def createSignalAutocompleteDocument(view, *args, **kwargs): 
+def createSignalAutocompleteDocument(view, *args, **kwargs):
     # https://launchpad.net/ubuntu/precise/+source/pykde4
     # https://launchpad.net/ubuntu/precise/+source/pykde4/4:4.7.97-0ubuntu1/+files/pykde4_4.7.97.orig.tar.bz2
     #http://doc.trolltech.com/4.6/qabstractitemmodel.html
