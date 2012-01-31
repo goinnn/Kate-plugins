@@ -259,10 +259,12 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                 module = module_path.split('.')[0]
                 submodules = module_path.split('.')[1:]
                 submodules.extend(code_line_split[1:])
-                module, submodules_undone = self.getModuleSmart(module, submodules)
+                module_done, submodules_undone = self.getModuleSmart(module, submodules)
+                if not submodules_undone:
+                    self.resultList = list(set(self.resultList.extend(self.getSubmodules(module, submodules, True))))
                 submodules_undone.reverse()
                 line = '.'.join(submodules_undone)
-                text = module.get_source()
+                text = module_done.get_source()
                 if line:
                     return self.getDynamic(text, line)
                 if text_info:
