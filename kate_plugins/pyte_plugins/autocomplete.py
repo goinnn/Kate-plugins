@@ -10,7 +10,9 @@ import kate
 from compiler import parse
 
 from PyKDE4.ktexteditor import KTextEditor
-from PyQt4 import QtCore
+from PyKDE4.kdeui import KIcon
+from PyQt4 import QtCore, QtGui
+from PyQt4.QtCore import QSize
 from PyQt4.QtCore import QModelIndex, Qt, QVariant
 from pysmell.codefinder import CodeFinder
 
@@ -21,6 +23,8 @@ global windowInterface
 global codecompletationmodel
 modules_path = {}
 python_path = []
+
+PYSMELL_PREFIX = '__package____module__.'
 
 _spaces = "(?:\ |\t|\n)*"
 _from = "%sfrom" % _spaces
@@ -86,10 +90,52 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         if not is_auto and '.' in line:
             is_auto = self.autoCompleteDynamic(view, word, line)
 
+    #http://api.kde.org/4.5-api/kdelibs-apidocs/interfaces/ktexteditor/html/classKTextEditor_1_1CodeCompletionModel.html#3bd60270a94fe2001891651b5332d42b
+    def index(self, row, column, parent):
+        if (row < 0 or row >= len(self.resultList) or
+            column < 0 or column >= KTextEditor.CodeCompletionModel.ColumnCount or
+            parent.isValid()):
+            return QModelIndex()
+        return self.createIndex(row, column)
+
+    def rowCount(self, parent):
+        if parent.isValid():
+            return 0 # Do not make the model look hierarchical
+        else:
+            return len(self.resultList)
+
+    def data(self, index, role, *args, **kwargs):
+        item = self.resultList[index.row()]
+        if index.column() == KTextEditor.CodeCompletionModel.Name:
+            if role == Qt.DisplayRole:
+                return QVariant(item['text'])
+            try:
+                return self.roles[role]
+            except KeyError:
+                pass
+        elif index.column() == KTextEditor.CodeCompletionModel.Icon:
+            if role == Qt.DecorationRole:
+                #code-class
+                #code-variablecode-function
+                return KIcon(item["icon"]).pixmap(QSize(16, 16))
+        elif index.column() == KTextEditor.CodeCompletionModel.Arguments:
+            item_args = item.get("args", None)
+            if role == Qt.DisplayRole and item_args:
+                return item_args
+        elif index.column() == KTextEditor.CodeCompletionModel.Postfix:
+            item_description = item.get("description", None)
+            if role == Qt.DisplayRole and item_description:
+                return item_description
+        return QVariant()
+
+    def executeCompletionItem(self, doc, word, row):
+        return super(PythonCodeCompletionModel, self).executeCompletionItem(doc, word, row)
+
+
     def autoCompleteImport(self, view, word, line):
         mfb = from_first_module.match(line) or import_complete.match(line)
         if mfb:
-            self.resultList = self.get_top_level_modules()
+            self.resultList = self.getTopLevelModules()
             return True
         mfom = from_other_modules.match(line)
         if mfom:
@@ -98,15 +144,18 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                 submodules = []
             else:
                 submodules = submodules.split('.')[:-1]
-            self.resultList = self.get_submodules(module,
+            self.resultList = self.getSubmodules(module,
                                                   submodules,
                                                   attributes=False)
             return True
         mfc = from_complete.match(line)
         if mfc:
             module, submodules, import_module = mfc.groups()
-            submodules = submodules.split('.')
-            self.resultList = self.get_submodules(module,
+            if submodules:
+                submodules = submodules.split('.')
+            else:
+                submodules = []
+            self.resultList = self.getSubmodules(module,
                                                   submodules,
                                                   attributes=True)
             return True
@@ -144,7 +193,7 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                 module = module_path.split('.')[0]
                 submodules = module_path.split('.')[1:]
                 submodules.extend(code_line_split[1:])
-                self.resultList = self.get_submodules(module,
+                self.resultList = self.getSubmodules(module,
                                                       submodules,
                                                       attributes=True)
                 if not self.resultList and len(submodules) >=2:
@@ -158,34 +207,53 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                             2, icon='dialog-warning', minTextWidth=200)
         return False
 
-    def index(self, row, column, parent):
-        if (row < 0 or row >= len(self.resultList) or
-            column < 0 or column >= KTextEditor.CodeCompletionModel.ColumnCount or
-            parent.isValid()):
-            return QModelIndex()
-        return self.createIndex(row, column)
+    def getTextInfo(self, text, list_autocomplete):
+        try:
+            code = parse(text)
+            code_walk = compiler.walk(code, CodeFinder())
+            modules = code_walk.modules
+            constans = modules['CONSTANTS']
+            for constant in constans:
+                list_autocomplete.append(self.treatment_pysmell_const(constant))
 
-    def rowCount(self, parent):
-        if parent.isValid():
-            return 0 # Do not make the model look hierarchical
-        else:
-            return len(self.resultList)
+            functions = modules['FUNCTIONS']
+            for func in functions:
+                list_autocomplete.append(self.treatment_pysmell_func(func))
 
-    def data(self, index, role):
-        if index.column() == KTextEditor.CodeCompletionModel.Name:
-            if role == Qt.DisplayRole:
-                return QVariant(self.resultList[index.row()])
-            try:
-                return self.roles[role]
-            except KeyError:
-                pass
-        return QVariant()
+            classes = modules['CLASSES']
+            for cls in classes.items():
+              list_autocomplete.append(self.treatment_pysmell_cls(cls))
 
-    def executeCompletionItem(self, doc, word, row):
-        return super(PythonCodeCompletionModel, self).executeCompletionItem(doc, word, row)
 
+        except SyntaxError, e:
+            kate.gui.popup('There was a syntax error in this file', 
+                            2, icon='dialog-warning', minTextWidth=200)
+        return False
+
+    def treatment_pysmell_const(self, constant):
+        constant = constant.replace(PYSMELL_PREFIX, '')
+        return self.createItemAutoComplete(constant, 'constant')
+
+    def treatment_pysmell_func(self, func):
+        func_name, args, description = func
+        func_name = func_name.replace(PYSMELL_PREFIX, '')
+        args = ', '.join(args)
+        args = ' (%s)' % args
+        return self.createItemAutoComplete(func_name,
+                                           'function', args, description)
+
+    def treatment_pysmell_cls(self, cls):
+        cls_name, info = cls
+        cls_name = cls_name.replace(PYSMELL_PREFIX, '')
+        args_constructor = info.get('constructor', None)
+        args_constructor = ', '.join(args_constructor)
+        args_constructor = ' (%s)' % args_constructor
+        description = info.get('docstring', None)
+        return self.createItemAutoComplete(cls_name,
+                                           'class', args_constructor,
+                                           description)
     @classmethod
-    def get_pythonpath(cls):
+    def getPythonpath(cls):
         global python_path
         if python_path:
             return python_path
@@ -199,23 +267,42 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         return python_path
 
     @classmethod
-    def get_top_level_modules(cls):
+    def createItemAutoComplete(cls, text,
+                                    icon='unknown',
+                                    args=None,
+                                    description=None):
+        icon_converter = {'module': 'code-block',
+                          'unknown': 'unknown',
+                          'constant': 'code-variable',
+                          'class': 'code-class',
+                          'function': 'code-function'}
+        max_description = 50
+        if description and len(description) > max_description:
+            description = '%s...' % description[:max_description]
+        return {'text': text,
+                'icon': icon_converter[icon],
+                'args': args or '',
+                'description': description or ''}
+
+    @classmethod
+    def getTopLevelModules(cls):
         # http://code.google.com/p/djangode/source/browse/trunk/djangode/data/codemodel/codemodel.py#57
         modules = []
-        pythonpath = cls.get_pythonpath()
+        pythonpath = cls.getPythonpath()
         for directory in pythonpath:
             for filename in glob.glob(directory + os.sep + "*"):
-                module = None
+                module_name = None
                 if filename.endswith(".py"):
-                    module = filename.split(os.sep)[-1][:-3]
+                    module_name = filename.split(os.sep)[-1][:-3]
                 elif os.path.isdir(filename) and os.path.exists(filename + os.sep + "__init__.py"):
-                    module = filename.split(os.sep)[-1]
+                    module_name = filename.split(os.sep)[-1]
+                module = cls.createItemAutoComplete(module_name, 'module')
                 if module and not module in modules:
                     modules.append(module)
-                    modules_path[module] = [filename]
+                    modules_path[module_name] = [filename]
         return modules
 
-    def get_submodules(self, module_name, submodules=None,
+    def getSubmodules(self, module_name, submodules=None,
                        attributes=True):
         module_dir = modules_path[module_name][0]
         submodules = [submodule for submodule in submodules if submodule]
@@ -224,17 +311,15 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
             module_dir = "%s%s%s" % (module_dir, os.sep, submodules)
         modules = []
         for loader, module_name, is_pkg in pkgutil.walk_packages([module_dir]):
-            modules.append(module_name)
+            module = self.createItemAutoComplete(module_name, 'module')
+            modules.append(module)
         if attributes:
             att_dir = os.sep.join(module_dir.split(os.sep)[:-1])
             att_module = module_dir.split(os.sep)[-1].replace('.py', '').replace('.pyc', '')
             importer = pkgutil.get_importer(att_dir)
             module = importer.find_module(att_module)
             if module:
-                code = module.get_code()
-                for const in code.co_consts:
-                    if getattr(const, 'co_name', None):
-                        modules.append(const.co_name)
+                self.getTextInfo(module.get_source(), modules)
         return sorted(modules)
 
 
@@ -246,7 +331,7 @@ def createSignalAutocompleteDocument(view, *args, **kwargs):
     #http://code.google.com/p/lilykde/source/browse/trunk/frescobaldi/python/frescobaldi_app/mainapp.py#1391
     #http://api.kde.org/4.0-api/kdelibs-apidocs/kate/html/katecompletionmodel_8cpp_source.html
     #https://svn.reviewboard.kde.org/r/1640/diff/?expand=1
-    PythonCodeCompletionModel.get_top_level_modules()
+    PythonCodeCompletionModel.getTopLevelModules()
     cci = view.codeCompletionInterface()
     cci.registerCompletionModel(codecompletationmodel)
 
