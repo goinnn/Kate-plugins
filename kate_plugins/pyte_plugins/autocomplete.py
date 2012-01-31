@@ -236,7 +236,7 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                 self.getTextInfo(module.get_source(), modules)
         return sorted(modules)
 
-    def getDynamic(self, text, code_line):
+    def getDynamic(self, text, code_line, text_info=True):
         try:
             code = parse(text)
             code_walk = compiler.walk(code, CodeFinder())
@@ -265,7 +265,8 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                 text = module.get_source()
                 if line:
                     return self.getDynamic(text, line)
-                return self.getTextInfo(text, self.resultList)
+                if text_info:
+                    return self.getTextInfo(text, self.resultList)
         except SyntaxError, e:
             kate.gui.popup('There was a syntax error in this file', 
                             2, icon='dialog-warning', minTextWidth=200)
@@ -328,7 +329,8 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                 for pointer in modules['POINTERS'].keys():
                     if pointer.startswith(line):
                         is_auto = is_auto or self.getDynamic(text,
-                                        pointer.replace(PYSMELL_PREFIX, ''))
+                                        pointer.replace(PYSMELL_PREFIX, ''),
+                                        text_info=False)
             return is_auto
         except SyntaxError, e:
             kate.gui.popup('There was a syntax error in this file', 

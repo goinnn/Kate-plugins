@@ -18,6 +18,7 @@ Installation
 ============
 
  * `Install Pâté <https://github.com/pag/pate/blob/master/INSTALL.txt>`_
+ * `Install Pysmell <http://pypi.python.org/pypi/pysmell>`_ (easy_install pysmell)
  * Install the plugins:
 
 ::
@@ -42,10 +43,19 @@ Plugins
 Autocomplete to python (python)
 -------------------------------
 
- * Shortcut: Is automatical
- * from and import instruction (alpha)
- * autocomplete into the code (pre-alpha) with `pysmell <http://pypi.python.org/pypi/pysmell>`_
- * Currently working on this plugin
+ * Shortcut: It is automatical
+ * from and import instruction (beta)
+ * autocomplete into the code (alpha) with `pysmell <http://pypi.python.org/pypi/pysmell>`_
+ * There was a hook if you want to add your own packages python in the autocomplete structure. You should be create a file called "autocomplete_path.py" next to the "autocomplete.py" with a function "def path(doc, view)", like this:
+
+::
+
+def path(doc, view):
+    return [
+    '/PATH/OF/THE/EGG1/name1.egg',
+    '/PATH/OF/THE/EGG2/name2.egg',
+    ...
+    '/PATH/OF/THE/EGGN/namen.egg'] 
 
 insert IPDB (python)
 --------------------
