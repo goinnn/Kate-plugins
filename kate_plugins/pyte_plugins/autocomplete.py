@@ -171,6 +171,44 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         text = '\n'.join(text_list)
         return self.getDynamic(text, line)
 
+    @classmethod
+    def getTopLevelModules(cls):
+        # http://code.google.com/p/djangode/source/browse/trunk/djangode/data/codemodel/codemodel.py#57
+        modules = []
+        pythonpath = cls.getPythonpath()
+        for directory in pythonpath:
+            for filename in glob.glob(directory + os.sep + "*"):
+                module_name = None
+                if filename.endswith(".py"):
+                    module_name = filename.split(os.sep)[-1][:-3]
+                elif os.path.isdir(filename) and os.path.exists(filename + os.sep + "__init__.py"):
+                    module_name = filename.split(os.sep)[-1]
+                module = cls.createItemAutoComplete(module_name, 'module')
+                if module and not module in modules:
+                    modules.append(module)
+                    modules_path[module_name] = [filename]
+        return modules
+
+    def getSubmodules(self, module_name, submodules=None,
+                       attributes=True):
+        module_dir = modules_path[module_name][0]
+        submodules = [submodule for submodule in submodules if submodule]
+        if submodules:
+            submodules = os.sep.join(submodules)
+            module_dir = "%s%s%s" % (module_dir, os.sep, submodules)
+        modules = []
+        for loader, module_name, is_pkg in pkgutil.walk_packages([module_dir]):
+            module = self.createItemAutoComplete(module_name, 'module')
+            modules.append(module)
+        if attributes:
+            att_dir = os.sep.join(module_dir.split(os.sep)[:-1])
+            att_module = module_dir.split(os.sep)[-1].replace('.py', '').replace('.pyc', '')
+            importer = pkgutil.get_importer(att_dir)
+            module = importer.find_module(att_module)
+            if module:
+                self.getTextInfo(module.get_source(), modules)
+        return sorted(modules)
+
     def getDynamic(self, text, code_line):
         try:
             code = parse(text)
@@ -206,6 +244,38 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
             kate.gui.popup('There was a syntax error in this file', 
                             2, icon='dialog-warning', minTextWidth=200)
         return False
+
+    @classmethod
+    def getPythonpath(cls):
+        global python_path
+        if python_path:
+            return python_path
+        python_path = sys.path
+        try:
+            from pyte_plugins import autocomplete_path
+            python_path = autocomplete_path.path() + python_path
+            sys.path = python_path
+        except ImportError:
+            pass
+        return python_path
+
+    @classmethod
+    def createItemAutoComplete(cls, text,
+                                    icon='unknown',
+                                    args=None,
+                                    description=None):
+        icon_converter = {'module': 'code-block',
+                          'unknown': 'unknown',
+                          'constant': 'code-variable',
+                          'class': 'code-class',
+                          'function': 'code-function'}
+        max_description = 50
+        if description and len(description) > max_description:
+            description = '%s...' % description[:max_description]
+        return {'text': text,
+                'icon': icon_converter[icon],
+                'args': args or '',
+                'description': description or ''}
 
     def getTextInfo(self, text, list_autocomplete):
         try:
@@ -252,75 +322,6 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         return self.createItemAutoComplete(cls_name,
                                            'class', args_constructor,
                                            description)
-    @classmethod
-    def getPythonpath(cls):
-        global python_path
-        if python_path:
-            return python_path
-        python_path = sys.path
-        try:
-            from pyte_plugins import autocomplete_path
-            python_path = autocomplete_path.path() + python_path
-            sys.path = python_path
-        except ImportError:
-            pass
-        return python_path
-
-    @classmethod
-    def createItemAutoComplete(cls, text,
-                                    icon='unknown',
-                                    args=None,
-                                    description=None):
-        icon_converter = {'module': 'code-block',
-                          'unknown': 'unknown',
-                          'constant': 'code-variable',
-                          'class': 'code-class',
-                          'function': 'code-function'}
-        max_description = 50
-        if description and len(description) > max_description:
-            description = '%s...' % description[:max_description]
-        return {'text': text,
-                'icon': icon_converter[icon],
-                'args': args or '',
-                'description': description or ''}
-
-    @classmethod
-    def getTopLevelModules(cls):
-        # http://code.google.com/p/djangode/source/browse/trunk/djangode/data/codemodel/codemodel.py#57
-        modules = []
-        pythonpath = cls.getPythonpath()
-        for directory in pythonpath:
-            for filename in glob.glob(directory + os.sep + "*"):
-                module_name = None
-                if filename.endswith(".py"):
-                    module_name = filename.split(os.sep)[-1][:-3]
-                elif os.path.isdir(filename) and os.path.exists(filename + os.sep + "__init__.py"):
-                    module_name = filename.split(os.sep)[-1]
-                module = cls.createItemAutoComplete(module_name, 'module')
-                if module and not module in modules:
-                    modules.append(module)
-                    modules_path[module_name] = [filename]
-        return modules
-
-    def getSubmodules(self, module_name, submodules=None,
-                       attributes=True):
-        module_dir = modules_path[module_name][0]
-        submodules = [submodule for submodule in submodules if submodule]
-        if submodules:
-            submodules = os.sep.join(submodules)
-            module_dir = "%s%s%s" % (module_dir, os.sep, submodules)
-        modules = []
-        for loader, module_name, is_pkg in pkgutil.walk_packages([module_dir]):
-            module = self.createItemAutoComplete(module_name, 'module')
-            modules.append(module)
-        if attributes:
-            att_dir = os.sep.join(module_dir.split(os.sep)[:-1])
-            att_module = module_dir.split(os.sep)[-1].replace('.py', '').replace('.pyc', '')
-            importer = pkgutil.get_importer(att_dir)
-            module = importer.find_module(att_module)
-            if module:
-                self.getTextInfo(module.get_source(), modules)
-        return sorted(modules)
 
 
 def createSignalAutocompleteDocument(view, *args, **kwargs): 
