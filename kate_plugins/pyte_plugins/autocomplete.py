@@ -117,8 +117,6 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                 pass
         elif index.column() == KTextEditor.CodeCompletionModel.Icon:
             if role == Qt.DecorationRole:
-                #code-class
-                #code-variablecode-function
                 return KIcon(item["icon"]).pixmap(QSize(16, 16))
         elif index.column() == KTextEditor.CodeCompletionModel.Arguments:
             item_args = item.get("args", None)
