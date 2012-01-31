@@ -85,6 +85,7 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         line = unicode(doc.line(line_start))
         if not line:
             return
+        line = line.strip()
         if 'from' in line or 'import' in line:
             is_auto = self.autoCompleteImport(view, word, line)
         if not is_auto and line:
@@ -261,7 +262,9 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                 submodules.extend(code_line_split[1:])
                 module_done, submodules_undone = self.getModuleSmart(module, submodules)
                 if not submodules_undone:
-                    self.resultList = list(set(self.resultList.extend(self.getSubmodules(module, submodules, True))))
+                    autocompletion_submodules = self.getSubmodules(module, submodules, True)
+                    if autocompletion_submodules:
+                        self.resultList = list(set(self.resultList.extend(autocompletion_submodules)))
                 submodules_undone.reverse()
                 line = '.'.join(submodules_undone)
                 text = module_done.get_source()
