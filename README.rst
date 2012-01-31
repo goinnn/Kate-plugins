@@ -50,12 +50,11 @@ Autocomplete to python (python)
 
 ::
 
-def path(doc, view):
-    return [
-    '/PATH/OF/THE/EGG1/name1.egg',
-    '/PATH/OF/THE/EGG2/name2.egg',
-    ...
-    '/PATH/OF/THE/EGGN/namen.egg'] 
+ def path(doc, view):
+     return ['/PATH/OF/THE/EGG1/name1.egg',
+             '/PATH/OF/THE/EGG2/name2.egg',
+             ...
+             '/PATH/OF/THE/EGGN/namen.egg'] 
 
 insert IPDB (python)
 --------------------
