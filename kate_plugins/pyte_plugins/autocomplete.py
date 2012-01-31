@@ -186,7 +186,7 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
     def getTopLevelModules(cls):
         # http://code.google.com/p/djangode/source/browse/trunk/djangode/data/codemodel/codemodel.py#57
         modules = []
-        pythonpath = cls.getPythonpath()
+        pythonpath = cls.getPythonPath()
         for directory in pythonpath:
             for filename in glob.glob(directory + os.sep + "*"):
                 module_name = None
@@ -272,14 +272,16 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         return False
 
     @classmethod
-    def getPythonpath(cls):
+    def getPythonPath(cls):
         global python_path
         if python_path:
             return python_path
         python_path = sys.path
         try:
             from pyte_plugins import autocomplete_path
-            python_path = autocomplete_path.path() + python_path
+            doc = kate.activeDocument()
+            view = doc.activeView()
+            python_path = autocomplete_path.path(doc, view) + python_path
             sys.path = python_path
         except ImportError:
             pass
