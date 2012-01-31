@@ -87,8 +87,10 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
             return
         if 'from' in line or 'import' in line:
             is_auto = self.autoCompleteImport(view, word, line)
-        if not is_auto and '.' in line:
+        if not is_auto and line:
             is_auto = self.autoCompleteDynamic(view, word, line)
+        if not is_auto and line:
+            is_auto = self.autoCompleteInThisFile(view, word, line)
 
     #http://api.kde.org/4.5-api/kdelibs-apidocs/interfaces/ktexteditor/html/classKTextEditor_1_1CodeCompletionModel.html#3bd60270a94fe2001891651b5332d42b
     def index(self, row, column, parent):
@@ -131,7 +133,6 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
     def executeCompletionItem(self, doc, word, row):
         return super(PythonCodeCompletionModel, self).executeCompletionItem(doc, word, row)
 
-
     def autoCompleteImport(self, view, word, line):
         mfb = from_first_module.match(line) or import_complete.match(line)
         if mfb:
@@ -162,14 +163,26 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         return False
 
     def autoCompleteDynamic(self, view, word, line):
-        last_dot = line.rindex('.')
-        line = line[:last_dot]
+        try:
+            last_dot = line.rindex('.')
+            line = line[:last_dot]
+        except ValueError:
+            pass
         doc = view.document()
         text_list = unicode(doc.text()).split("\n")
         raw, column = word.start().position()
         del text_list[raw]
         text = '\n'.join(text_list)
         return self.getDynamic(text, line)
+
+    def autoCompleteInThisFile(self, view, word, line):
+        doc = view.document()
+        text_list = unicode(doc.text()).split("\n")
+        raw, column = word.start().position()
+        line = text_list[raw]
+        del text_list[raw]
+        text = '\n'.join(text_list)
+        return self.getTextInfo(text, self.resultList, line)
 
     @classmethod
     def getTopLevelModules(cls):
@@ -188,6 +201,22 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                     modules.append(module)
                     modules_path[module_name] = [filename]
         return modules
+
+    def getModuleSmart(self, module_name, submodules, submodules_undone=None):
+        module_dir = modules_path[module_name][0]
+        submodules_undone = submodules_undone or []
+        submodules_str = os.sep.join(submodules)
+        module_dir = "%s%s%s" % (module_dir, os.sep, submodules_str)
+        att_dir = os.sep.join(module_dir.split(os.sep)[:-1])
+        att_module = module_dir.split(os.sep)[-1].replace('.py', '').replace('.pyc', '')
+        importer = pkgutil.get_importer(att_dir)
+        module = importer.find_module(att_module)
+        if module:
+            return (module, submodules_undone)
+        elif submodules:
+            submodules_undone.append(submodules[-1])
+            return self.getModuleSmart(module_name, submodules[:-1], submodules_undone)
+        return (None, None)
 
     def getSubmodules(self, module_name, submodules=None,
                        attributes=True):
@@ -215,31 +244,30 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
             code_walk = compiler.walk(code, CodeFinder())
             code_line_split = code_line.split('.')
             prefix = code_line_split[0]
-            prfx = '__package____module__.'
-            prfx_code_line = '%s%s' %(prfx, prefix)
+            prfx_code_line = '%s%s' %(PYSMELL_PREFIX, prefix)
             if prfx_code_line in code_walk.modules['CONSTANTS']:
                 return False
-            elif code_walk.modules['CLASSES'].get(prfx_code_line, None):
+            elif code_walk.modules['CLASSES'].get(prfx_code_line, None) and not code_line_split[1:]:
                 class_smell = code_walk.modules['CLASSES'].get(prfx_code_line)
-                resultList = [c[0] for c in class_smell['constructor']]
-                resultList.extend([m[0] for m in class_smell['methods']])
-                resultList.extend(class_smell['properties'])
-                self.resultList = resultList
+                self.treatment_pysmell_into_cls(class_smell, self.resultList)
+                return True
+            elif prfx_code_line in [name for name, args, desc in code_walk.modules['FUNCTIONS']]:
+                index_func = [f[0] for f in code_walk.modules['FUNCTIONS']].index(prfx_code_line)
+                func_smell = code_walk.modules['FUNCTIONS'][index_func]
+                self.resultList.append(self.treatment_pysmell_into_func(func_smell))
                 return True
             elif code_walk.modules['POINTERS'].get(prfx_code_line, None):
                 module_path = code_walk.modules['POINTERS'].get(prfx_code_line, None)
                 module = module_path.split('.')[0]
                 submodules = module_path.split('.')[1:]
                 submodules.extend(code_line_split[1:])
-                self.resultList = self.getSubmodules(module,
-                                                      submodules,
-                                                      attributes=True)
-                if not self.resultList and len(submodules) >=2:
-                    module_path = modules_path[module][0] + os.sep + os.sep.join(submodules[:-2])
-                    importer = pkgutil.get_importer(module_path)
-                    module = importer.find_module(submodules[-2])
-                    return self.getDynamic(module.get_source(), submodules[-1])
-                return True
+                module, submodules_undone = self.getModuleSmart(module, submodules)
+                submodules_undone.reverse()
+                line = '.'.join(submodules_undone)
+                text = module.get_source()
+                if line:
+                    return self.getDynamic(text, line)
+                return self.getTextInfo(text, self.resultList)
         except SyntaxError, e:
             kate.gui.popup('There was a syntax error in this file', 
                             2, icon='dialog-warning', minTextWidth=200)
@@ -277,7 +305,7 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                 'args': args or '',
                 'description': description or ''}
 
-    def getTextInfo(self, text, list_autocomplete):
+    def getTextInfo(self, text, list_autocomplete, line=None):
         try:
             code = parse(text)
             code_walk = compiler.walk(code, CodeFinder())
@@ -294,7 +322,14 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
             for cls in classes.items():
               list_autocomplete.append(self.treatment_pysmell_cls(cls))
 
-
+            is_auto = len(list_autocomplete) > 0
+            if not is_auto and line:
+                line = "%s%s" %(PYSMELL_PREFIX, line.strip())
+                for pointer in modules['POINTERS'].keys():
+                    if pointer.startswith(line):
+                        is_auto = is_auto or self.getDynamic(text,
+                                        pointer.replace(PYSMELL_PREFIX, ''))
+            return is_auto
         except SyntaxError, e:
             kate.gui.popup('There was a syntax error in this file', 
                             2, icon='dialog-warning', minTextWidth=200)
@@ -312,6 +347,9 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         return self.createItemAutoComplete(func_name,
                                            'function', args, description)
 
+    def treatment_pysmell_into_func(self, func):
+        return self.treatment_pysmell_func(func)
+
     def treatment_pysmell_cls(self, cls):
         cls_name, info = cls
         cls_name = cls_name.replace(PYSMELL_PREFIX, '')
@@ -322,6 +360,14 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         return self.createItemAutoComplete(cls_name,
                                            'class', args_constructor,
                                            description)
+
+    def treatment_pysmell_into_cls(self, cls, resultList):
+        for m in cls['methods']:
+            resultList.append(self.treatment_pysmell_func(m))
+        for m in cls['constructor']:
+            resultList.append(self.treatment_pysmell_func(m))
+        for m in cls['properties']:
+            resultList.append(self.treatment_pysmell_const(m))
 
 
 def createSignalAutocompleteDocument(view, *args, **kwargs): 
