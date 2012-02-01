@@ -138,10 +138,14 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         return QVariant()
 
     def executeCompletionItem(self, doc, word, row):
+        raw, col = word.start().position()
+        line = unicode(doc.line(raw))
+        line = self._parse_line(line)
         t = self.resultList[row].get('type', None)
         args = self.resultList[row].get('args', None).strip()
         text = self.resultList[row].get('text', None)
-        if t in ['function', 'class']:
+        if not "from" in line and not "import" in line and \
+           t in ['function', 'class']:
             if args == '()':
                 doc.replaceText(word, '%s()' % text)
                 return
@@ -201,7 +205,8 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         return line
 
     def _get_expression_last_expression(self, line):
-        operators = ["=", " ", "[", "]", "(", ")", "{", "}", ":"]
+        operators = ["=", " ", "[", "]", "(", ")", "{", "}", ":", ">", "<",
+                     "+", "-", "*", "/", "%", "and", "or"]
         opmax = max(operators, key=lambda e: line.rfind(e))
         opmax_index = line.rfind(opmax)
         if line.find(opmax) != -1:
@@ -341,7 +346,8 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
     def createItemAutoComplete(cls, text,
                                     icon='unknown',
                                     args=None,
-                                    description=None):
+                                    description=None,
+                                    place='code'):
         icon_converter = {'package': 'code-block',
                           'module': 'code-context',
                           'unknown': 'unknown',
