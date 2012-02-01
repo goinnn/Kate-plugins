@@ -193,13 +193,38 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                 module_name = None
                 if filename.endswith(".py"):
                     module_name = filename.split(os.sep)[-1][:-3]
+                    icon = 'module'
                 elif os.path.isdir(filename) and os.path.exists(filename + os.sep + "__init__.py"):
                     module_name = filename.split(os.sep)[-1]
-                module = cls.createItemAutoComplete(module_name, 'module')
+                    icon = 'package'
+                if not module_name:
+                    continue
+                module = cls.createItemAutoComplete(module_name, icon)
                 if module and not module in modules:
                     modules.append(module)
                     modules_path[module_name] = [filename]
         return modules
+
+    def getSubmodules(self, module_name, submodules=None,
+                       attributes=True):
+        module_dir = modules_path[module_name][0]
+        submodules = [submodule for submodule in submodules if submodule]
+        if submodules:
+            submodules = os.sep.join(submodules)
+            module_dir = "%s%s%s" % (module_dir, os.sep, submodules)
+        modules = []
+        for loader, module_name, is_pkg in pkgutil.walk_packages([module_dir]):
+            icon = is_pkg and 'package' or 'module'
+            module = self.createItemAutoComplete(module_name, icon)
+            modules.append(module)
+        if attributes:
+            att_dir = os.sep.join(module_dir.split(os.sep)[:-1])
+            att_module = module_dir.split(os.sep)[-1].replace('.py', '').replace('.pyc', '')
+            importer = pkgutil.get_importer(att_dir)
+            module = importer.find_module(att_module)
+            if module:
+                self.getTextInfo(module.get_source(), modules)
+        return sorted(modules)
 
     def getModuleSmart(self, module_name, submodules, submodules_undone=None):
         module_dir = modules_path[module_name][0]
@@ -216,26 +241,6 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
             submodules_undone.append(submodules[-1])
             return self.getModuleSmart(module_name, submodules[:-1], submodules_undone)
         return (None, None)
-
-    def getSubmodules(self, module_name, submodules=None,
-                       attributes=True):
-        module_dir = modules_path[module_name][0]
-        submodules = [submodule for submodule in submodules if submodule]
-        if submodules:
-            submodules = os.sep.join(submodules)
-            module_dir = "%s%s%s" % (module_dir, os.sep, submodules)
-        modules = []
-        for loader, module_name, is_pkg in pkgutil.walk_packages([module_dir]):
-            module = self.createItemAutoComplete(module_name, 'module')
-            modules.append(module)
-        if attributes:
-            att_dir = os.sep.join(module_dir.split(os.sep)[:-1])
-            att_module = module_dir.split(os.sep)[-1].replace('.py', '').replace('.pyc', '')
-            importer = pkgutil.get_importer(att_dir)
-            module = importer.find_module(att_module)
-            if module:
-                self.getTextInfo(module.get_source(), modules)
-        return sorted(modules)
 
     def getDynamic(self, text, code_line, text_info=True):
         try:
@@ -298,7 +303,8 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                                     icon='unknown',
                                     args=None,
                                     description=None):
-        icon_converter = {'module': 'code-block',
+        icon_converter = {'package': 'code-block',
+                          'module': 'code-context',
                           'unknown': 'unknown',
                           'constant': 'code-variable',
                           'class': 'code-class',
