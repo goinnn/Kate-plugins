@@ -53,6 +53,8 @@ import_complete = re.compile(_import_complete + "?$")
 
 class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
 
+    MIMETYPES = ['', 'py', 'pyc']
+
     def __init__(self, *args, **kwargs):
         super(PythonCodeCompletionModel, self).__init__(*args, **kwargs)
         self.resultList = []
@@ -79,7 +81,10 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         line_start = word.start().line()
         line_end = word.end().line()
         self.resultList = []
+        path = unicode(view.document().url().path())
         if line_start != line_end:
+            return
+        if not path.split(".")[-1] in self.MIMETYPES:
             return
         doc = view.document()
         line = unicode(doc.line(line_start))
