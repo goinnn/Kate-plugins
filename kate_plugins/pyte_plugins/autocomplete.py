@@ -81,6 +81,7 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         line_start = word.start().line()
         line_end = word.end().line()
         self.resultList = []
+        self.invocationType = invocationType
         path = unicode(view.document().url().path())
         if line_start != line_end:
             return
@@ -306,8 +307,7 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                 if text_info:
                     return self.getTextInfo(text, self.resultList)
         except SyntaxError, e:
-            kate.gui.popup('There was a syntax error in this file',
-                            2, icon='dialog-warning', minTextWidth=200)
+            self.treatment_exception(e)
         return False
 
     @classmethod
@@ -379,9 +379,25 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                                         text_info=False)
             return is_auto
         except SyntaxError, e:
-            kate.gui.popup('There was a syntax error in this file',
-                            2, icon='dialog-warning', minTextWidth=200)
+            self.treatment_exception(e)
         return False
+
+    def treatment_exception(self, e):
+        if self.invocationType == KTextEditor.CodeCompletionModel.AutomaticInvocation:
+            return
+        f = e.filename or ''
+        text = e.text
+        line = e.lineno
+        message = 'There was a syntax error in this file:'
+        if f:
+            message = '%s\n  * file: %s' %(message, f)
+        if text:
+            message = '%s\n  * text: %s' %(message, text)
+        if line:
+            message = '%s\n  * line: %s' %(message, line)
+        kate.gui.popup(message,
+                       2, icon='dialog-warning', minTextWidth=200)
+
 
     def treatment_pysmell_const(self, constant):
         constant = constant.replace(PYSMELL_PREFIX, '')
