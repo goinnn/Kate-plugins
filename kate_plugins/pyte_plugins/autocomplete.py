@@ -138,6 +138,16 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         return QVariant()
 
     def executeCompletionItem(self, doc, word, row):
+        t = self.resultList[row].get('type', None)
+        args = self.resultList[row].get('args', None).strip()
+        text = self.resultList[row].get('text', None)
+        if t in ['function', 'class']:
+            if args == '()':
+                doc.replaceText(word, '%s()' % text)
+                return
+            else:
+                doc.replaceText(word, '%s(' % text)
+                return
         return super(PythonCodeCompletionModel, self).executeCompletionItem(doc, word, row)
 
     def autoCompleteImport(self, view, word, line):
@@ -187,13 +197,13 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         if "'" in line or '"' in line:
             return line
         if ";" in line:
-            return self._parser_line(line.split(";")[-1])
+            return self._parse_line(line.split(";")[-1])
         return line
 
     def _get_expression_last_expression(self, line):
         operators = ["=", " ", "[", "]", "(", ")", "{", "}", ":"]
-        opmax = max(operators, key=lambda e: line.find(e))
-        opmax_index = line.find(opmax)
+        opmax = max(operators, key=lambda e: line.rfind(e))
+        opmax_index = line.rfind(opmax)
         if line.find(opmax) != -1:
             line = line[opmax_index + 1:]
         return line.strip()
@@ -345,6 +355,7 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         return {'text': text,
                 'icon': icon_converter[icon],
                 'args': args or '',
+                'type': icon,
                 'description': description or ''}
 
     def getTextInfo(self, text, list_autocomplete, line=None):
