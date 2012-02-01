@@ -178,7 +178,7 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
 
     def autoCompleteInThisFile(self, view, word, line):
         text = self._parser_text(view, word, line)
-        return self.getTextInfo(text, self.resultList, line)
+        return self.getTextInfo(text, self.resultList)
 
     def _parser_line(self, line):
         line = line.strip()
@@ -339,6 +339,7 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                           'function': 'code-function'}
         max_description = 50
         if description and len(description) > max_description:
+            description = description.strip()
             description = '%s...' % description[:max_description]
         return {'text': text,
                 'icon': icon_converter[icon],
