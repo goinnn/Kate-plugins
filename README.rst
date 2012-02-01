@@ -18,7 +18,7 @@ Installation
 ============
 
 * `Install Pâté <https://github.com/pag/pate/blob/master/INSTALL.txt>`_
-* `Install Pysmell <http://pypi.python.org/pypi/pysmell>`_ 
+* Install `Pysmell <http://pypi.python.org/pypi/pysmell>`_ 
 
 ::
 
