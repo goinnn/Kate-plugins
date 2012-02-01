@@ -17,14 +17,14 @@ Requeriments
 Installation
 ============
 
- * `Install Pâté <https://github.com/pag/pate/blob/master/INSTALL.txt>`_
- * `Install Pysmell <http://pypi.python.org/pypi/pysmell>`_ 
+* `Install Pâté <https://github.com/pag/pate/blob/master/INSTALL.txt>`_
+* `Install Pysmell <http://pypi.python.org/pypi/pysmell>`_ 
 
 ::
 
   easy_install pysmell==0.7.3
 
- * Install the plugins:
+* Install the plugins:
 
 ::
 
