@@ -91,13 +91,14 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         line = unicode(doc.line(line_start))
         if not line:
             return
-        line = self._parser_line(line)
+        line = self._parse_line(line)
+        line_rough = line
         if 'from' in line or 'import' in line:
             is_auto = self.autoCompleteImport(view, word, line)
         line = self._get_expression_last_expression(line)
         if not is_auto and line:
             is_auto = self.autoCompleteDynamic(view, word, line)
-        if not is_auto and line:
+        if not is_auto and line and line_rough and not '.' in line_rough:
             is_auto = self.autoCompleteInThisFile(view, word, line)
 
     #http://api.kde.org/4.5-api/kdelibs-apidocs/interfaces/ktexteditor/html/classKTextEditor_1_1CodeCompletionModel.html#3bd60270a94fe2001891651b5332d42b
@@ -174,14 +175,14 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
             line = line[:last_dot]
         except ValueError:
             pass
-        text = self._parser_text(view, word, line)
+        text = self._parse_text(view, word, line)
         return self.getDynamic(text, line)
 
     def autoCompleteInThisFile(self, view, word, line):
-        text = self._parser_text(view, word, line)
+        text = self._parse_text(view, word, line)
         return self.getTextInfo(text, self.resultList)
 
-    def _parser_line(self, line):
+    def _parse_line(self, line):
         line = line.strip()
         if "'" in line or '"' in line:
             return line
@@ -197,7 +198,7 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
             line = line[opmax_index + 1:]
         return line.strip()
 
-    def _parser_text(self, view, word, line):
+    def _parse_text(self, view, word, line):
         doc = view.document()
         text_list = unicode(doc.text()).split("\n")
         raw, column = word.start().position()
