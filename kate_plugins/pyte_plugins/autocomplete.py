@@ -268,8 +268,9 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                 module_done, submodules_undone = self.getModuleSmart(module, submodules)
                 if not submodules_undone:
                     autocompletion_submodules = self.getSubmodules(module, submodules, True)
-                    if autocompletion_submodules:
-                        self.resultList = list(set(self.resultList.extend(autocompletion_submodules)))
+                    for autocompletion_submodule in autocompletion_submodules:
+                        if autocompletion_submodule not in self.resultList:
+                            self.resultList.append(autocompletion_submodule)
                 submodules_undone.reverse()
                 line = '.'.join(submodules_undone)
                 text = module_done.get_source()
