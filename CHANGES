@@ -4,8 +4,8 @@
 * Fix some errors to autocomplete
 * Icons different to packages and modules
 * Usability in the autocomplete:
- * The popup that say "Syntax error" only show if the autocomplete is not manual
- * The python autocomplete, only works if the file ends with ".py", ".pyc" or it is not saved
+* The popup that say "Syntax error" only show if the autocomplete is not manual
+* The python autocomplete, only works if the file ends with ".py", ".pyc" or it is not saved
 
 
 0.0.2  (2012-02-01)
