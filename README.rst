@@ -45,9 +45,8 @@ Autocomplete to python (python)
 
  * Shortcut: It is automatical
  * from and import instruction (beta)
- * autocomplete into the code (alpha) with `pysmell <http://pypi.python.org/pypi/pysmell>`_
+ * autocomplete into the code (beta) with `pysmell <http://pypi.python.org/pypi/pysmell>`_
  * There was a hook if you want to add your own packages python in the autocomplete structure. You should be create a file called "autocomplete_path.py" next to the "autocomplete.py" with a function "def path(doc, view)", like this:
- * **Currently working on this plugin**
 
 ::
 
