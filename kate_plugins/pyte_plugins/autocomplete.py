@@ -118,15 +118,15 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
                 pass
         elif index.column() == KTextEditor.CodeCompletionModel.Icon:
             if role == Qt.DecorationRole:
-                return KIcon(item["icon"]).pixmap(QSize(16, 16))
+                return QVariant(KIcon(item["icon"]).pixmap(QSize(16, 16)))
         elif index.column() == KTextEditor.CodeCompletionModel.Arguments:
             item_args = item.get("args", None)
             if role == Qt.DisplayRole and item_args:
-                return item_args
+                return QVariant(item_args)
         elif index.column() == KTextEditor.CodeCompletionModel.Postfix:
             item_description = item.get("description", None)
             if role == Qt.DisplayRole and item_description:
-                return item_description
+                return QVariant(item_description)
         return QVariant()
 
     def executeCompletionItem(self, doc, word, row):
