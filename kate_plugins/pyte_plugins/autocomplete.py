@@ -90,9 +90,10 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         line = unicode(doc.line(line_start))
         if not line:
             return
-        line = line.strip()
+        line = self._parser_line(line)
         if 'from' in line or 'import' in line:
             is_auto = self.autoCompleteImport(view, word, line)
+        line = self._get_expression_last_expression(line)
         if not is_auto and line:
             is_auto = self.autoCompleteDynamic(view, word, line)
         if not is_auto and line:
@@ -172,21 +173,41 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
             line = line[:last_dot]
         except ValueError:
             pass
-        doc = view.document()
-        text_list = unicode(doc.text()).split("\n")
-        raw, column = word.start().position()
-        del text_list[raw]
-        text = '\n'.join(text_list)
+        text = self._parser_text(view, word, line)
         return self.getDynamic(text, line)
 
     def autoCompleteInThisFile(self, view, word, line):
+        text = self._parser_text(view, word, line)
+        return self.getTextInfo(text, self.resultList, line)
+
+    def _parser_line(self, line):
+        line = line.strip()
+        if "'" in line or '"' in line:
+            return line
+        if ";" in line:
+            return self._parser_line(line.split(";")[-1])
+        return line
+
+    def _get_expression_last_expression(self, line):
+        operators = ["=", " ", "[", "]", "(", ")", "{", "}", ":"]
+        opmax = max(operators, key=lambda e: line.find(e))
+        opmax_index = line.find(opmax)
+        if line.find(opmax) != -1:
+            line = line[opmax_index + 1:]
+        return line.strip()
+
+    def _parser_text(self, view, word, line):
         doc = view.document()
         text_list = unicode(doc.text()).split("\n")
         raw, column = word.start().position()
         line = text_list[raw]
-        del text_list[raw]
+        if ";" in line and not "'" in line and not '"' in line:
+            text_list[raw] = ';'.join(text_list[raw].split(";")[:-1])
+        else:
+            del text_list[raw]
         text = '\n'.join(text_list)
-        return self.getTextInfo(text, self.resultList, line)
+        line = line.strip()
+        return text
 
     @classmethod
     def getTopLevelModules(cls):
@@ -235,7 +256,8 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         module_dir = modules_path[module_name][0]
         submodules_undone = submodules_undone or []
         submodules_str = os.sep.join(submodules)
-        module_dir = "%s%s%s" % (module_dir, os.sep, submodules_str)
+        if submodules_str:
+            module_dir = "%s%s%s" % (module_dir, os.sep, submodules_str)
         att_dir = os.sep.join(module_dir.split(os.sep)[:-1])
         att_module = module_dir.split(os.sep)[-1].replace('.py', '').replace('.pyc', '')
         importer = pkgutil.get_importer(att_dir)
@@ -245,7 +267,7 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         elif submodules:
             submodules_undone.append(submodules[-1])
             return self.getModuleSmart(module_name, submodules[:-1], submodules_undone)
-        return (None, None)
+        return (None, submodules_undone)
 
     def getDynamic(self, text, code_line, text_info=True):
         try:
@@ -330,15 +352,21 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
             modules = code_walk.modules
             constans = modules['CONSTANTS']
             for constant in constans:
-                list_autocomplete.append(self.treatment_pysmell_const(constant))
+                item = self.treatment_pysmell_const(constant)
+                if not item in list_autocomplete:
+                    list_autocomplete.append(item)
 
             functions = modules['FUNCTIONS']
             for func in functions:
-                list_autocomplete.append(self.treatment_pysmell_func(func))
+                item = self.treatment_pysmell_func(func)
+                if not item in list_autocomplete:
+                    list_autocomplete.append(item)
 
             classes = modules['CLASSES']
             for cls in classes.items():
-                list_autocomplete.append(self.treatment_pysmell_cls(cls))
+                item = self.treatment_pysmell_cls(cls)
+                if not item in list_autocomplete:
+                    list_autocomplete.append(item)
 
             is_auto = len(list_autocomplete) > 0
             if not is_auto and line:
@@ -382,11 +410,17 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
 
     def treatment_pysmell_into_cls(self, cls, resultList):
         for m in cls['methods']:
-            resultList.append(self.treatment_pysmell_func(m))
+            item = self.treatment_pysmell_func(m)
+            if not item in resultList:
+                resultList.append(item)
         for m in cls['constructor']:
-            resultList.append(self.treatment_pysmell_func(m))
+            item = self.treatment_pysmell_func(m)
+            if not item in resultList:
+                resultList.append(item)
         for m in cls['properties']:
-            resultList.append(self.treatment_pysmell_const(m))
+            item = self.treatment_pysmell_const(m)
+            if not item in resultList:
+                resultList.append(item)
 
 
 def createSignalAutocompleteDocument(view, *args, **kwargs):
