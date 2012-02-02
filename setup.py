@@ -40,6 +40,7 @@ setup(
         "Topic :: Software Development",
     ],
     packages=('kate_plugins', ),
+    keywords="kate,pate,plugins,kate plugins,pate plugins,python,autocomplete,autocomplete python,django,jquery,js",
     include_package_data=True,
     zip_safe=False,
 )
