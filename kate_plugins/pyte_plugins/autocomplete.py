@@ -206,7 +206,7 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
 
     def _get_expression_last_expression(self, line):
         operators = ["=", " ", "[", "]", "(", ")", "{", "}", ":", ">", "<",
-                     "+", "-", "*", "/", "%", "and", "or"]
+                     "+", "-", "*", "/", "%", " and ", " or "]
         opmax = max(operators, key=lambda e: line.rfind(e))
         opmax_index = line.rfind(opmax)
         if line.find(opmax) != -1:

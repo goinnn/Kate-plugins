@@ -1,3 +1,8 @@
+0.0.4  (2012-02-??)
+===================
+
+* Fix a error in autocomplete, if the line contains "and" or "or" 
+
 0.0.3  (2012-02-02)
 ===================
 
