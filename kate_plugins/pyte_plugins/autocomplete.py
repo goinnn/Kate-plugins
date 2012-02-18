@@ -10,12 +10,10 @@ import kate
 from compiler import parse
 
 from PyKDE4.ktexteditor import KTextEditor
-from PyKDE4.kdeui import KIcon
 from PyQt4 import QtCore
-from PyQt4.QtCore import QSize
-from PyQt4.QtCore import QModelIndex, Qt, QVariant
 from pysmell.codefinder import CodeFinder
 
+from autopate import AbstractCodeCompletionModel
 
 global modules_path
 global python_path
@@ -51,47 +49,14 @@ import_begin = re.compile(_import_begin + "$")
 import_complete = re.compile(_import_complete + "?$")
 
 
-class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
+class PythonCodeCompletionModel(AbstractCodeCompletionModel):
 
     MIMETYPES = ['', 'py', 'pyc']
 
-    def __init__(self, *args, **kwargs):
-        super(PythonCodeCompletionModel, self).__init__(*args, **kwargs)
-        self.resultList = []
-
-    roles = {
-        KTextEditor.CodeCompletionModel.CompletionRole:
-            QVariant(
-                KTextEditor.CodeCompletionModel.FirstProperty |
-                KTextEditor.CodeCompletionModel.Public |
-                KTextEditor.CodeCompletionModel.LastProperty |
-                KTextEditor.CodeCompletionModel.Prefix),
-        KTextEditor.CodeCompletionModel.ScopeIndex:
-            QVariant(0),
-        KTextEditor.CodeCompletionModel.MatchQuality:
-            QVariant(10),
-        KTextEditor.CodeCompletionModel.HighlightingMethod:
-            QVariant(QVariant.Invalid),
-        KTextEditor.CodeCompletionModel.InheritanceDepth:
-            QVariant(0),
-    }
-
     def completionInvoked(self, view, word, invocationType):
-        is_auto = False
-        line_start = word.start().line()
-        line_end = word.end().line()
-        self.resultList = []
-        self.invocationType = invocationType
-        path = unicode(view.document().url().path())
-        if line_start != line_end:
-            return
-        if not path.split(".")[-1] in self.MIMETYPES:
-            return
-        doc = view.document()
-        line = unicode(doc.line(line_start))
-        if not line:
-            return
-        line = self._parse_line(line)
+        is_auto, line = super(PythonCodeCompletionModel, self).completionInvoked(view,
+                                                                                 word,
+                                                                                 invocationType)
         line_rough = line
         if 'from' in line or 'import' in line:
             is_auto = self.autoCompleteImport(view, word, line)
@@ -101,46 +66,10 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         if not is_auto and line and line_rough and not '.' in line_rough:
             is_auto = self.autoCompleteInThisFile(view, word, line)
 
-    #http://api.kde.org/4.5-api/kdelibs-apidocs/interfaces/ktexteditor/html/classKTextEditor_1_1CodeCompletionModel.html#3bd60270a94fe2001891651b5332d42b
-    def index(self, row, column, parent):
-        if (row < 0 or row >= len(self.resultList) or
-            column < 0 or column >= KTextEditor.CodeCompletionModel.ColumnCount or
-            parent.isValid()):
-            return QModelIndex()
-        return self.createIndex(row, column)
-
-    def rowCount(self, parent):
-        if parent.isValid():
-            return 0  # Do not make the model look hierarchical
-        else:
-            return len(self.resultList)
-
-    def data(self, index, role, *args, **kwargs):
-        item = self.resultList[index.row()]
-        if index.column() == KTextEditor.CodeCompletionModel.Name:
-            if role == Qt.DisplayRole:
-                return QVariant(item['text'])
-            try:
-                return self.roles[role]
-            except KeyError:
-                pass
-        elif index.column() == KTextEditor.CodeCompletionModel.Icon:
-            if role == Qt.DecorationRole:
-                return QVariant(KIcon(item["icon"]).pixmap(QSize(16, 16)))
-        elif index.column() == KTextEditor.CodeCompletionModel.Arguments:
-            item_args = item.get("args", None)
-            if role == Qt.DisplayRole and item_args:
-                return QVariant(item_args)
-        elif index.column() == KTextEditor.CodeCompletionModel.Postfix:
-            item_description = item.get("description", None)
-            if role == Qt.DisplayRole and item_description:
-                return QVariant(item_description)
-        return QVariant()
-
     def executeCompletionItem(self, doc, word, row):
         raw, col = word.start().position()
         line = unicode(doc.line(raw))
-        line = self._parse_line(line)
+        line = self.parse_line(line)
         t = self.resultList[row].get('type', None)
         args = self.resultList[row].get('args', None).strip()
         text = self.resultList[row].get('text', None)
@@ -196,12 +125,12 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         text = self._parse_text(view, word, line)
         return self.getTextInfo(text, self.resultList)
 
-    def _parse_line(self, line):
+    def parse_line(self, line):
         line = line.strip()
         if "'" in line or '"' in line:
             return line
         if ";" in line:
-            return self._parse_line(line.split(";")[-1])
+            return self.parse_line(line.split(";")[-1])
         return line
 
     def _get_expression_last_expression(self, line):
@@ -331,6 +260,7 @@ class PythonCodeCompletionModel(KTextEditor.CodeCompletionModel):
         global python_path
         if python_path:
             return python_path
+        print 'getPythonPath'
         python_path = sys.path
         try:
             from pyte_plugins import autocomplete_path
@@ -466,11 +396,13 @@ def createSignalAutocompleteDocument(view, *args, **kwargs):
     #http://code.google.com/p/lilykde/source/browse/trunk/frescobaldi/python/frescobaldi_app/mainapp.py#1391
     #http://api.kde.org/4.0-api/kdelibs-apidocs/kate/html/katecompletionmodel_8cpp_source.html
     #https://svn.reviewboard.kde.org/r/1640/diff/?expand=1
-    PythonCodeCompletionModel.getTopLevelModules()
+    print 'createSignalAutocompleteDocument'
+    PythonCodeCompletionModel.getPythonPath()
     cci = view.codeCompletionInterface()
     cci.registerCompletionModel(codecompletationmodel)
 
 windowInterface = kate.application.activeMainWindow()
+print 'Creo PythonCodeCompletionModel'
 codecompletationmodel = PythonCodeCompletionModel(windowInterface)
 windowInterface.connect(windowInterface,
                 QtCore.SIGNAL('viewCreated(KTextEditor::View*)'),
