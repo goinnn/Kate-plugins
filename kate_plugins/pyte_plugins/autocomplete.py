@@ -260,7 +260,6 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
         global python_path
         if python_path:
             return python_path
-        print 'getPythonPath'
         python_path = sys.path
         try:
             from pyte_plugins import autocomplete_path
@@ -396,13 +395,11 @@ def createSignalAutocompleteDocument(view, *args, **kwargs):
     #http://code.google.com/p/lilykde/source/browse/trunk/frescobaldi/python/frescobaldi_app/mainapp.py#1391
     #http://api.kde.org/4.0-api/kdelibs-apidocs/kate/html/katecompletionmodel_8cpp_source.html
     #https://svn.reviewboard.kde.org/r/1640/diff/?expand=1
-    print 'createSignalAutocompleteDocument'
     PythonCodeCompletionModel.getPythonPath()
     cci = view.codeCompletionInterface()
     cci.registerCompletionModel(codecompletationmodel)
 
 windowInterface = kate.application.activeMainWindow()
-print 'Creo PythonCodeCompletionModel'
 codecompletationmodel = PythonCodeCompletionModel(windowInterface)
 windowInterface.connect(windowInterface,
                 QtCore.SIGNAL('viewCreated(KTextEditor::View*)'),
