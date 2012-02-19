@@ -106,8 +106,7 @@ Create model (django)
 
 
 Autocomplete static to javascript (js)
--------------------------------
-
+--------------------------------------
  * Shortcut: It is automatical
  * This is a first version
 
