@@ -124,14 +124,14 @@ class AbstractJSONFileCodeCompletionModel(AbstractCodeCompletionModel):
     FILE_PATH = None
 
     def __init__(self, *args, **kwargs):
-        super(JSONFileCodeCompletionModel, self).__init__(*args, **kwargs)
+        super(AbstractJSONFileCodeCompletionModel, self).__init__(*args, **kwargs)
         abs_file_path = path.join(path.dirname(path.abspath(__file__)),
                                   self.FILE_PATH)
         json_str = open(abs_file_path).read()
         self.json = loads(json_str)
 
     def completionInvoked(self, view, word, invocationType):
-        line = super(JSONFileCodeCompletionModel, self).completionInvoked(view, word, invocationType)
+        line = super(AbstractJSONFileCodeCompletionModel, self).completionInvoked(view, word, invocationType)
         line = self.get_expression_last_expression(line)
         children = self.get_children_in_json(line, self.json)
         for child, attrs in children.items():
