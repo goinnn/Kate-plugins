@@ -131,7 +131,6 @@ class JSONFileCodeCompletionModel(AbstractCodeCompletionModel):
     def completionInvoked(self, view, word, invocationType):
         line = super(JSONFileCodeCompletionModel, self).completionInvoked(view, word, invocationType)
         line = self.get_expression_last_expression(line)
-        #import utils; utils.ipdb(0)
         children = self.get_children_in_json(line, self.json)
         for child, attrs in children.items():
             self.resultList.append(self.createItemAutoComplete(text=child,
