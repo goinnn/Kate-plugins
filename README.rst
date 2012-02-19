@@ -49,7 +49,7 @@ Autocomplete to python (python)
 -------------------------------
 
  * Shortcut: It is automatical
- * from and import instruction (beta)
+ * from and import instruction
  * autocomplete into the code (beta) with `pysmell <http://pypi.python.org/pypi/pysmell>`_
  * There was a hook if you want to add your own packages python in the autocomplete structure. You should be create a file called "autocomplete_path.py" next to the "autocomplete.py" with a function "def path(doc, view)", like this:
 
@@ -104,6 +104,12 @@ Create model (django)
  * Shortcut: Ctrl+Alt+M
  * Template to model class
 
+
+Autocomplete static to javascript (js)
+-------------------------------
+
+ * Shortcut: It is automatical
+ * This is a first version
 
 jQuery ready (js)
 -----------------

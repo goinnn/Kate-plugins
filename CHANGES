@@ -1,7 +1,11 @@
-0.0.4  (2012-02-??)
+0.0.4  (2012-02-20)
 ===================
 
 * Fix a error in autocomplete, if the line contains "and" or "or" 
+* Improvement in the performance in the python autocompletation
+* Abstraction of Autocomplete. Create a Abstract class
+* Create a AbstractJSONFileCodeCompletionModel. Only autocompletion creating a json file
+* Create a static autocompletation to javascript
 
 0.0.3  (2012-02-02)
 ===================
