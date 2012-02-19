@@ -265,7 +265,6 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
             pass
         return python_path
 
-
     def getTextInfo(self, text, list_autocomplete, line=None):
         try:
             code = parse(text)
@@ -310,14 +309,13 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
         line = e.lineno
         message = 'There was a syntax error in this file:'
         if f:
-            message = '%s\n  * file: %s' %(message, f)
+            message = '%s\n  * file: %s' % (message, f)
         if text:
-            message = '%s\n  * text: %s' %(message, text)
+            message = '%s\n  * text: %s' % (message, text)
         if line:
-            message = '%s\n  * line: %s' %(message, line)
+            message = '%s\n  * line: %s' % (message, line)
         kate.gui.popup(message,
                        2, icon='dialog-warning', minTextWidth=200)
-
 
     def treatment_pysmell_const(self, constant):
         constant = constant.replace(PYSMELL_PREFIX, '')

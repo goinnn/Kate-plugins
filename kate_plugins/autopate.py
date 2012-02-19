@@ -11,7 +11,6 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
     MIMETYPES = None
     OPERATORS = []
 
-
     def __init__(self, *args, **kwargs):
         super(AbstractCodeCompletionModel, self).__init__(*args, **kwargs)
         self.resultList = []
@@ -57,10 +56,10 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
         line_end = word.end().line()
         self.resultList = []
         self.invocationType = invocationType
-        path = unicode(view.document().url().path())
+        document_path = unicode(view.document().url().path())
         if line_start != line_end:
             return None
-        if not path.split(".")[-1] in self.MIMETYPES:
+        if not document_path.split(".")[-1] in self.MIMETYPES:
             return None
         doc = view.document()
         line = unicode(doc.line(line_start))
