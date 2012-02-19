@@ -2,12 +2,12 @@ import kate
 
 from PyQt4 import QtCore
 
-from autopate import JSONFileCodeCompletionModel
+from autopate import AbstractJSONFileCodeCompletionModel
 
 
-class JSCodeCompletionModel(JSONFileCodeCompletionModel):
+class StaticJSCodeCompletionModel(AbstractJSONFileCodeCompletionModel):
 
-    MIMETYPES = ['', 'js', 'html', 'htm']
+    MIMETYPES = ['js', 'html', 'htm']
     FILE_PATH = 'jste_plugins/autocomplete_js.json'
     OPERATORS = ["=", " ", "[", "]", "(", ")", "{", "}", ":", ">", "<",
                  "+", "-", "*", "/", "%", " && ", " || ", ","]
@@ -75,10 +75,10 @@ class JSCodeCompletionModel(JSONFileCodeCompletionModel):
 
 def createSignalAutocompleteDocument(view, *args, **kwargs):
     cci = view.codeCompletionInterface()
-    cci.registerCompletionModel(codecompletationmodel)
+    cci.registerCompletionModel(jscodecompletationmodel)
 
 windowInterface = kate.application.activeMainWindow()
-codecompletationmodel = JSCodeCompletionModel(windowInterface)
+jscodecompletationmodel = StaticJSCodeCompletionModel(windowInterface)
 windowInterface.connect(windowInterface,
                 QtCore.SIGNAL('viewCreated(KTextEditor::View*)'),
                 createSignalAutocompleteDocument)

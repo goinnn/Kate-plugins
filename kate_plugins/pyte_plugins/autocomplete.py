@@ -66,7 +66,7 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
         line = self.get_expression_last_expression(line)
         if not is_auto and line:
             is_auto = self.autoCompleteDynamic(view, word, line)
-        if not is_auto and line and line_rough and not '.' in line_rough:
+        if not is_auto and line and line_rough and not self.SEPARATOR in line_rough:
             is_auto = self.autoCompleteInThisFile(view, word, line)
 
     def executeCompletionItem(self, doc, word, row):
@@ -97,7 +97,7 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
             if not submodules:
                 submodules = []
             else:
-                submodules = submodules.split('.')[:-1]
+                submodules = submodules.split(self.SEPARATOR)[:-1]
             self.resultList = self.getSubmodules(module,
                                                   submodules,
                                                   attributes=False)
@@ -106,7 +106,7 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
         if mfc:
             module, submodules, import_module = mfc.groups()
             if submodules:
-                submodules = submodules.split('.')
+                submodules = submodules.split(self.SEPARATOR)
             else:
                 submodules = []
             self.resultList = self.getSubmodules(module,
@@ -117,7 +117,7 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
 
     def autoCompleteDynamic(self, view, word, line):
         try:
-            last_dot = line.rindex('.')
+            last_dot = line.rindex(self.SEPARATOR)
             line = line[:last_dot]
         except ValueError:
             pass
@@ -213,7 +213,7 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
         try:
             code = parse(text)
             code_walk = compiler.walk(code, CodeFinder())
-            code_line_split = code_line.split('.')
+            code_line_split = code_line.split(self.SEPARATOR)
             prefix = code_line_split[0]
             prfx_code_line = '%s%s' % (PYSMELL_PREFIX, prefix)
             if prfx_code_line in code_walk.modules['CONSTANTS']:
@@ -229,8 +229,8 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
                 return True
             elif code_walk.modules['POINTERS'].get(prfx_code_line, None):
                 module_path = code_walk.modules['POINTERS'].get(prfx_code_line, None)
-                module = module_path.split('.')[0]
-                submodules = module_path.split('.')[1:]
+                module = module_path.split(self.SEPARATOR)[0]
+                submodules = module_path.split(self.SEPARATOR)[1:]
                 submodules.extend(code_line_split[1:])
                 module_done, submodules_undone = self.getModuleSmart(module, submodules)
                 if not submodules_undone:
@@ -239,7 +239,7 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
                         if autocompletion_submodule not in self.resultList:
                             self.resultList.append(autocompletion_submodule)
                 submodules_undone.reverse()
-                line = '.'.join(submodules_undone)
+                line = self.SEPARATOR.join(submodules_undone)
                 text = module_done.get_source()
                 if line:
                     return self.getDynamic(text, line)

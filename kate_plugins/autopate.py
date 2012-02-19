@@ -10,6 +10,7 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
 
     MIMETYPES = None
     OPERATORS = []
+    SEPARATOR = '.'
 
     def __init__(self, *args, **kwargs):
         super(AbstractCodeCompletionModel, self).__init__(*args, **kwargs)
@@ -68,6 +69,7 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
         return self.parse_line(line)
 
     def data(self, index, role, *args, **kwargs):
+        #http://api.kde.org/4.5-api/kdelibs-apidocs/kate/html/katewordcompletion_8cpp_source.html
         item = self.resultList[index.row()]
         if index.column() == KTextEditor.CodeCompletionModel.Name:
             if role == Qt.DisplayRole:
@@ -117,7 +119,7 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
             return len(self.resultList)
 
 
-class JSONFileCodeCompletionModel(AbstractCodeCompletionModel):
+class AbstractJSONFileCodeCompletionModel(AbstractCodeCompletionModel):
 
     FILE_PATH = None
 
@@ -137,10 +139,10 @@ class JSONFileCodeCompletionModel(AbstractCodeCompletionModel):
                                                                icon=attrs.get('icon', 'unknown')))
 
     def get_children_in_json(self, keys, json):
-        if not '.' in keys:
+        if not self.SEPARATOR in keys:
             return json
-        keys_split = keys.split('.')
+        keys_split = keys.split(self.SEPARATOR)
         if keys_split and keys_split[0] in json:
-            keys = '.'.join(keys_split[1:])
+            keys = self.SEPARATOR.join(keys_split[1:])
             return self.get_children_in_json(keys, json[keys_split[0]].get('children', None))
         return None
