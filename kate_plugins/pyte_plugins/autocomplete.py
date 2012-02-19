@@ -52,15 +52,18 @@ import_complete = re.compile(_import_complete + "?$")
 class PythonCodeCompletionModel(AbstractCodeCompletionModel):
 
     MIMETYPES = ['', 'py', 'pyc']
+    OPERATORS = ["=", " ", "[", "]", "(", ")", "{", "}", ":", ">", "<",
+                 "+", "-", "*", "/", "%", " and ", " or ", ","]
 
     def completionInvoked(self, view, word, invocationType):
-        is_auto, line = super(PythonCodeCompletionModel, self).completionInvoked(view,
-                                                                                 word,
-                                                                                 invocationType)
+        line = super(PythonCodeCompletionModel, self).completionInvoked(view,
+                                                                        word,
+                                                                        invocationType)
+        is_auto = False
         line_rough = line
         if 'from' in line or 'import' in line:
             is_auto = self.autoCompleteImport(view, word, line)
-        line = self._get_expression_last_expression(line)
+        line = self.get_expression_last_expression(line)
         if not is_auto and line:
             is_auto = self.autoCompleteDynamic(view, word, line)
         if not is_auto and line and line_rough and not '.' in line_rough:
@@ -126,21 +129,12 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
         return self.getTextInfo(text, self.resultList)
 
     def parse_line(self, line):
-        line = line.strip()
+        line = super(PythonCodeCompletionModel, self).parse_line(line)
         if "'" in line or '"' in line:
             return line
         if ";" in line:
             return self.parse_line(line.split(";")[-1])
         return line
-
-    def _get_expression_last_expression(self, line):
-        operators = ["=", " ", "[", "]", "(", ")", "{", "}", ":", ">", "<",
-                     "+", "-", "*", "/", "%", " and ", " or "]
-        opmax = max(operators, key=lambda e: line.rfind(e))
-        opmax_index = line.rfind(opmax)
-        if line.find(opmax) != -1:
-            line = line[opmax_index + 1:]
-        return line.strip()
 
     def _parse_text(self, view, word, line):
         doc = view.document()
@@ -271,27 +265,6 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
             pass
         return python_path
 
-    @classmethod
-    def createItemAutoComplete(cls, text,
-                                    icon='unknown',
-                                    args=None,
-                                    description=None,
-                                    place='code'):
-        icon_converter = {'package': 'code-block',
-                          'module': 'code-context',
-                          'unknown': 'unknown',
-                          'constant': 'code-variable',
-                          'class': 'code-class',
-                          'function': 'code-function'}
-        max_description = 50
-        if description and len(description) > max_description:
-            description = description.strip()
-            description = '%s...' % description[:max_description]
-        return {'text': text,
-                'icon': icon_converter[icon],
-                'args': args or '',
-                'type': icon,
-                'description': description or ''}
 
     def getTextInfo(self, text, list_autocomplete, line=None):
         try:
