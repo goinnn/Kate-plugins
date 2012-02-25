@@ -132,6 +132,8 @@ class AbstractJSONFileCodeCompletionModel(AbstractCodeCompletionModel):
 
     def completionInvoked(self, view, word, invocationType):
         line = super(AbstractJSONFileCodeCompletionModel, self).completionInvoked(view, word, invocationType)
+        if not line:
+            return
         line = self.get_expression_last_expression(line)
         children = self.get_children_in_json(line, self.json)
         for child, attrs in children.items():
