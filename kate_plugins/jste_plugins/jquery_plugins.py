@@ -6,7 +6,7 @@ TEXT_JQUERY = """<script type="text/javascript">
     (function($){
         $(document).ready(function () {
             $("XXX").click(function(){
-                // Escribe aqui
+                // Write here
             });
         });
       })(jQuery);
