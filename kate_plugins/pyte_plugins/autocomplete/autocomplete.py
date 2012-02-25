@@ -95,6 +95,14 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
                 return
         return super(PythonCodeCompletionModel, self).executeCompletionItem(doc, word, row)
 
+    def parse_line(self, line):
+        line = super(PythonCodeCompletionModel, self).parse_line(line)
+        if "'" in line or '"' in line:
+            return line
+        if ";" in line:
+            return self.parse_line(line.split(";")[-1])
+        return line
+
     def autoCompleteImport(self, view, word, line):
         mfb = from_first_module.match(line) or import_complete.match(line)
         if mfb:
@@ -136,14 +144,6 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
     def autoCompleteInThisFile(self, view, word, line):
         text = self._parse_text(view, word, line)
         return self.getTextInfo(text, self.resultList)
-
-    def parse_line(self, line):
-        line = super(PythonCodeCompletionModel, self).parse_line(line)
-        if "'" in line or '"' in line:
-            return line
-        if ";" in line:
-            return self.parse_line(line.split(";")[-1])
-        return line
 
     def _parse_text(self, view, word, line):
         doc = view.document()
@@ -265,7 +265,7 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
             return python_path
         python_path = sys.path
         try:
-            from pyte_plugins import autocomplete_path
+            from pyte_plugins.autocomplete import autocomplete_path
             doc = kate.activeDocument()
             view = doc.activeView()
             python_path = autocomplete_path.path(doc, view) + python_path
@@ -375,7 +375,7 @@ def createSignalAutocompleteDocument(view, *args, **kwargs):
     #http://code.google.com/p/lilykde/source/browse/trunk/frescobaldi/python/frescobaldi_app/mainapp.py#1391
     #http://api.kde.org/4.0-api/kdelibs-apidocs/kate/html/katecompletionmodel_8cpp_source.html
     #https://svn.reviewboard.kde.org/r/1640/diff/?expand=1
-    PythonCodeCompletionModel.getPythonPath()
+    PythonCodeCompletionModel.getTopLevelModules()
     cci = view.codeCompletionInterface()
     cci.registerCompletionModel(codecompletationmodel)
 
