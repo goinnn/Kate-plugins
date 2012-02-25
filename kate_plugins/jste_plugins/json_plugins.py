@@ -21,7 +21,7 @@ def togglePrettyJsonFormat():
     try:
         target = pp.pformat(simplejson.loads(source))
         view.removeSelectionText()
-        utils.insertText(target)
+        utils.insertText(target.replace("'", '"'))
     except JSONDecodeError:
         kate.gui.popup('This text is not a valid json text', 2,
                        icon='dialog-warning',
