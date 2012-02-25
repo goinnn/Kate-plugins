@@ -1,3 +1,11 @@
+0.0.5  (2012-03-??)
+===================
+
+* Cleaning code
+* Fix little error in preatty JSON. The quotes should be " instead of '
+* Fix some other error
+
+
 0.0.4  (2012-02-20)
 ===================
 
