@@ -7,8 +7,8 @@ from PyQt4 import QtCore
 
 from autopate import AbstractCodeCompletionModel
 from pyte_plugins.autocomplete.pyplete import PyPlete
-from pyte_plugins.autocomplete.parse import (from_first_module, import_complete,
-                                             from_other_modules, from_complete)
+from pyte_plugins.autocomplete.parse import (from_first_imporable, import_complete,
+                                             from_other_imporables, from_complete)
 
 global python_path
 global windowInterface
@@ -16,7 +16,7 @@ global codecompletationmodel
 global pyplete
 python_path = []
 
-PYSMELL_PREFIX = '__package____module__.'
+PYSMELL_PREFIX = '__package____imporable__.'
 
 
 class PythonCodeCompletionModel(AbstractCodeCompletionModel):
@@ -82,27 +82,27 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
         return line
 
     def autoCompleteImport(self, view, word, line):
-        mfb = from_first_module.match(line) or import_complete.match(line)
+        mfb = from_first_imporable.match(line) or import_complete.match(line)
         if mfb:
             return pyplete.get_importables_top_level(self.resultList)
-        mfom = from_other_modules.match(line)
+        mfom = from_other_imporables.match(line)
         if mfom:
-            module, submodules = mfom.groups()
-            if not submodules:
-                submodules = []
+            imporable, subimporables = mfom.groups()
+            if not subimporables:
+                subimporables = []
             else:
-                submodules = submodules.split(self.SEPARATOR)[:-1]
-            return pyplete.get_importables_rest_level(self.resultList, module,
-                                                      submodules, into_module=False)
+                subimporables = subimporables.split(self.SEPARATOR)[:-1]
+            return pyplete.get_importables_rest_level(self.resultList, imporable,
+                                                      subimporables, into_module=False)
         mfc = from_complete.match(line)
         if mfc:
-            module, submodules, import_module = mfc.groups()
-            if submodules:
-                submodules = submodules.split(self.SEPARATOR)
+            imporable, subimporables, import_imporable = mfc.groups()
+            if subimporables:
+                subimporables = subimporables.split(self.SEPARATOR)
             else:
-                submodules = []
-            return pyplete.get_importables_rest_level(self.resultList, module,
-                                                      submodules, into_module=True)
+                subimporables = []
+            return pyplete.get_importables_rest_level(self.resultList, imporable,
+                                                      subimporables, into_module=True)
         return False
 
     def autoCompleteLine(self, view, word, line):
