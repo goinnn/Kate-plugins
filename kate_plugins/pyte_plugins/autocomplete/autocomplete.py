@@ -44,6 +44,8 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
     def completionInvoked(self, view, word, invocationType):
         line = super(PythonCodeCompletionModel, self).completionInvoked(view,
                                                        word, invocationType)
+        if line is None:
+            return
         is_auto = False
         line_rough = line
         if 'from' in line or 'import' in line:

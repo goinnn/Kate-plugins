@@ -134,8 +134,8 @@ class AbstractJSONFileCodeCompletionModel(AbstractCodeCompletionModel):
         line = super(AbstractJSONFileCodeCompletionModel, self).completionInvoked(view, word, invocationType)
         if not line:
             return
-        line = self.get_expression_last_expression(line)
-        children = self.get_children_in_json(line, self.json)
+        line = self.getLastExpression(line)
+        children = self.getChildrenInJSON(line, self.json)
         for child, attrs in children.items():
             self.resultList.append(self.createItemAutoComplete(text=child,
                                                                icon=attrs.get('icon', 'unknown')))
