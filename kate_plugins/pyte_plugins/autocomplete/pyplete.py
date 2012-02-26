@@ -117,37 +117,34 @@ class PyPlete(object):
             module = module_path.split(self.separator)[0]
             submodules = module_path.split(self.separator)[1:]
             submodules.extend(code_line_split[1:])
-            module_done, submodules_undone = self.get_module_from_path(module, submodules)
+            imp_loader, submodules_undone = self.get_imp_loader_from_path(module, submodules)
             if not submodules_undone:
-                autocompletion_submodules = self.get_importables_rest_level(list_autocomplete, module, submodules, True)
-                for autocompletion_submodule in autocompletion_submodules:
-                    if autocompletion_submodule not in list_autocomplete:
-                        list_autocomplete.append(autocompletion_submodule)
+                self.get_importables_rest_level(list_autocomplete, module, submodules, True)
             submodules_undone.reverse()
             line = self.separator.join(submodules_undone)
-            text = module_done.get_source()
+            text = imp_loader.get_source()
             if line:
                 return self.get_importables_from_line(list_autocomplete, text, line)
             if text_info:
                 return self.get_importables_from_text(list_autocomplete, text, list_autocomplete)
         return False
 
-    def get_module_from_path(self, module_name, submodules, submodules_undone=None):
-        module_dir = self.importables_path[module_name][0]
-        submodules_undone = submodules_undone or []
-        submodules_str = os.sep.join(submodules)
-        if submodules_str:
-            module_dir = "%s%s%s" % (module_dir, os.sep, submodules_str)
-        att_dir = os.sep.join(module_dir.split(os.sep)[:-1])
-        att_module = module_dir.split(os.sep)[-1].replace('.py', '').replace('.pyc', '')
-        importer = pkgutil.get_importer(att_dir)
-        module = importer.find_module(att_module)
-        if module:
-            return (module, submodules_undone)
-        elif submodules:
-            submodules_undone.append(submodules[-1])
-            return self.get_module_from_path(module_name, submodules[:-1], submodules_undone)
-        return (None, submodules_undone)
+    def get_imp_loader_from_path(self, imp_name, subimportables, subimportables_undone=None):
+        imp_path = self.importables_path[imp_name][0]
+        subimportables_undone = subimportables_undone or []
+        subimportables_str = os.sep.join(subimportables)
+        if subimportables_str:
+            imp_path = "%s%s%s" % (imp_path, os.sep, subimportables_str)
+        into_dir = os.sep.join(imp_path.split(os.sep)[:-1])
+        into_module = imp_path.split(os.sep)[-1].replace('.py', '').replace('.pyc', '')
+        importer = pkgutil.get_importer(into_dir)
+        importable = importer.find_module(into_module)
+        if importable:
+            return (importable, subimportables_undone)
+        elif subimportables:
+            subimportables_undone.append(subimportables[-1])
+            return self.get_module_from_path(imp_name, subimportables[:-1], subimportables_undone)
+        return (None, subimportables_undone)
 
     def treatment_pysmell_const(self, constant):
         constant = constant.replace(PYSMELL_PREFIX, '')

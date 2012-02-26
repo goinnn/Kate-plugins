@@ -7,7 +7,7 @@ from PyQt4 import QtCore
 
 from autopate import AbstractCodeCompletionModel
 from pyte_plugins.autocomplete.pyplete import PyPlete
-from pyte_plugins.autocomplete.utils import (from_first_module, import_complete,
+from pyte_plugins.autocomplete.parse import (from_first_module, import_complete,
                                              from_other_modules, from_complete)
 
 global python_path
