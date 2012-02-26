@@ -66,7 +66,7 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
         line = unicode(doc.line(line_start))
         if not line:
             return line
-        return self.parse_line(line)
+        return self.parseLine(line)
 
     def data(self, index, role, *args, **kwargs):
         #http://api.kde.org/4.5-api/kdelibs-apidocs/kate/html/katewordcompletion_8cpp_source.html
@@ -94,7 +94,7 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
     def executeCompletionItem(self, doc, word, row):
         return super(AbstractCodeCompletionModel, self).executeCompletionItem(doc, word, row)
 
-    def get_expression_last_expression(self, line):
+    def getLastExpression(self, line):
         opmax = max(self.OPERATORS, key=lambda e: line.rfind(e))
         opmax_index = line.rfind(opmax)
         if line.find(opmax) != -1:
@@ -109,7 +109,7 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
             return QModelIndex()
         return self.createIndex(row, column)
 
-    def parse_line(self, line):
+    def parseLine(self, line):
         return line.strip()
 
     def rowCount(self, parent):
@@ -140,7 +140,7 @@ class AbstractJSONFileCodeCompletionModel(AbstractCodeCompletionModel):
             self.resultList.append(self.createItemAutoComplete(text=child,
                                                                icon=attrs.get('icon', 'unknown')))
 
-    def get_children_in_json(self, keys, json):
+    def getChildrenInJSON(self, keys, json):
         if not self.SEPARATOR in keys:
             return json
         keys_split = keys.split(self.SEPARATOR)
