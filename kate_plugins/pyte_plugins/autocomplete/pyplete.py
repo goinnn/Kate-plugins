@@ -22,8 +22,8 @@ class PyPlete(object):
         self.separator = separator
         self.get_importables_top_level([])
 
-    def func_info(self, name, icon):
-        return (name, icon)
+    def func_info(self, *args):
+        return args
 
     def get_importables_top_level(self, list_autocomplete, use_cache=True):
         # http://code.google.com/p/djangode/source/browse/trunk/djangode/data/codemodel/codemodel.py#57
@@ -37,13 +37,13 @@ class PyPlete(object):
                 name = None
                 if filename.endswith(".py"):
                     name = filename.split(os.sep)[-1][:-3]
-                    icon = 'module'
+                    category = 'module'
                 elif os.path.isdir(filename) and os.path.exists(filename + os.sep + "__init__.py"):
                     name = filename.split(os.sep)[-1]
-                    icon = 'package'
+                    category = 'package'
                 if not name:
                     continue
-                importable = self.func_info(name, icon)
+                importable = self.func_info(name, category)
                 if importable and not importable in self.importables_top_level:
                     self.importables_top_level.append(importable)
                     self.importables_path[name] = [filename]
@@ -52,13 +52,14 @@ class PyPlete(object):
 
     def get_importables_rest_level(self, list_autocomplete, imp_name, subimportables=None, into_module=True):
         imp_path = self.importables_path[imp_name][0]
+        subimportables = subimportables or []
         subimportables = [subimportable for subimportable in subimportables if subimportable]
         if subimportables:
             subimportables = os.sep.join(subimportables)
             imp_path = "%s%s%s" % (imp_path, os.sep, subimportables)
         for loader, imp_name, is_pkg in pkgutil.walk_packages([imp_path]):
-            icon = is_pkg and 'package' or 'module'
-            importable = self.func_info(imp_name, icon)
+            category = is_pkg and 'package' or 'module'
+            importable = self.func_info(imp_name, category)
             list_autocomplete.append(importable)
         if into_module:
             into_dir = os.sep.join(imp_path.split(os.sep)[:-1])
@@ -226,4 +227,3 @@ class PyPlete(object):
             cls_name = '%s%s' % (PYSMELL_PREFIX, submodules_undone[0])
             base_info = self.get_pysmell_modules_to_text(imp_loader.get_source())['CLASSES'].get(cls_name, None)
         return base_info
-        
