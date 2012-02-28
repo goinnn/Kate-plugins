@@ -45,8 +45,8 @@ or
 Plugins
 =======
 
-Autocomplete to python (python)
--------------------------------
+Autocomplete (python)
+---------------------
 
  * Shortcut: It is automatical
  * from and import instruction
@@ -60,6 +60,12 @@ Autocomplete to python (python)
              '/PATH/OF/THE/PACKAGE/',
              ...
              '/PATH/OF/THE/EGGN/namen.egg'] 
+
+Parse syntax (python)
+---------------------
+
+ * Shortcut: Ctrl+6 or when you save the file
+ * Pase syntax this file and show a error list, or a dialog say "OK"
 
 insert IPDB (python)
 --------------------

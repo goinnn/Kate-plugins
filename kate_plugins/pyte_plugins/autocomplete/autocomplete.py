@@ -166,11 +166,11 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
 def createSignalAutocompleteDocument(view, *args, **kwargs):
     # https://launchpad.net/ubuntu/precise/+source/pykde4
     # https://launchpad.net/ubuntu/precise/+source/pykde4/4:4.7.97-0ubuntu1/+files/pykde4_4.7.97.orig.tar.bz2
-    #http://doc.trolltech.com/4.6/qabstractitemmodel.html
-    #http://gitorious.org/kate/kate/blobs/a17eb928f8133528a6194b7e788ab7a425ef5eea/ktexteditor/codecompletionmodel.cpp
-    #http://code.google.com/p/lilykde/source/browse/trunk/frescobaldi/python/frescobaldi_app/mainapp.py#1391
-    #http://api.kde.org/4.0-api/kdelibs-apidocs/kate/html/katecompletionmodel_8cpp_source.html
-    #https://svn.reviewboard.kde.org/r/1640/diff/?expand=1
+    # http://doc.trolltech.com/4.6/qabstractitemmodel.html
+    # http://gitorious.org/kate/kate/blobs/a17eb928f8133528a6194b7e788ab7a425ef5eea/ktexteditor/codecompletionmodel.cpp
+    # http://code.google.com/p/lilykde/source/browse/trunk/frescobaldi/python/frescobaldi_app/mainapp.py#1391
+    # http://api.kde.org/4.0-api/kdelibs-apidocs/kate/html/katecompletionmodel_8cpp_source.html
+    # https://svn.reviewboard.kde.org/r/1640/diff/?expand=1
     global pyplete
     pyplete = PyPlete(PythonCodeCompletionModel.createItemAutoComplete,
                       PythonCodeCompletionModel.getPythonPath())
