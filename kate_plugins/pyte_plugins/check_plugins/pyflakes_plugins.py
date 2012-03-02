@@ -69,7 +69,7 @@ def checkPyflakes(currentDocument=None):
 
 def createSignalCheckDocument(view, *args, **kwargs):
     doc = view.document()
-    doc.modifiedChanged.connect(check_pyflakes)
+    doc.modifiedChanged.connect(checkPyflakes)
 
 windowInterface = kate.application.activeMainWindow()
 windowInterface.connect(windowInterface,

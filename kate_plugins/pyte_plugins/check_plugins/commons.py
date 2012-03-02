@@ -26,7 +26,7 @@ def removeOldMarks(key_mark, doc):
 
 
 def showErrors(message, errors, key_mark, doc, time=10, icon='dialog-warning',
-               key_line='line', max_errors=5):
+               key_line='line', max_errors=3):
     removeOldMarks(key_mark, doc)
     mark_iface = doc.markInterface()
     message_post = ''
