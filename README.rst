@@ -69,12 +69,6 @@ Autocomplete (python)
              ...
              '/PATH/OF/THE/EGGN/namen.egg'] 
 
-Parse syntax (python)
----------------------
-
- * Shortcut: Ctrl+6 or when you save the file
- * Pase syntax this file and show a error list, or a dialog say "OK"
-
 insert IPDB (python)
 --------------------
 
@@ -106,26 +100,39 @@ PyFlakes (python)
  * Use PyFlakes to look for bad code, highlights lines with problems
  * It uses `pyflakes <http://pypi.python.org/pypi/pyflakes>`_ so it must be present in the system
 
-template urls (django)
+Parse syntax (python)
+---------------------
+
+ * Shortcut: Alt+6 or when you save the file
+ * Parse syntax this file and show a error list, or a dialog say "OK"
+
+Refresh marks (python)
 ----------------------
+
+ * Shortcut: Alt+5
+ * When run pep8, pyflakes, parse syntax or jslint plugin these create marks. If after some of these create marks and after you insert a line breaks, if possible that you must run this plugin to refresh the crazy marks.
+
+
+Template Django urls (django)
+-----------------------------
  * Shortcut: Ctrl+Alt+7
  * Smart template of the file `urls.py <http://docs.djangoproject.com/en/dev/topics/http/urls/#example>`_
 
 
-import views (django)
-----------------------
+Template import views (django)
+------------------------------
  * Shortcut: Ctrl+Alt+v
  * Insert the tipical imports in a view
 
 
-Create form (django)
-----------------------
+Create Django form (django)
+---------------------------
  * Shortcut: Ctrl+Alt+F
  * Template to form class
 
 
-Create model (django)
-----------------------
+Create Django model (django)
+----------------------------
  * Shortcut: Ctrl+Alt+M
  * Template to model class
 
@@ -155,6 +162,8 @@ Future Plugins
 ==============
 
  * Call recursive
+ * Improve autocompletes plugins
+ * Integration with rope
 
 Other repositories of Plugins to Kate
 =====================================

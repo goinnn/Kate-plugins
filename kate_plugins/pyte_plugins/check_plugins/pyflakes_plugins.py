@@ -47,7 +47,7 @@ def checkPyflakes(currentDocument=None):
     mark_key = '%s-pyflakes' % path
 
     text = unicode(currentDocument.text())
-    errors = pyflakes(text.encode('utf-8'), path)
+    errors = pyflakes(text.encode('utf-8', 'ignore'), path)
     errors_to_show = []
 
     if len(errors) == 0:

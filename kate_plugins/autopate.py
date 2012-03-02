@@ -146,5 +146,5 @@ class AbstractJSONFileCodeCompletionModel(AbstractCodeCompletionModel):
         keys_split = keys.split(self.SEPARATOR)
         if keys_split and keys_split[0] in json:
             keys = self.SEPARATOR.join(keys_split[1:])
-            return self.get_children_in_json(keys, json[keys_split[0]].get('children', None))
+            return self.getChildrenInJSON(keys, json[keys_split[0]].get('children', None))
         return None

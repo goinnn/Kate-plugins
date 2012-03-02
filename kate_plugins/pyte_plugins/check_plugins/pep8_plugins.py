@@ -7,7 +7,6 @@ from PyQt4 import QtCore
 
 from kate_settings_plugins import kate_plugins_settings
 from pyte_plugins.check_plugins import commons
-from utils import is_mymetype_python
 
 
 class StoreErrorsChecker(pep8.Checker):
@@ -38,7 +37,8 @@ def checkPep8(currentDocument=None):
         return
     currentDocument = currentDocument or kate.activeDocument()
     if currentDocument.isModified():
-        kate.gui.popup('You must save the file first', 3, icon='dialog-warning', minTextWidth=200)
+        kate.gui.popup('You must save the file first', 3,
+                       icon='dialog-warning', minTextWidth=200)
         return
     path = unicode(currentDocument.url().path())
     mark_key = '%s-pep8' % unicode(currentDocument.url().path())
@@ -65,7 +65,8 @@ def checkPep8(currentDocument=None):
             "message": error[3],
             })
 
-    commons.showErrors('Pep8 Errors:',errors_to_show, '%s-pep8' % path, currentDocument)
+    commons.showErrors('Pep8 Errors:', errors_to_show,
+                       mark_key, currentDocument)
 
 
 def createSignalCheckDocument(view, *args, **kwargs):

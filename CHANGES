@@ -1,7 +1,9 @@
-0.0.7  (2012-03-??)
+0.0.7  (2012-03-02)
 ===================
 
-* ...
+* Fix some errors of the 0.0.6 version (checker plugins)
+* Fix a error of JSON autocompletion
+* Update the readme
 
 0.0.6  (2012-03-02)
 ===================
@@ -10,6 +12,7 @@
 * PEP8 checker plugin
 * PyFlakes checker plugin
 * JSLint checker plugin
+* Settings to the kate actions: texts, short cuts, menus and icons
 
 0.0.5  (2012-02-28)
 ===================
