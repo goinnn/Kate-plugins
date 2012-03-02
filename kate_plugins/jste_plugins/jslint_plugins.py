@@ -13,6 +13,7 @@ pattern = re.compile(r"Lint at line (\d+) character (\d+): (.*)")
 def check_jslint():
     currentDocument = kate.activeDocument()
     path = unicode(currentDocument.url().path())
+    mark_key =  '%s-jslint' % path
 
     text = unicode(currentDocument.text())
     errors = check_JSLint(text.encode('utf-8'))
@@ -25,13 +26,14 @@ def check_jslint():
             errors_to_show.append({
                 "filename": path,
                 "message": matches.groups()[2],
-                "line": int(matches.groups()[0]),
+                "line": int(matches.groups()[0]) - 1,
                 "column": int(matches.groups()[1]),
                 })
 
     if len(errors_to_show) == 0:
+        commons.removeOldMarks(mark_key, currentDocument)
         commons.showOk("JSLint Ok")
         return
 
-    commons.showErrors('JSLint Errors:', errors_to_show, '%s-jslint' % path,
+    commons.showErrors('JSLint Errors:', errors_to_show, mark_key,
                        currentDocument)
