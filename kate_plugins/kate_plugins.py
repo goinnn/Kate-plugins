@@ -1,6 +1,7 @@
 from jste_plugins.autocomplete import *
 from jste_plugins.jquery_plugins import *
 from jste_plugins.json_plugins import *
+from jste_plugins.jslint_plugins import *
 
 from pyte_plugins.autocomplete.autocomplete import *
 from pyte_plugins.check_plugins import *
