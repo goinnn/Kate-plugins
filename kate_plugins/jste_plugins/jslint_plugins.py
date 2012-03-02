@@ -1,8 +1,9 @@
 import re
 
 from pyjslint import check_JSLint
-from pyte_plugins.check_plugins import commons
 import kate
+
+from pyte_plugins.check_plugins import commons
 
 
 pattern = re.compile(r"Lint at line (\d+) character (\d+): (.*)")
@@ -13,10 +14,11 @@ def check_jslint():
     currentDocument = kate.activeDocument()
     path = unicode(currentDocument.url().path())
 
-    errors = check_JSLint(currentDocument.text())
+    text = unicode(currentDocument.text())
+    errors = check_JSLint(text.encode('utf-8'))
     errors_to_show = []
 
-    # Paint errors found
+    # Prepare errors found for painting
     for error in errors:
         matches = pattern.search(error)
         if matches:
@@ -28,7 +30,8 @@ def check_jslint():
                 })
 
     if len(errors_to_show) == 0:
-        commons.showOk()
+        commons.showOk("JSLint Ok")
         return
 
-    commons.showErrors(errors_to_show)
+    commons.showErrors('JSLint Errors:', errors_to_show, '%s-jslint' % path,
+                       currentDocument)
