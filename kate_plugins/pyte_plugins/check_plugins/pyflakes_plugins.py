@@ -3,6 +3,7 @@ import _ast
 import kate
 from pyflakes.checker import Checker
 from pyflakes.messages import Message
+from PyQt4 import QtCore
 
 from pyte_plugins.check_plugins import commons
 
@@ -35,13 +36,14 @@ def pyflakes(codeString, filename):
         return w.messages
 
 
-@kate.action('pyflakes', shortcut='Alt+P', menu='Edit')
-def check_pyflakes():
-    currentDocument = kate.activeDocument()
+@kate.action('pyflakes', shortcut='Alt+7', menu='Edit')
+def checkPyflakes(currentDocument=None):
+    if not commons.canCheckDocument(currentDocument):
+        return
+    currentDocument = currentDocument or kate.activeDocument()
+
     path = unicode(currentDocument.url().path())
     mark_key = '%s-pyflakes' % path
-
-    # TODO check if pyhton file
 
     text = unicode(currentDocument.text())
     errors = pyflakes(text.encode('utf-8'), path)
@@ -63,4 +65,12 @@ def check_pyflakes():
     commons.showErrors('Pyflakes Errors:', errors_to_show, mark_key,
                        currentDocument)
 
-# TODO on save
+
+def createSignalCheckDocument(view, *args, **kwargs):
+    doc = view.document()
+    doc.modifiedChanged.connect(check_pyflakes)
+
+windowInterface = kate.application.activeMainWindow()
+windowInterface.connect(windowInterface,
+                QtCore.SIGNAL('viewCreated(KTextEditor::View*)'),
+                createSignalCheckDocument)
