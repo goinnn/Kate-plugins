@@ -36,6 +36,9 @@ def check_pep8(currentDocument=None):
     if not commons.canCheckDocument(currentDocument):
         return
     currentDocument = currentDocument or kate.activeDocument()
+    if currentDocument.isModified():
+        kate.gui.popup('You must save the file first', 3, icon='dialog-warning', minTextWidth=200)
+        return
     path = unicode(currentDocument.url().path())
     mark_key = '%s-pep8' % unicode(currentDocument.url().path())
     # Check the file for errors with PEP8
