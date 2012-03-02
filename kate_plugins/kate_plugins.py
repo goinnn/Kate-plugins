@@ -9,3 +9,4 @@ from pyte_plugins.djte_plugins.text_plugins import *
 from pyte_plugins.text_plugins import *
 from pyte_plugins.check_plugins.pep8_plugins import *
 from pyte_plugins.check_plugins.parse_plugins import *
+from pyte_plugins.check_plugins.pyflakes_plugins import *
