@@ -16,7 +16,7 @@ def generateErrorMessage(error):
     return message
 
 
-def showErrors(errors, key_mark, doc, time=10, icon='dialog-warning', key_line='line'):
+def removeOldMarks(key_mark, doc):
     # Delete previous errors
     mark_iface = doc.markInterface()
     if key_mark in old_marks:
@@ -24,11 +24,14 @@ def showErrors(errors, key_mark, doc, time=10, icon='dialog-warning', key_line='
             mark_iface.removeMark(mark.line, mark.type)
     old_marks[key_mark] = []
 
-    message = ''
+
+def showErrors(message, errors, key_mark, doc, time=10, icon='dialog-warning', key_line='line'):
+    removeOldMarks(key_mark, doc)
+    mark_iface = doc.markInterface()
     for error in errors:
         message += '%s\n' % generateErrorMessage(error)
         mark = kate.KTextEditor.Mark()
-        mark.line = error[key_line]
+        mark.line = error[key_line] - 1 
         mark.type = mark_iface.Error
         mark_iface.setMark(mark.line, mark.type)
         old_marks[key_mark].append(mark)

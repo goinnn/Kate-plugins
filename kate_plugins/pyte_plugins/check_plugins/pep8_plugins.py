@@ -37,7 +37,7 @@ def check_pep8(currentDocument=None):
         return
     currentDocument = currentDocument or kate.activeDocument()
     path = unicode(currentDocument.url().path())
-
+    mark_key = '%s-pep8' % unicode(currentDocument.url().path())
     # Check the file for errors with PEP8
     sys.argv = [path]
     pep8.process_options([path])
@@ -46,6 +46,7 @@ def check_pep8(currentDocument=None):
     errors = checker.get_errors()
 
     if len(errors) == 0:
+        commons.removeOldMarks(mark_key, currentDocument)
         commons.showOk('Pep8 Ok')
         return
 
@@ -60,7 +61,7 @@ def check_pep8(currentDocument=None):
             "message": error[3],
             })
 
-    commons.showErrors(errors_to_show, '%s-pep8' % path, currentDocument)
+    commons.showErrors('Pep8 Errors:',errors_to_show, '%s-pep8' % path, currentDocument)
 
 
 def createSignalCheckDocument(view, *args, **kwargs):
