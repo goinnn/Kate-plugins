@@ -12,4 +12,5 @@ kate_plugins_settings = {
     'insertReady': {'text': 'jQuery Ready', 'shortcut': 'Ctrl+J', 'menu': 'Edit', 'icon': None},
     'togglePrettyJsonFormat': {'text': 'Pretty Json', 'shortcut': 'Ctrl+Alt+J', 'menu': 'Edit', 'icon': None},
     'checkJslint': {'text': 'JSLint', 'shortcut': 'Alt+J', 'menu': 'Edit', 'icon': None},
+    'checkPyflakes': {'text': 'pyflakes', 'shortcut':'Alt+7', 'menu':'Edit'},
 }

@@ -12,7 +12,18 @@ except ImportError:
 from pyte_plugins.djte_plugins.class_plugins import *
 from pyte_plugins.djte_plugins.text_plugins import *
 from pyte_plugins.text_plugins import *
-from pyte_plugins.check_plugins.refresh_marks_plugins import *
-from pyte_plugins.check_plugins.pep8_plugins import *
 from pyte_plugins.check_plugins.parse_plugins import *
-from pyte_plugins.check_plugins.pyflakes_plugins import *
+try:
+    from pyte_plugins.check_plugins.refresh_marks_plugins import *
+except ImportError:
+    pass
+try:
+    from pyte_plugins.check_plugins.pep8_plugins import *
+except ImportError:
+    pass
+
+try:
+    from pyte_plugins.check_plugins.pyflakes_plugins import *
+except ImportError:
+    pass
+
