@@ -3,6 +3,8 @@ import sys
 
 import pep8
 
+import commons
+
 
 old_marks = {}
 
@@ -46,12 +48,26 @@ def check_pep8():
     if path in old_marks:
         for mark in old_marks[path]:
             mark_iface.removeMark(mark.line, mark.type)
+    old_marks[path] = []
+
+    if len(errors) == 0:
+        commons.showOk()
+        return
+
+    errors_to_show = []
 
     # Paint errors found
-    old_marks[path] = []
     for error in errors:
         mark = kate.KTextEditor.Mark()
         mark.line = error[0] - 1
         mark.type = mark_iface.Error
         mark_iface.setMark(mark.line, mark.type)
         old_marks[path].append(mark)
+        errors_to_show.append({
+            "line": error[0],
+            "column": error[1],
+            "filename": path,
+            "message": error[3],
+            })
+
+    commons.showErrors(errors_to_show)
