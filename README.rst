@@ -18,11 +18,19 @@ Installation
 ============
 
 * `Install Pâté <https://github.com/pag/pate/blob/master/INSTALL.txt>`_
-* Install `Pysmell <http://pypi.python.org/pypi/pysmell>`_ 
+* Extra dependencies for extra and super nice features. Optional, but **very recomended** :)
+
+    * Install `Pysmell <http://pypi.python.org/pypi/pysmell>`_:
+    * Install `PEP8 <http://pypi.python.org/pypi/pep8>`_:
+    * Install `PyFlakes <http://pypi.python.org/pypi/pyflakes>`_:
+    * Install `pyjslint <http://pypi.python.org/pypi/pyjslint>`_ (it requires NodeJS, read the pyjslint readme):
 
 ::
 
-  easy_install pysmell==0.7.3
+ easy_install pysmell==0.7.3
+ easy_install pep8==0.6.1
+ easy_install pyflakes==0.5.0
+ easy_install pyjslint==0.3.3
 
 * Install the plugins:
 
@@ -86,6 +94,17 @@ insert super (python)
  * Shortcut: Alt+-
  * Smart insert a call to super of the function
 
+PEP8 (python)
+-------------
+ * Shortcut: Alt+8
+ * Use PEP8 to look for ugly code, highlights lines with problems
+ * It uses `pep8 <http://pypi.python.org/pypi/pep8>`_ so it must be present in the system
+
+PyFlakes (python)
+-----------------
+ * Shortcut: Alt+7
+ * Use PyFlakes to look for bad code, highlights lines with problems
+ * It uses `pyflakes <http://pypi.python.org/pypi/pyflakes>`_ so it must be present in the system
 
 template urls (django)
 ----------------------
@@ -126,14 +145,16 @@ Pretty JSON (js)
  * Shortcut: Ctrl+Alt+J
  * Convert a horrible json in a pretty JSON :-)
 
+JSLint (js)
+-----------
+ * Shortcut: Alt+J
+ * Use JSLint to look for errors and bad code, highlights lines with problems
+ * It uses `pyjslint <http://pypi.python.org/pypi/pyjslint>`_ so it must be present in the system (and working!)
 
 Future Plugins
 ==============
 
  * Call recursive
- * `pep8 <http://www.python.org/dev/peps/pep-0008/>`_
- * `pyflakes <http://pypi.python.org/pypi/pyflakes>`_
- * `jslint <http://www.jslint.com/>`_
 
 Other repositories of Plugins to Kate
 =====================================
