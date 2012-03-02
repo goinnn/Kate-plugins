@@ -20,10 +20,10 @@ Installation
 * `Install Pâté <https://github.com/pag/pate/blob/master/INSTALL.txt>`_
 * Extra dependencies for extra and super nice features. Optional, but **very recomended** :)
 
-    * Install `Pysmell <http://pypi.python.org/pypi/pysmell>`_:
-    * Install `PEP8 <http://pypi.python.org/pypi/pep8>`_:
-    * Install `PyFlakes <http://pypi.python.org/pypi/pyflakes>`_:
-    * Install `pyjslint <http://pypi.python.org/pypi/pyjslint>`_ (it requires NodeJS, read the pyjslint readme):
+    * Install `Pysmell <http://pypi.python.org/pypi/pysmell>`_
+    * Install `PEP8 <http://pypi.python.org/pypi/pep8>`_
+    * Install `PyFlakes <http://pypi.python.org/pypi/pyflakes>`_
+    * Install `pyjslint <http://pypi.python.org/pypi/pyjslint>`_ (it requires NodeJS, read the pyjslint readme)
 
 ::
 
