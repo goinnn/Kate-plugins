@@ -19,6 +19,15 @@ def insertText(text, strip_line=False,
     currentDocument.insertText(currentPosition, text)
 
 
+def is_mymetype_python(doc, text_plain=False):
+    mimetype = unicode(doc.mimeType())
+    if mimetype == 'text/x-python':
+        return True
+    elif mimetype == 'text/plain' and text_plain:
+        return True
+    return False
+
+
 def ipdb(with_position=True):
     import sys
     sys.path.insert(-1, '/usr/lib/pymodules/python2.6/IPython/Extensions')

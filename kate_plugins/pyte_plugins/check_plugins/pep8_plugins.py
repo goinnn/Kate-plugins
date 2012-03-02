@@ -1,12 +1,12 @@
-import kate
 import sys
 
+import kate
 import pep8
 
-import commons
+from PyQt4 import QtCore
 
-
-old_marks = {}
+from pyte_plugins.check_plugins import commons
+from utils import is_mymetype_python
 
 
 class StoreErrorsChecker(pep8.Checker):
@@ -32,11 +32,12 @@ class StoreErrorsChecker(pep8.Checker):
 
 
 @kate.action('pep8', shortcut='Alt+8', menu='Edit')
-def check_pep8():
-    currentDocument = kate.activeDocument()
-    mark_iface = currentDocument.markInterface()
+def check_pep8(currentDocument=None):
+    if not commons.canCheckDocument(currentDocument):
+        return
+    currentDocument = currentDocument or kate.activeDocument()
     path = unicode(currentDocument.url().path())
-
+    mark_key = '%s-pep8' % unicode(currentDocument.url().path())
     # Check the file for errors with PEP8
     sys.argv = [path]
     pep8.process_options([path])
@@ -44,25 +45,15 @@ def check_pep8():
     checker.check_all()
     errors = checker.get_errors()
 
-    # Delete previous errors
-    if path in old_marks:
-        for mark in old_marks[path]:
-            mark_iface.removeMark(mark.line, mark.type)
-    old_marks[path] = []
-
     if len(errors) == 0:
-        commons.showOk()
+        commons.removeOldMarks(mark_key, currentDocument)
+        commons.showOk('Pep8 Ok')
         return
 
     errors_to_show = []
 
     # Paint errors found
     for error in errors:
-        mark = kate.KTextEditor.Mark()
-        mark.line = error[0] - 1
-        mark.type = mark_iface.Error
-        mark_iface.setMark(mark.line, mark.type)
-        old_marks[path].append(mark)
         errors_to_show.append({
             "line": error[0],
             "column": error[1],
@@ -70,4 +61,14 @@ def check_pep8():
             "message": error[3],
             })
 
-    commons.showErrors(errors_to_show)
+    commons.showErrors('Pep8 Errors:',errors_to_show, '%s-pep8' % path, currentDocument)
+
+
+def createSignalCheckDocument(view, *args, **kwargs):
+    doc = view.document()
+    doc.modifiedChanged.connect(check_pep8)
+
+windowInterface = kate.application.activeMainWindow()
+windowInterface.connect(windowInterface,
+                QtCore.SIGNAL('viewCreated(KTextEditor::View*)'),
+                createSignalCheckDocument)
