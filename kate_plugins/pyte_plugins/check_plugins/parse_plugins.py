@@ -4,11 +4,12 @@ import kate
 
 from PyQt4 import QtCore
 
+from kate_settings_plugins import kate_plugins_settings
 from utils import is_mymetype_python
 from pyte_plugins.check_plugins.commons import showOk, showErrors, canCheckDocument, removeOldMarks
 
 
-@kate.action('parse code', shortcut='Alt+6', menu='Edit')
+@kate.action(**kate_plugins_settings['parseCode'])
 def parseCode(doc=None):
     if not canCheckDocument(doc, text_plain=True):
         return

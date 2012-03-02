@@ -1,6 +1,7 @@
 import kate
 
 from PyQt4 import QtGui
+from kate_settings_plugins import kate_plugins_settings
 
 
 PATTERN_MODEL_FORM = """
@@ -50,13 +51,13 @@ def create_frame(pattern_str='', title='', name_field=''):
         currentDocument.insertText(view.cursorPosition(), text)
 
 
-@kate.action('Create form', shortcut='Ctrl+Alt+F', menu='Edit')
-def create_form():
+@kate.action(**kate_plugins_settings['createForm'])
+def createForm():
     create_frame(pattern_str=PATTERN_MODEL_FORM, title='Create Form',
                  name_field='Name Form')
 
 
-@kate.action("Create model", shortcut="Ctrl+Alt+M", menu='Edit')
-def create_model():
+@kate.action(**kate_plugins_settings['createModel'])
+def createModel():
     create_frame(pattern_str=PATTERN_MODEL, title='Create Model',
                  name_field='Name Model')

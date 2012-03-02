@@ -3,11 +3,13 @@ import simplejson
 import pprint
 import utils
 
+from kate_settings_plugins import kate_plugins_settings
+
 from simplejson import JSONDecodeError
 
 
 #http://www.muhuk.com/2008/11/extending-kate-with-pate/
-@kate.action('Pretty Json', shortcut='Ctrl+Alt+J', menu='Edit')
+@kate.action(**kate_plugins_settings['togglePrettyJsonFormat'])
 def togglePrettyJsonFormat():
     currentDocument = kate.activeDocument()
     view = currentDocument.activeView()

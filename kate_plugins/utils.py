@@ -28,6 +28,15 @@ def is_mymetype_python(doc, text_plain=False):
     return False
 
 
+def is_mymetype_js(doc, text_plain=False):
+    mimetype = unicode(doc.mimeType())
+    if mimetype == 'application/javascript':
+        return True
+    elif mimetype == 'text/plain' and text_plain:
+        return True
+    return False
+
+
 def ipdb(with_position=True):
     import sys
     sys.path.insert(-1, '/usr/lib/pymodules/python2.6/IPython/Extensions')

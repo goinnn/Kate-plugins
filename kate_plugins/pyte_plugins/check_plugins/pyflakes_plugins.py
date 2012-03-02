@@ -5,6 +5,7 @@ from pyflakes.checker import Checker
 from pyflakes.messages import Message
 from PyQt4 import QtCore
 
+from kate_settings_plugins import kate_plugins_settings
 from pyte_plugins.check_plugins import commons
 
 
@@ -36,7 +37,7 @@ def pyflakes(codeString, filename):
         return w.messages
 
 
-@kate.action('pyflakes', shortcut='Alt+7', menu='Edit')
+@kate.action(**kate_plugins_settings['checkPyflakes'])
 def checkPyflakes(currentDocument=None):
     if not commons.canCheckDocument(currentDocument):
         return

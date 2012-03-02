@@ -25,11 +25,16 @@ def removeOldMarks(key_mark, doc):
     old_marks[key_mark] = []
 
 
-def showErrors(message, errors, key_mark, doc, time=10, icon='dialog-warning', key_line='line'):
+def showErrors(message, errors, key_mark, doc, time=10, icon='dialog-warning',
+               key_line='line', max_errors=5):
     removeOldMarks(key_mark, doc)
     mark_iface = doc.markInterface()
-    for error in errors:
-        message += '%s\n' % generateErrorMessage(error)
+    message_post = ''
+    for i, error in enumerate(errors):
+        if i < max_errors:
+            message += '%s\n' % generateErrorMessage(error)
+        elif i == max_errors:
+            message += '\n And others'
         mark = kate.KTextEditor.Mark()
         mark.line = error[key_line] - 1 
         mark.type = mark_iface.Error
