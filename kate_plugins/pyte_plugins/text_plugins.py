@@ -1,7 +1,9 @@
 import kate
 import re
 
+from kate_settings_plugins import kate_plugins_settings
 from utils import insertText
+
 
 TEXT_INIT = """
     def __init__(self, *args, **kwargs):
@@ -33,12 +35,12 @@ pattern_param = re.compile("%(espaces)s(\w+)%(blank)s\=%(blank)s(.*)" % {
 PYTHON_SPACES = 4
 
 
-@kate.action('ipdb', shortcut='Ctrl+I', menu='Edit')
+@kate.action(**kate_plugins_settings['insertIPDB'])
 def insertIPDB():
     insertText("import ipdb; ipdb.set_trace()")
 
 
-@kate.action('__init__', shortcut='Ctrl+-', menu='Edit')
+@kate.action(**kate_plugins_settings['insertInit'])
 def insertInit():
     class_name = 'XXX'
     currentDocument = kate.activeDocument()
@@ -88,7 +90,7 @@ def get_number_espaces(currentDocument, currentLine,
     return PYTHON_SPACES * 2
 
 
-@kate.action('super', shortcut='Alt+-', menu='Edit')
+@kate.action(**kate_plugins_settings['insertSuper'])
 def insertSuper():
     class_name = 'XXX'
     function_name = 'XXX'

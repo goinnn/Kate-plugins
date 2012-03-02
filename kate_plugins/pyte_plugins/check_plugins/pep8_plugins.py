@@ -5,6 +5,7 @@ import pep8
 
 from PyQt4 import QtCore
 
+from kate_settings_plugins import kate_plugins_settings
 from pyte_plugins.check_plugins import commons
 from utils import is_mymetype_python
 
@@ -31,8 +32,8 @@ class StoreErrorsChecker(pep8.Checker):
         return result
 
 
-@kate.action('pep8', shortcut='Alt+8', menu='Edit')
-def check_pep8(currentDocument=None):
+@kate.action(**kate_plugins_settings['checkPep8'])
+def checkPep8(currentDocument=None):
     if not commons.canCheckDocument(currentDocument):
         return
     currentDocument = currentDocument or kate.activeDocument()
@@ -69,7 +70,7 @@ def check_pep8(currentDocument=None):
 
 def createSignalCheckDocument(view, *args, **kwargs):
     doc = view.document()
-    doc.modifiedChanged.connect(check_pep8)
+    doc.modifiedChanged.connect(checkPep8)
 
 windowInterface = kate.application.activeMainWindow()
 windowInterface.connect(windowInterface,
