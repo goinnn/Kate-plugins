@@ -2,7 +2,8 @@ kate_plugins_settings = {
     'insertIPDB': {'text': 'ipdb', 'shortcut': 'Ctrl+I', 'menu': 'Edit', 'icon': None},
     'insertInit': {'text': '__init__', 'shortcut': 'Ctrl+-', 'menu': 'Edit', 'icon': None},
     'insertSuper': {'text': 'super', 'shortcut': 'Alt+-', 'menu': 'Edit', 'icon': None},
-    'refreshMarks': {'text': 'refresh marks', 'shortcut': 'Alt+5', 'menu': 'Edit', 'icon': None},
+    'checkAll': {'text': 'Check all', 'shortcut': 'Alt+5', 'menu': 'Edit', 'icon': None},
+    'checkPyflakes': {'text': 'pyflakes', 'shortcut':'Alt+7', 'menu':'Edit', 'icon': None},
     'parseCode': {'text': 'Parse code python', 'shortcut': 'Alt+6', 'menu': 'Edit', 'icon': None},
     'checkPep8': {'text': 'Pep8', 'shortcut': 'Alt+8', 'menu': 'Edit', 'icon': None},
     'createForm': {'text': 'Create Django Form', 'shortcut': 'Ctrl+Alt+F', 'menu': 'Edit', 'icon': None},
@@ -12,5 +13,4 @@ kate_plugins_settings = {
     'insertReady': {'text': 'jQuery Ready', 'shortcut': 'Ctrl+J', 'menu': 'Edit', 'icon': None},
     'togglePrettyJsonFormat': {'text': 'Pretty Json', 'shortcut': 'Ctrl+Alt+J', 'menu': 'Edit', 'icon': None},
     'checkJslint': {'text': 'JSLint', 'shortcut': 'Alt+J', 'menu': 'Edit', 'icon': None},
-    'checkPyflakes': {'text': 'pyflakes', 'shortcut':'Alt+7', 'menu':'Edit'},
 }

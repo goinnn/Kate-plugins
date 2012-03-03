@@ -6,7 +6,7 @@ from kate_settings_plugins import kate_plugins_settings
 
 from pyte_plugins.check_plugins.commons import (canCheckDocument, showOk,
                                                 showErrors)
-from pyte_plugins.check_plugins.refresh_marks_plugins import refreshMarks
+from pyte_plugins.check_plugins.check_all_plugins import checkAll
 
 
 @kate.action(**kate_plugins_settings['parseCode'])
@@ -14,7 +14,7 @@ def parseCode(doc=None, refresh=True, show_popup=True):
     if not canCheckDocument(doc):
         return
     if refresh:
-        refreshMarks(doc, ['parseCode'], exclude_all=not doc)
+        checkAll(doc, ['parseCode'], exclude_all=not doc)
     doc = doc or kate.activeDocument()
     text = unicode(doc.text())
     text = text.encode('utf-8', 'ignore')

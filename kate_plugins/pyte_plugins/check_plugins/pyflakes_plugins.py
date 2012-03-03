@@ -6,7 +6,7 @@ from pyflakes.messages import Message
 
 from kate_settings_plugins import kate_plugins_settings
 from pyte_plugins.check_plugins import commons
-from pyte_plugins.check_plugins.refresh_marks_plugins import refreshMarks
+from pyte_plugins.check_plugins.check_all_plugins import checkAll
 
 
 def pyflakes(codeString, filename):
@@ -42,8 +42,8 @@ def checkPyflakes(currentDocument=None, refresh=True, show_popup=True):
     if not commons.canCheckDocument(currentDocument):
         return
     if refresh:
-        refreshMarks(currentDocument, ['checkPyflakes'],
-                     exclude_all=not currentDocument)
+        checkAll(currentDocument, ['checkPyflakes'],
+                 exclude_all=not currentDocument)
     currentDocument = currentDocument or kate.activeDocument()
 
     path = unicode(currentDocument.url().path())

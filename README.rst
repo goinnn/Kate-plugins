@@ -23,7 +23,7 @@ Installation
     * Install `Pysmell <http://pypi.python.org/pypi/pysmell>`_
     * Install `PEP8 <http://pypi.python.org/pypi/pep8>`_
     * Install `PyFlakes <http://pypi.python.org/pypi/pyflakes>`_
-    * Install `pyjslint <http://pypi.python.org/pypi/pyjslint>`_ (it requires NodeJS, read the pyjslint readme)
+    * Install `pyjslint <http://pypi.python.org/pypi/pyjslint>`_ (it requires `NodeJS <http://nodejs.org/>`_, read the pyjslint readme)
 
 ::
 
@@ -106,12 +106,11 @@ Parse syntax (python)
  * Shortcut: Alt+6 or when you save the file
  * Parse syntax this file and show a error list, or a dialog say "OK"
 
-Refresh marks (python)
-----------------------
+Check All (python/javascript)
+-----------------------------
 
  * Shortcut: Alt+5
- * When run pep8, pyflakes, parse syntax or jslint plugin these create marks. If after some of these create marks and after you insert a line breaks, if possible that you must run this plugin to refresh the crazy marks.
-
+ * Check pep8, pyflakes, parse syntax and jslint
 
 Template Django urls (django)
 -----------------------------
@@ -137,23 +136,23 @@ Create Django model (django)
  * Template to model class
 
 
-Autocomplete static to javascript (js)
---------------------------------------
+Autocomplete static to javascript (javascript)
+----------------------------------------------
  * Shortcut: It is automatical
  * This is a first version
 
-jQuery ready (js)
------------------
+jQuery ready (javascript)
+-------------------------
  * Shortcut: Ctrl+J
  * Template jQuery ready
 
-Pretty JSON (js)
-----------------
+Pretty JSON (javascript)
+------------------------
  * Shortcut: Ctrl+Alt+J
  * Convert a horrible json in a pretty JSON :-)
 
-JSLint (js)
------------
+JSLint (javascript)
+-------------------
  * Shortcut: Alt+J
  * Use JSLint to look for errors and bad code, highlights lines with problems
  * It uses `pyjslint <http://pypi.python.org/pypi/pyjslint>`_ so it must be present in the system (and working!)

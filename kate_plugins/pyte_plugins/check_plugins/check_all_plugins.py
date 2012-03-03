@@ -11,12 +11,9 @@ def clearMarksOfError(doc, mark_iface):
             mark_iface.removeMark(line, mark_iface.Error)
 
 
-@kate.action(**kate_plugins_settings['refreshMarks'])
-def refreshMarks(doc=None, excludes=None, exclude_all=False):
+@kate.action(**kate_plugins_settings['checkAll'])
+def checkAll(doc=None, excludes=None, exclude_all=False):
     from pyte_plugins.check_plugins.parse_plugins import parseCode
-    from pyte_plugins.check_plugins.pyflakes_plugins import checkPyflakes
-    from pyte_plugins.check_plugins.pep8_plugins import checkPep8
-    from jste_plugins.jslint_plugins import checkJslint
     if not doc or not doc.isModified():
         excludes = excludes or []
         currentDoc = doc or kate.activeDocument()
@@ -27,16 +24,30 @@ def refreshMarks(doc=None, excludes=None, exclude_all=False):
             if not 'parseCode' in excludes:
                 parseCode(currentDoc, refresh=False, show_popup=show_popup)
             if not 'checkPyflakes' in excludes:
-                checkPyflakes(currentDoc, refresh=False, show_popup=show_popup)
+                try:
+                    from pyte_plugins.check_plugins.pyflakes_plugins import checkPyflakes
+                    checkPyflakes(currentDoc, refresh=False,
+                                  show_popup=show_popup)
+                except ImportError:
+                    pass
             if not 'checkPep8' in excludes:
-                checkPep8(currentDoc, refresh=False, show_popup=show_popup)
+                try:
+                    from pyte_plugins.check_plugins.pep8_plugins import checkPep8
+                    checkPep8(currentDoc, refresh=False, show_popup=show_popup)
+                except ImportError:
+                    pass
             if not 'checkJslint' in excludes:
-                checkJslint(currentDoc, refresh=False, show_popup=show_popup)
+                try:
+                    from jste_plugins.jslint_plugins import checkJslint
+                    checkJslint(currentDoc, refresh=False,
+                                show_popup=show_popup)
+                except ImportError:
+                    pass
 
 
 def createSignalCheckDocument(view, *args, **kwargs):
     doc = view.document()
-    doc.modifiedChanged.connect(refreshMarks)
+    doc.modifiedChanged.connect(checkAll)
 
 windowInterface = kate.application.activeMainWindow()
 windowInterface.connect(windowInterface,

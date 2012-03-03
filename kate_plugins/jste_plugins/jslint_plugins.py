@@ -8,7 +8,7 @@ from utils import is_mymetype_js
 
 from kate_settings_plugins import kate_plugins_settings
 from pyte_plugins.check_plugins import commons
-from pyte_plugins.check_plugins.refresh_marks_plugins import refreshMarks
+from pyte_plugins.check_plugins.check_all_plugins import checkAll
 
 
 pattern = re.compile(r"Lint at line (\d+) character (\d+): (.*)")
@@ -20,8 +20,8 @@ def checkJslint(currentDocument=None, refresh=True, show_popup=True):
                                     not currentDocument.isModified())):
         return
     if refresh:
-        refreshMarks(currentDocument, ['checkJslint'],
-                     exclude_all=not currentDocument)
+        checkAll(currentDocument, ['checkJslint'],
+                 exclude_all=not currentDocument)
     currentDocument = currentDocument or kate.activeDocument()
     path = unicode(currentDocument.url().path())
     mark_key = '%s-jslint' % path
