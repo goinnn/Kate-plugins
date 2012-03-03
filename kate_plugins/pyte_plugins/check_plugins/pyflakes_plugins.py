@@ -3,10 +3,10 @@ import _ast
 import kate
 from pyflakes.checker import Checker
 from pyflakes.messages import Message
-from PyQt4 import QtCore
 
 from kate_settings_plugins import kate_plugins_settings
 from pyte_plugins.check_plugins import commons
+from pyte_plugins.check_plugins.refresh_marks_plugins import refreshMarks
 
 
 def pyflakes(codeString, filename):
@@ -38,9 +38,12 @@ def pyflakes(codeString, filename):
 
 
 @kate.action(**kate_plugins_settings['checkPyflakes'])
-def checkPyflakes(currentDocument=None):
+def checkPyflakes(currentDocument=None, refresh=True, show_popup=True):
     if not commons.canCheckDocument(currentDocument):
         return
+    if refresh:
+        refreshMarks(currentDocument, ['checkPyflakes'],
+                     exclude_all=not currentDocument)
     currentDocument = currentDocument or kate.activeDocument()
 
     path = unicode(currentDocument.url().path())
@@ -51,8 +54,8 @@ def checkPyflakes(currentDocument=None):
     errors_to_show = []
 
     if len(errors) == 0:
-        commons.removeOldMarks(mark_key, currentDocument)
-        commons.showOk("Pyflakes Ok")
+        if show_popup:
+            commons.showOk("Pyflakes Ok")
         return
 
     # Prepare errors found for painting
@@ -64,14 +67,4 @@ def checkPyflakes(currentDocument=None):
             })
 
     commons.showErrors('Pyflakes Errors:', errors_to_show, mark_key,
-                       currentDocument)
-
-
-def createSignalCheckDocument(view, *args, **kwargs):
-    doc = view.document()
-    doc.modifiedChanged.connect(checkPyflakes)
-
-windowInterface = kate.application.activeMainWindow()
-windowInterface.connect(windowInterface,
-                QtCore.SIGNAL('viewCreated(KTextEditor::View*)'),
-                createSignalCheckDocument)
+                       currentDocument, show_popup=show_popup)

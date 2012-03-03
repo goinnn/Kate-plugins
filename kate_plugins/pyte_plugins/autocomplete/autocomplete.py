@@ -151,7 +151,9 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
 
     def _parseText(self, view, word, line):
         doc = view.document()
-        text_list = unicode(doc.text()).split("\n")
+        text = unicode(doc.text())
+        text = text.encode('utf-8', 'ignore')
+        text_list = text.split("\n")
         raw, column = word.start().position()
         line = text_list[raw]
         if ";" in line and not "'" in line and not '"' in line:

@@ -3,10 +3,10 @@ import sys
 import kate
 import pep8
 
-from PyQt4 import QtCore
 
 from kate_settings_plugins import kate_plugins_settings
 from pyte_plugins.check_plugins import commons
+from pyte_plugins.check_plugins.refresh_marks_plugins import refreshMarks
 
 
 class StoreErrorsChecker(pep8.Checker):
@@ -32,13 +32,17 @@ class StoreErrorsChecker(pep8.Checker):
 
 
 @kate.action(**kate_plugins_settings['checkPep8'])
-def checkPep8(currentDocument=None):
+def checkPep8(currentDocument=None, refresh=True, show_popup=True):
     if not commons.canCheckDocument(currentDocument):
         return
+    if refresh:
+        refreshMarks(currentDocument, ['checkPep8'],
+                     exclude_all=not currentDocument)
     currentDocument = currentDocument or kate.activeDocument()
     if currentDocument.isModified():
-        kate.gui.popup('You must save the file first', 3,
-                       icon='dialog-warning', minTextWidth=200)
+        if show_popup:
+            kate.gui.popup('You must save the file first', 3,
+                           icon='dialog-warning', minTextWidth=200)
         return
     path = unicode(currentDocument.url().path())
     mark_key = '%s-pep8' % unicode(currentDocument.url().path())
@@ -50,8 +54,8 @@ def checkPep8(currentDocument=None):
     errors = checker.get_errors()
 
     if len(errors) == 0:
-        commons.removeOldMarks(mark_key, currentDocument)
-        commons.showOk('Pep8 Ok')
+        if show_popup:
+            commons.showOk('Pep8 Ok')
         return
 
     errors_to_show = []
@@ -64,16 +68,5 @@ def checkPep8(currentDocument=None):
             "filename": path,
             "message": error[3],
             })
-
     commons.showErrors('Pep8 Errors:', errors_to_show,
-                       mark_key, currentDocument)
-
-
-def createSignalCheckDocument(view, *args, **kwargs):
-    doc = view.document()
-    doc.modifiedChanged.connect(checkPep8)
-
-windowInterface = kate.application.activeMainWindow()
-windowInterface.connect(windowInterface,
-                QtCore.SIGNAL('viewCreated(KTextEditor::View*)'),
-                createSignalCheckDocument)
+                       mark_key, currentDocument, show_popup=show_popup)
