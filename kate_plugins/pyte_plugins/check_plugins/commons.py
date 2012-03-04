@@ -23,10 +23,7 @@ def showErrors(message, errors, key_mark, doc, time=10, icon='dialog-warning',
             message += '%s\n' % generateErrorMessage(error)
         elif i == max_errors:
             message += '\n And others'
-        mark = kate.KTextEditor.Mark()
-        mark.line = error[key_line] - 1
-        mark.type = mark_iface.Error
-        mark_iface.setMark(mark.line, mark.type)
+        mark_iface.setMark(error[key_line] - 1, mark_iface.Error)
     if show_popup:
         kate.gui.popup(message, time, icon, minTextWidth=200)
 
