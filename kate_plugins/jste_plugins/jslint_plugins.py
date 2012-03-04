@@ -6,7 +6,7 @@ from pyjslint import check_JSLint
 
 from utils import is_mymetype_js
 
-from kate_settings_plugins import kate_plugins_settings
+from kate_settings_plugins import KATE_ACTIONS
 from pyte_plugins.check_plugins import commons
 from pyte_plugins.check_plugins.check_all_plugins import checkAll
 
@@ -14,7 +14,7 @@ from pyte_plugins.check_plugins.check_all_plugins import checkAll
 pattern = re.compile(r"Lint at line (\d+) character (\d+): (.*)")
 
 
-@kate.action(**kate_plugins_settings['checkJslint'])
+@kate.action(**KATE_ACTIONS['checkJslint'])
 def checkJslint(currentDocument=None, refresh=True, show_popup=True):
     if not (not currentDocument or (is_mymetype_js(currentDocument) and
                                     not currentDocument.isModified())):

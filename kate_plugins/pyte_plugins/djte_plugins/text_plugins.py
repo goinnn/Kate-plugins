@@ -1,6 +1,6 @@
 import kate
 
-from kate_settings_plugins import kate_plugins_settings
+from kate_settings_plugins import KATE_ACTIONS
 from utils import insertText
 
 TEXT_URLS = """from django.conf.urls.defaults import patterns, url
@@ -18,7 +18,7 @@ from django.template import RequestContext
 """
 
 
-@kate.action(**kate_plugins_settings['importUrls'])
+@kate.action(**KATE_ACTIONS['importUrls'])
 def importUrls():
     currentDocument = kate.activeDocument()
     path = unicode(currentDocument.url().directory())
@@ -27,6 +27,6 @@ def importUrls():
     insertText(TEXT_URLS % application)
 
 
-@kate.action(**kate_plugins_settings['importViews'])
+@kate.action(**KATE_ACTIONS['importViews'])
 def importViews():
     insertText(TEXT_VIEWS)

@@ -2,7 +2,7 @@ import kate
 
 from PyQt4 import QtCore
 
-from kate_settings_plugins import kate_plugins_settings
+from kate_settings_plugins import KATE_ACTIONS, CHECKALL_TO_SAVE
 
 
 def clearMarksOfError(doc, mark_iface):
@@ -11,7 +11,7 @@ def clearMarksOfError(doc, mark_iface):
             mark_iface.removeMark(line, mark_iface.Error)
 
 
-@kate.action(**kate_plugins_settings['checkAll'])
+@kate.action(**KATE_ACTIONS['checkAll'])
 def checkAll(doc=None, excludes=None, exclude_all=False):
     from pyte_plugins.check_plugins.parse_plugins import parseCode
     if not doc or not doc.isModified():
@@ -49,7 +49,9 @@ def createSignalCheckDocument(view, *args, **kwargs):
     doc = view.document()
     doc.modifiedChanged.connect(checkAll)
 
-windowInterface = kate.application.activeMainWindow()
-windowInterface.connect(windowInterface,
-                QtCore.SIGNAL('viewCreated(KTextEditor::View*)'),
-                createSignalCheckDocument)
+
+if CHECKALL_TO_SAVE:
+    windowInterface = kate.application.activeMainWindow()
+    windowInterface.connect(windowInterface,
+                            QtCore.SIGNAL('viewCreated(KTextEditor::View*)'),
+                            createSignalCheckDocument)

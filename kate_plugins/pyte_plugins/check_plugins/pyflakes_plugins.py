@@ -4,7 +4,7 @@ import kate
 from pyflakes.checker import Checker
 from pyflakes.messages import Message
 
-from kate_settings_plugins import kate_plugins_settings
+from kate_settings_plugins import KATE_ACTIONS
 from pyte_plugins.check_plugins import commons
 from pyte_plugins.check_plugins.check_all_plugins import checkAll
 
@@ -37,7 +37,7 @@ def pyflakes(codeString, filename):
         return w.messages
 
 
-@kate.action(**kate_plugins_settings['checkPyflakes'])
+@kate.action(**KATE_ACTIONS['checkPyflakes'])
 def checkPyflakes(currentDocument=None, refresh=True, show_popup=True):
     if not commons.canCheckDocument(currentDocument):
         return

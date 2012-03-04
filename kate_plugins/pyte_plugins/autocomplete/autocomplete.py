@@ -6,6 +6,7 @@ from PyKDE4.ktexteditor import KTextEditor
 from PyQt4 import QtCore
 
 from autopate import AbstractCodeCompletionModel
+from kate_settings_plugins import PYTHON_AUTOCOMPLETE_ENABLED
 from pyte_plugins.autocomplete.pyplete import PyPlete
 from pyte_plugins.autocomplete.parse import (from_first_imporable, import_complete,
                                              from_other_imporables, from_complete)
@@ -179,8 +180,10 @@ def createSignalAutocompleteDocument(view, *args, **kwargs):
     cci = view.codeCompletionInterface()
     cci.registerCompletionModel(codecompletationmodel)
 
-windowInterface = kate.application.activeMainWindow()
-codecompletationmodel = PythonCodeCompletionModel(windowInterface)
-windowInterface.connect(windowInterface,
-                QtCore.SIGNAL('viewCreated(KTextEditor::View*)'),
-                createSignalAutocompleteDocument)
+
+if PYTHON_AUTOCOMPLETE_ENABLED:
+    windowInterface = kate.application.activeMainWindow()
+    codecompletationmodel = PythonCodeCompletionModel(windowInterface)
+    windowInterface.connect(windowInterface,
+                    QtCore.SIGNAL('viewCreated(KTextEditor::View*)'),
+                    createSignalAutocompleteDocument)

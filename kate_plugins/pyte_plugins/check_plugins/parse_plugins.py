@@ -2,14 +2,14 @@ import compiler
 
 import kate
 
-from kate_settings_plugins import kate_plugins_settings
+from kate_settings_plugins import KATE_ACTIONS
 
 from pyte_plugins.check_plugins.commons import (canCheckDocument, showOk,
                                                 showErrors)
 from pyte_plugins.check_plugins.check_all_plugins import checkAll
 
 
-@kate.action(**kate_plugins_settings['parseCode'])
+@kate.action(**KATE_ACTIONS['parseCode'])
 def parseCode(doc=None, refresh=True, show_popup=True):
     if not canCheckDocument(doc):
         return

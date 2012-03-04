@@ -4,7 +4,7 @@ import kate
 import pep8
 
 
-from kate_settings_plugins import kate_plugins_settings
+from kate_settings_plugins import KATE_ACTIONS
 from pyte_plugins.check_plugins import commons
 from pyte_plugins.check_plugins.check_all_plugins import checkAll
 
@@ -31,7 +31,7 @@ class StoreErrorsChecker(pep8.Checker):
         return result
 
 
-@kate.action(**kate_plugins_settings['checkPep8'])
+@kate.action(**KATE_ACTIONS['checkPep8'])
 def checkPep8(currentDocument=None, refresh=True, show_popup=True):
     if not commons.canCheckDocument(currentDocument):
         return
