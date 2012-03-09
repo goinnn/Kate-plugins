@@ -94,9 +94,23 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
                 return QVariant(item_description)
         return QVariant()
 
+    def parent(self, index):
+        if index.internalId():
+            return self.createIndex(0, 0, 0)
+        else:
+            return QModelIndex()
+
+    def rowCount(self, parent):
+        lenResultList = len(self.resultList)
+        if not parent.isValid() and lenResultList:
+            return 1
+        elif parent.parent().isValid():
+            return 0  # Do not make the model look hierarchical
+        else:
+            return lenResultList
+
     def executeCompletionItem(self, doc, word, row):
         return super(AbstractCodeCompletionModel, self).executeCompletionItem(doc, word, row)
-
 
     #http://api.kde.org/4.5-api/kdelibs-apidocs/interfaces/ktexteditor/html/classKTextEditor_1_1CodeCompletionModel.html#3bd60270a94fe2001891651b5332d42b
     def index(self, row, column, parent):
@@ -119,23 +133,8 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
             line = line[opmax_index + 1:]
         return line.strip()
 
-    def parent(self, index):
-        if index.internalId():
-            return self.createIndex(0, 0, 0)
-        else:
-            return QModelIndex()
-
     def parseLine(self, line):
         return line.strip()
-
-    def rowCount(self, parent):
-        lenResultList = len(self.resultList)
-        if not parent.isValid() and lenResultList:
-            return 1
-        elif parent.parent().isValid():
-            return 0  # Do not make the model look hierarchical
-        else:
-            return lenResultList
 
 
 class AbstractJSONFileCodeCompletionModel(AbstractCodeCompletionModel):
