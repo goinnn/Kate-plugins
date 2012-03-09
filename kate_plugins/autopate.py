@@ -8,7 +8,8 @@ from PyQt4.QtCore import QModelIndex, QSize, Qt, QVariant
 
 class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
 
-    MIMETYPES = None
+    TITLE_AUTOCOMPLETATION = 'Autopate'
+    MIMETYPES = []
     OPERATORS = []
     SEPARATOR = '.'
 
@@ -57,10 +58,10 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
         line_end = word.end().line()
         self.resultList = []
         self.invocationType = invocationType
-        document_path = unicode(view.document().url().path())
         if line_start != line_end:
             return None
-        if not document_path.split(".")[-1] in self.MIMETYPES:
+        mimetype = unicode(view.document().mimeType())
+        if not mimetype in self.MIMETYPES:
             return None
         doc = view.document()
         line = unicode(doc.line(line_start))
@@ -70,6 +71,8 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
 
     def data(self, index, role, *args, **kwargs):
         #http://api.kde.org/4.5-api/kdelibs-apidocs/kate/html/katewordcompletion_8cpp_source.html
+        if not index.parent().isValid():
+            return self.TITLE_AUTOCOMPLETATION
         item = self.resultList[index.row()]
         if index.column() == KTextEditor.CodeCompletionModel.Name:
             if role == Qt.DisplayRole:
@@ -94,6 +97,21 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
     def executeCompletionItem(self, doc, word, row):
         return super(AbstractCodeCompletionModel, self).executeCompletionItem(doc, word, row)
 
+
+    #http://api.kde.org/4.5-api/kdelibs-apidocs/interfaces/ktexteditor/html/classKTextEditor_1_1CodeCompletionModel.html#3bd60270a94fe2001891651b5332d42b
+    def index(self, row, column, parent):
+        if not parent.isValid():
+            if row == 0:
+                return self.createIndex(row, column, 0)
+            else:
+                return QModelIndex()
+        elif parent.parent().isValid():
+            return QModelIndex()
+        if row < 0 or row >= len(self.resultList) or column < 0 or column >= KTextEditor.CodeCompletionModel.ColumnCount:
+            return QModelIndex()
+
+        return self.createIndex(row, column, 1)
+
     def getLastExpression(self, line):
         opmax = max(self.OPERATORS, key=lambda e: line.rfind(e))
         opmax_index = line.rfind(opmax)
@@ -101,22 +119,23 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
             line = line[opmax_index + 1:]
         return line.strip()
 
-    #http://api.kde.org/4.5-api/kdelibs-apidocs/interfaces/ktexteditor/html/classKTextEditor_1_1CodeCompletionModel.html#3bd60270a94fe2001891651b5332d42b
-    def index(self, row, column, parent):
-        if (row < 0 or row >= len(self.resultList) or
-            column < 0 or column >= KTextEditor.CodeCompletionModel.ColumnCount or
-            parent.isValid()):
+    def parent(self, index):
+        if index.internalId():
+            return self.createIndex(0, 0, 0)
+        else:
             return QModelIndex()
-        return self.createIndex(row, column)
 
     def parseLine(self, line):
         return line.strip()
 
     def rowCount(self, parent):
-        if parent.isValid():
+        lenResultList = len(self.resultList)
+        if not parent.isValid() and lenResultList:
+            return 1
+        elif parent.parent().isValid():
             return 0  # Do not make the model look hierarchical
         else:
-            return len(self.resultList)
+            return lenResultList
 
 
 class AbstractJSONFileCodeCompletionModel(AbstractCodeCompletionModel):

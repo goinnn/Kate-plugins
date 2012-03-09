@@ -8,21 +8,20 @@ from PyQt4 import QtCore
 from autopate import AbstractCodeCompletionModel
 from kate_settings_plugins import PYTHON_AUTOCOMPLETE_ENABLED
 from pyte_plugins.autocomplete.pyplete import PyPlete
-from pyte_plugins.autocomplete.parse import (from_first_imporable, import_complete,
-                                             from_other_imporables, from_complete)
+from pyte_plugins.autocomplete.parse import (import_complete,
+                                             from_first_imporable,
+                                             from_other_imporables,
+                                             from_complete)
 
-global python_path
-global windowInterface
-global codecompletationmodel
 global pyplete
+global python_path
 python_path = []
-
-PYSMELL_PREFIX = '__package____imporable__.'
 
 
 class PythonCodeCompletionModel(AbstractCodeCompletionModel):
 
-    MIMETYPES = ['', 'py', 'pyc']
+    TITLE_AUTOCOMPLETATION = "Python Auto Complete"
+    MIMETYPES = ['text/plain', 'text/x-python']
     OPERATORS = ["=", " ", "[", "]", "(", ")", "{", "}", ":", ">", "<",
                  "+", "-", "*", "/", "%", " and ", " or ", ","]
 

@@ -3,6 +3,7 @@
 
 * Other settings: PYTHON_AUTOCOMPLETE_ENABLED, JAVASCRIPT_AUTOCOMPLETE_ENABLED, CHECKALL_TO_SAVE
 * Remove old popups in check plugins
+* Title in the autocompletes
 
 0.0.8  (2012-03-03)
 ===================

@@ -8,7 +8,8 @@ from kate_settings_plugins import JAVASCRIPT_AUTOCOMPLETE_ENABLED
 
 class StaticJSCodeCompletionModel(AbstractJSONFileCodeCompletionModel):
 
-    MIMETYPES = ['js', 'html', 'htm']
+    MIMETYPES = ['application/javascript', 'text/html']
+    TITLE_AUTOCOMPLETATION = "JS Auto Complete"
     # generated with jste_plugins/autocomplete_js.gen
     FILE_PATH = 'jste_plugins/autocomplete_js.json'
     OPERATORS = ["=", " ", "[", "]", "(", ")", "{", "}", ":", ">", "<",
