@@ -32,3 +32,8 @@ KATE_ACTIONS = {
 PYTHON_AUTOCOMPLETE_ENABLED = True
 JAVASCRIPT_AUTOCOMPLETE_ENABLED = True
 CHECKALL_TO_SAVE = True
+
+try:
+    from kate_settings_local import *
+except ImportError:
+    pass
