@@ -15,6 +15,7 @@ def parseCode(doc=None, refresh=True, show_popup=True):
         return
     if refresh:
         checkAll(doc, ['parseCode'], exclude_all=not doc)
+    move_cursor = not doc
     doc = doc or kate.activeDocument()
     text = unicode(doc.text())
     text = text.encode('utf-8', 'ignore')
@@ -29,4 +30,5 @@ def parseCode(doc=None, refresh=True, show_popup=True):
         error['text'] = e.text
         error['line'] = e.lineno
         showErrors('Parse code Errors:', [error], mark_key, doc,
-                    show_popup=show_popup)
+                    show_popup=show_popup,
+                    move_cursor=move_cursor)

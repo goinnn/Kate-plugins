@@ -38,6 +38,7 @@ def checkPep8(currentDocument=None, refresh=True, show_popup=True):
     if refresh:
         checkAll(currentDocument, ['checkPep8'],
                  exclude_all=not currentDocument)
+    move_cursor = not currentDocument
     currentDocument = currentDocument or kate.activeDocument()
     if currentDocument.isModified():
         if show_popup:
@@ -69,4 +70,6 @@ def checkPep8(currentDocument=None, refresh=True, show_popup=True):
             "message": error[3],
             })
     commons.showErrors('Pep8 Errors:', errors_to_show,
-                       mark_key, currentDocument, show_popup=show_popup)
+                       mark_key, currentDocument,
+                       show_popup=show_popup,
+                       move_cursor=move_cursor)

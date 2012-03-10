@@ -22,6 +22,7 @@ def checkJslint(currentDocument=None, refresh=True, show_popup=True):
     if refresh:
         checkAll(currentDocument, ['checkJslint'],
                  exclude_all=not currentDocument)
+    move_cursor = not currentDocument
     currentDocument = currentDocument or kate.activeDocument()
     path = unicode(currentDocument.url().path())
     mark_key = '%s-jslint' % path
@@ -46,5 +47,6 @@ def checkJslint(currentDocument=None, refresh=True, show_popup=True):
             commons.showOk("JSLint Ok")
         return
 
-    commons.showErrors('JSLint Errors:', errors_to_show, mark_key,
-                       currentDocument, show_popup=show_popup)
+    commons.showErrors('JSLint Errors:',
+                       errors_to_show, mark_key, currentDocument,
+                       show_popup=show_popup, move_cursor=move_cursor)
