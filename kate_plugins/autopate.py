@@ -36,7 +36,7 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
 
     @classmethod
     def createItemAutoComplete(cls, text, icon='unknown', args=None,
-                               description=None, place='code'):
+                               description=None):
         icon_converter = {'package': 'code-block',
                           'module': 'code-context',
                           'unknown': 'unknown',
@@ -151,9 +151,13 @@ class AbstractJSONFileCodeCompletionModel(AbstractCodeCompletionModel):
             return
         line = self.getLastExpression(line)
         children = self.getChildrenInJSON(line, self.json)
+        if not children:
+            return
         for child, attrs in children.items():
             self.resultList.append(self.createItemAutoComplete(text=child,
-                                                               icon=attrs.get('icon', 'unknown')))
+                                            icon=attrs.get('icon', 'unknown'),
+                                            args=attrs.get('args', None),
+                                            description=attrs.get('description', None)))
 
     def getChildrenInJSON(self, keys, json):
         if not self.SEPARATOR in keys:

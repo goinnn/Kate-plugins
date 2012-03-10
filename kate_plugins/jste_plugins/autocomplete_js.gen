@@ -1,23 +1,40 @@
 /* File generated with this script: */
-function getIcon(child, childKey) {
+function kateGetIcon(child, childKey) {
     if (!child) {
         return "constant";
     }
     try {
-        var toString = child['toString'];
-        var repr = toString();
+        var repr = child.toString();
     } catch(e) {
         return "constant";
     }
     if (repr == "[object "+ childKey +"]" ) {
         return "class";
-    } else if (repr.indexOf("[object ")) {
+    } else if (repr.indexOf("[object ") != -1) {
         return "module";
     }
-    return "function";
+    if (typeof(child) == "function") {
+        return "function";
+    }
+    return "constant";
 }
 
-function getJSAutocomplete(obj, levelmax, level, dict) {
+function kateGetArgs(child) {
+    var args = "";
+    try {
+        var firstLine = child.toString().split("\n")[0];
+        var arg1 = firstLine.indexOf("(") + 1;
+        var arg2 = firstLine.indexOf(")");
+        args = firstLine.substring(arg1, arg2);
+        if (args) {
+            args = "(" + args + ")";
+        }
+    } catch(e) {
+    }
+    return args;
+}
+
+function kateGetJSAutocomplete(obj, levelmax, level, dict) {
     if (!dict) {
         dict = {}
     }
@@ -30,23 +47,34 @@ function getJSAutocomplete(obj, levelmax, level, dict) {
         children = {};
         var child = null;
         var childKeyInt = parseInt(childKey);
-        if (childKey != "window" && !childKeyInt && childKeyInt!=0) {
+
+        if (childKey != "window" && childKey.indexOf("kateGet") == -1 && !childKeyInt && childKeyInt!=0) {
             try {
                 child = obj[childKey];
                 if (level < levelmax) {
-                    children = getJSAutocomplete(child, levelmax, level, children);
+                    children = kateGetJSAutocomplete(child, levelmax, level, children);
                 }
             } catch(e) {
             }
             dict[childKey] = {"children": children};
-            if (child) {
-                dict[childKey]["icon"] = getIcon(child, childKey);
+            if (child != undefined) {
+                var icon = kateGetIcon(child, childKey);
+                dict[childKey]["icon"] = icon;
+                if (icon == "function") {
+                    var args = kateGetArgs(child);
+                    if (args) {
+                        dict[childKey]["args"] = kateGetArgs(child);
+                    }
+                }
+            } else {
+                dict[childKey]["icon"] = "constant";
             }
         }
     }
     return dict
 }
-result = JSON.stringify(getJSAutocomplete(window, 2))
+
+result = JSON.stringify(kateGetJSAutocomplete(window, 2))
 
 /* After in a python shell: */
 import simplejson
