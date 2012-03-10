@@ -109,9 +109,6 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
         else:
             return lenResultList
 
-    def executeCompletionItem(self, doc, word, row):
-        return super(AbstractCodeCompletionModel, self).executeCompletionItem(doc, word, row)
-
     #http://api.kde.org/4.5-api/kdelibs-apidocs/interfaces/ktexteditor/html/classKTextEditor_1_1CodeCompletionModel.html#3bd60270a94fe2001891651b5332d42b
     def index(self, row, column, parent):
         if not parent.isValid():

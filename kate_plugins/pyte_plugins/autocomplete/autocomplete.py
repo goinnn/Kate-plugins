@@ -56,23 +56,6 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
         if not is_auto and line and line_rough and not self.SEPARATOR in line_rough:
             is_auto = self.autoCompleteFile(view, word, line)
 
-    def executeCompletionItem(self, doc, word, row):
-        raw, col = word.start().position()
-        line = unicode(doc.line(raw))
-        line = self.parseLine(line)
-        t = self.resultList[row].get('type', None)
-        args = self.resultList[row].get('args', None).strip()
-        text = self.resultList[row].get('text', None)
-        if not "from" in line and not "import" in line and \
-           t in ['function', 'class']:
-            if args == '()':
-                doc.replaceText(word, '%s()' % text)
-                return
-            else:
-                doc.replaceText(word, '%s(' % text)
-                return
-        return super(PythonCodeCompletionModel, self).executeCompletionItem(doc, word, row)
-
     def parseLine(self, line):
         line = super(PythonCodeCompletionModel, self).parseLine(line)
         if "'" in line or '"' in line:
