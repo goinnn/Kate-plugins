@@ -1,6 +1,7 @@
 import kate
 
 from PyKDE4.kdecore import KConfig, KConfigGroup
+from PyKDE4.ktexteditor import KTextEditor
 
 
 def insertText(text, strip_line=False,
@@ -61,6 +62,14 @@ def get_last_session():
         session = session.replace('.katesession', '')
         return session
     return None
+
+
+def setSelectionFromCurrentPosition(pos, start, end):
+    view = kate.activeView()
+    cursor1 = KTextEditor.Cursor(pos.line() + start[0], pos.column() + start[1])
+    cursor2 = KTextEditor.Cursor(pos.line() + end[0], pos.column() + end[1])
+    view.setSelection(KTextEditor.Range(cursor1, cursor2))
+    view.setCursorPosition(cursor1)
 
 
 def ipdb(with_position=True):

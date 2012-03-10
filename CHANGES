@@ -10,6 +10,7 @@ Releases
 * Fix some error in js autocomplete
 * Now the python autocomplete can depend of the session
 * The checker plugins move to the first error when they are invoked
+* Improvement in the usability of the template Django urls plugin and jQuery ready plugin
 
 0.0.8  (2012-03-03)
 -------------------
