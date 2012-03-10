@@ -139,7 +139,6 @@ Create Django model (django)
 Autocomplete static to javascript (javascript)
 ----------------------------------------------
  * Shortcut: It is automatical
- * This is a first version
 
 jQuery ready (javascript)
 -------------------------
