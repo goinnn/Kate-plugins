@@ -59,15 +59,27 @@ Autocomplete (python)
  * Shortcut: It is automatical
  * from and import instruction
  * autocomplete into the code (beta) with `pysmell <http://pypi.python.org/pypi/pysmell>`_
- * There was a hook if you want to add your own packages python in the autocomplete structure. You should be create a file called "autocomplete_path.py" next to the "autocomplete.py" with a function "def path(doc, view)", like this:
+ * There was a hook if you want to add your own packages python in the autocomplete structure. You should be create a file called "autocomplete_path.py" next to the "autocomplete.py" with a function "def path(session, doc, view)", like this:
 
 ::
 
- def path(doc, view):
-     return ['/PATH/OF/THE/EGG1/name1.egg',
-             '/PATH/OF/THE/PACKAGE/',
-             ...
-             '/PATH/OF/THE/EGGN/namen.egg'] 
+ def path(session, doc, view):
+     if session == 'session1'
+        return ['/PATH/OF/THE/EGG1/name1.egg',
+                '/PATH/OF/THE/PACKAGE1/',
+                ...
+                '/PATH/OF/THE/EGGN/namen.egg'] 
+     elif session == 'session2':
+        return ['/PATH/OF/THE/EGG2/name2.egg',
+                '/PATH/OF/THE/PACKAGE2/',
+                ...
+                '/PATH/OF/THE/EGGN/namem.egg'] 
+      else:
+        return ['/PATH/OF/THE/EGG2/name3.egg',
+                '/PATH/OF/THE/PACKAGE3/',
+                ...
+                '/PATH/OF/THE/EGGN/namel.egg'] 
+
 
 insert IPDB (python)
 --------------------

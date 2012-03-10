@@ -12,6 +12,7 @@ from pyte_plugins.autocomplete.parse import (import_complete,
                                              from_first_imporable,
                                              from_other_imporables,
                                              from_complete)
+from utils import get_session
 
 global pyplete
 global python_path
@@ -25,18 +26,21 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
     OPERATORS = ["=", " ", "[", "]", "(", ")", "{", "}", ":", ">", "<",
                  "+", "-", "*", "/", "%", " and ", " or ", ","]
 
+    def __init__(self, session=None, *args, **kwargs):
+        super(PythonCodeCompletionModel, self).__init__(*args, **kwargs)
+        self.session = session
+
     @classmethod
-    def getPythonPath(cls):
+    def getPythonPath(cls, recalculeSession=False):
         global python_path
-        if python_path:
+        if python_path and not recalculeSession:
             return python_path
         python_path = sys.path
         try:
             from pyte_plugins.autocomplete import autocomplete_path
             doc = kate.activeDocument()
             view = doc.activeView()
-            python_path = autocomplete_path.path(doc, view) + python_path
-            sys.path = python_path
+            python_path = autocomplete_path.path(recalculeSession, doc, view) + python_path
         except ImportError:
             pass
         return python_path
@@ -44,6 +48,9 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
     def completionInvoked(self, view, word, invocationType):
         line = super(PythonCodeCompletionModel, self).completionInvoked(view,
                                                        word, invocationType)
+        session = get_session()
+        if self.session != session:
+            self.setSession(session)
         if line is None:
             return
         is_auto = False
@@ -132,6 +139,14 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
             message = '%s\n  * line: %s' % (message, line)
         kate.gui.popup(message, 2, icon='dialog-warning', minTextWidth=200)
 
+    def setSession(self, session):
+        if session == self.session:
+            return
+        self.session = session
+        global pyplete
+        pyplete = PyPlete(PythonCodeCompletionModel.createItemAutoComplete,
+                          PythonCodeCompletionModel.getPythonPath(recalculeSession=self.session))
+
     def _parseText(self, view, word, line):
         doc = view.document()
         text = unicode(doc.text())
@@ -157,15 +172,18 @@ def createSignalAutocompleteDocument(view, *args, **kwargs):
     # http://api.kde.org/4.0-api/kdelibs-apidocs/kate/html/katecompletionmodel_8cpp_source.html
     # https://svn.reviewboard.kde.org/r/1640/diff/?expand=1
     global pyplete
+    session = get_session()
+    codecompletationmodel.setSession(session)
     pyplete = PyPlete(PythonCodeCompletionModel.createItemAutoComplete,
-                      PythonCodeCompletionModel.getPythonPath())
+                      PythonCodeCompletionModel.getPythonPath(recalculeSession=session))
     cci = view.codeCompletionInterface()
     cci.registerCompletionModel(codecompletationmodel)
 
 
 if PYTHON_AUTOCOMPLETE_ENABLED:
     windowInterface = kate.application.activeMainWindow()
-    codecompletationmodel = PythonCodeCompletionModel(windowInterface)
+    session = get_session()
+    codecompletationmodel = PythonCodeCompletionModel(session, windowInterface)
     windowInterface.connect(windowInterface,
                     QtCore.SIGNAL('viewCreated(KTextEditor::View*)'),
                     createSignalAutocompleteDocument)

@@ -5,6 +5,7 @@
 * Remove old popups in check plugins
 * Title in the autocompletes
 * Fix some error in js autocomplete
+* Now the python autocomplete can depend of the session
 
 0.0.8  (2012-03-03)
 ===================

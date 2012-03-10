@@ -1,5 +1,7 @@
 import kate
 
+from PyKDE4.kdecore import KConfig, KConfigGroup
+
 
 def insertText(text, strip_line=False,
                start_in_current_column=False,
@@ -35,6 +37,30 @@ def is_mymetype_js(doc, text_plain=False):
     elif mimetype == 'text/plain' and text_plain:
         return True
     return False
+
+
+def get_session():
+    main_window = kate.mainWindow()
+    title = unicode(main_window.windowTitle())
+    session = None
+    if title and title != 'Kate' and ":" in title:
+        session = title.split(":")[0]
+        if session == 'file':
+            session = None
+    if session:
+        return session
+    return get_last_session()
+
+
+def get_last_session():
+    config = KConfig('katerc')
+    kgroup = KConfigGroup(config, "General")
+    session = kgroup.readEntry("Last Session")
+    if session:
+        session = unicode(session)
+        session = session.replace('.katesession', '')
+        return session
+    return None
 
 
 def ipdb(with_position=True):
