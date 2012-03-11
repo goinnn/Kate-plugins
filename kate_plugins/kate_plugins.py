@@ -28,3 +28,5 @@ try:
     from pyte_plugins.check_plugins.pyflakes_plugins import *
 except ImportError:
     pass
+
+from xhtml_plugins.xml_plugins import *

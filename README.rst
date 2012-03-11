@@ -172,6 +172,11 @@ JSLint (javascript)
  * Use JSLint to look for errors and bad code, highlights lines with problems
  * It uses `pyjslint <http://pypi.python.org/pypi/pyjslint>`_ so it must be present in the system (and working!)
 
+Pretty XML (xhtml)
+------------------------
+ * Shortcut: Ctrl+Alt+X
+ * Convert a horrible xml in a pretty XML :-)
+
 Future Plugins
 ==============
 

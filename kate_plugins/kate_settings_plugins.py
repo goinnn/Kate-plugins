@@ -23,10 +23,12 @@ KATE_ACTIONS = {
                     'menu': 'Edit', 'icon': None},
     'insertReady': {'text': 'jQuery Ready', 'shortcut': 'Ctrl+J',
                     'menu': 'Edit', 'icon': None},
-    'togglePrettyJsonFormat': {'text': 'Pretty Json', 'shortcut': 'Ctrl+Alt+J',
-                               'menu': 'Edit', 'icon': None},
     'checkJslint': {'text': 'JSLint', 'shortcut': 'Alt+J',
                     'menu': 'Edit', 'icon': None},
+    'togglePrettyJsonFormat': {'text': 'Pretty Json', 'shortcut': 'Ctrl+Alt+J',
+                               'menu': 'Edit', 'icon': None},
+    'togglePrettyXMLFormat': {'text': 'Pretty XML', 'shortcut': 'Ctrl+Alt+X',
+                              'menu': 'Edit', 'icon': None},
 }
 
 PYTHON_AUTOCOMPLETE_ENABLED = True

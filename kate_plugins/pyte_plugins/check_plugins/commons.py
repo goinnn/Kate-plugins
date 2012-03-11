@@ -12,8 +12,9 @@ def showOk(message="Ok", time=3, icon='dialog-ok'):
 def generateErrorMessage(error, key_line='line', key_column='column', header=True):
     message = ''
     exclude_keys = [key_line, key_column, 'filename']
-    if header:
-        line = error[key_line]
+    line = error[key_line]
+    column = error.get(key_column, None)
+    if header or column:
         column = error.get(key_column, None)
         if column:
             message = '~*~ Position: (%s, %s)' % (line, column)
