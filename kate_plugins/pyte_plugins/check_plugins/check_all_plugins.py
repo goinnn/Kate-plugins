@@ -1,6 +1,6 @@
 import kate
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore
 
 from kate_settings_plugins import KATE_ACTIONS, CHECKALL_TO_SAVE
 
@@ -54,6 +54,9 @@ def checkAll(doc=None, excludes=None, exclude_all=False):
                     checkJslint(currentDoc, refresh=False)
                 except ImportError:
                     pass
+        if not doc and currentDoc.isModified() and not excludes:
+            kate.gui.popup('You must save the file first', 3,
+                            icon='dialog-warning', minTextWidth=200)
 
 
 def createSignalCheckDocument(view, *args, **kwargs):

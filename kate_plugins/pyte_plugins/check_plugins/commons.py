@@ -9,28 +9,95 @@ def showOk(message="Ok", time=3, icon='dialog-ok'):
     kate.gui.popup(message, time, icon='dialog-ok', minTextWidth=200)
 
 
-def generateErrorMessage(error):
+def generateErrorMessage(error, key_line='line', key_column='column', header=True):
     message = ''
+    exclude_keys = [key_line, key_column, 'filename']
+    if header:
+        line = error[key_line]
+        column = error.get(key_column, None)
+        if column:
+            message = '~*~ Position: (%s, %s)' % (line, column)
+        else:
+            message = '~*~ Line: %s' % line
+        message += ' ~*~'
     for key, value in error.items():
-        if value:
-            message = '%s\n * %s: %s' % (message, key, value)
+        if value and key not in exclude_keys:
+            if key != 'message':
+                message = '%s\n     * %s: %s' % (message, key, value)
+            else:
+                message = '%s\n     %s' % (message, value)
     return message
+
+
+def getErrorMessagesOrder(messages, max_errors, current_line=None):
+    messages_order = []
+    first_error = None
+    messages_items = messages.items()
+    messages_items.sort()
+    num_messages = 0
+    if not current_line:
+        for line, message in messages_items:
+            messages_order.extend(message)
+            num_messages += 1
+            if num_messages >= max_errors:
+                break
+        return (0, messages_order)
+    for i, error in enumerate(messages_items):
+        line = error[0]
+        message = error[1]
+        if line > current_line:
+            if first_error is None:
+                first_error = i
+            num_messages += 1
+            messages_order.extend(message)
+        if num_messages >= max_errors:
+            break
+    if len(messages_order) == max_errors:
+        return (first_error, messages_order)
+    for i, error in enumerate(messages_items):
+        line = error[0]
+        message = error[1]
+        if line <= current_line:
+            if first_error is None:
+                first_error = i
+            num_messages += 1
+            messages_order.extend(message)
+        else:
+            break
+        if num_messages >= max_errors:
+            break
+    return (first_error, messages_order)
 
 
 def showErrors(message, errors, key_mark, doc, time=10, icon='dialog-warning',
                key_line='line', key_column='column',
                max_errors=3, show_popup=True, move_cursor=False):
     mark_iface = doc.markInterface()
-    for i, error in enumerate(errors):
-        if i == 0 and move_cursor:
-            moveCursorTFirstError(error, key_line, key_column)
-        if i < max_errors:
-            message += '%s\n' % generateErrorMessage(error)
-        elif i == max_errors:
-            message += '\n And others'
-        mark_iface.setMark(error[key_line] - 1, mark_iface.Error)
+    messages = {}
+    view = kate.activeView()
+    pos = view.cursorPosition()
+    current_line = pos.line() + 1
+    for error in errors:
+        header = False
+        line = error[key_line]
+        if not messages.get(line, None):
+            header = True
+            messages[line] = []
+        error_message = generateErrorMessage(error, key_line, key_column, header)
+        messages[line].append(error_message)
+        mark_iface.setMark(line - 1, mark_iface.Error)
+
+    if move_cursor:
+        first_error, messages_show = getErrorMessagesOrder(messages,
+                                                           max_errors,
+                                                           current_line)
+        error = errors[first_error]
+        moveCursorTFirstError(error[key_line], error.get(key_column, 0))
+    else:
+        first_error, messages_show = getErrorMessagesOrder(messages, max_errors)
     if show_popup:
-        kate.gui.popup(message, time, icon, minTextWidth=200)
+        message = '%s\n%s' % (message, '\n'.join(messages_show))
+        kate.gui.popup(message, time, icon, minTextWidth=300)
 
 
 def canCheckDocument(doc, text_plain=False):
@@ -38,9 +105,10 @@ def canCheckDocument(doc, text_plain=False):
                        not doc.isModified())
 
 
-def moveCursorTFirstError(error, key_line='line', key_column='column'):
+def moveCursorTFirstError(line, column=None):
     try:
-        cursor = KTextEditor.Cursor(error[key_line] - 1, error.get(key_column, 0))
+        column = column or 0
+        cursor = KTextEditor.Cursor(line - 1, column)
         view = kate.activeView()
         view.setCursorPosition(cursor)
     except KeyError:

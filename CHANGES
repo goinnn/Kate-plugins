@@ -5,12 +5,17 @@ Releases
 -------------------
 
 * Other settings: PYTHON_AUTOCOMPLETE_ENABLED, JAVASCRIPT_AUTOCOMPLETE_ENABLED, CHECKALL_TO_SAVE
-* Remove old popups in check plugins
+
 * Title in the autocompletes
 * Fix some error in js autocomplete
 * Now the python autocomplete can depend of the session
-* The checker plugins move to the first error when they are invoked
+
+* The checker plugins move to the first error, from position, when they are invoked
+* Remove old popups in check plugins
+
 * Improvement in the usability of the template Django urls plugin and jQuery ready plugin
+
+* Refactor: Rename the utils file to kate_core_plugins, removing unnecessary code
 
 0.0.8  (2012-03-03)
 -------------------
