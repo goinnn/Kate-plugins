@@ -152,6 +152,10 @@ Autocomplete static to javascript (javascript)
 ----------------------------------------------
  * Shortcut: It is automatical
 
+Autocomplete static to jQuery (javascript)
+----------------------------------------------
+ * Shortcut: It is automatical
+
 jQuery ready (javascript)
 -------------------------
  * Shortcut: Ctrl+J
