@@ -32,7 +32,7 @@ class StoreErrorsChecker(pep8.Checker):
 
 
 @kate.action(**KATE_ACTIONS['checkPep8'])
-def checkPep8(currentDocument=None, refresh=True, show_popup=True):
+def checkPep8(currentDocument=None, refresh=True):
     if not commons.canCheckDocument(currentDocument):
         return
     if refresh:
@@ -41,9 +41,8 @@ def checkPep8(currentDocument=None, refresh=True, show_popup=True):
     move_cursor = not currentDocument
     currentDocument = currentDocument or kate.activeDocument()
     if currentDocument.isModified():
-        if show_popup:
-            kate.gui.popup('You must save the file first', 3,
-                           icon='dialog-warning', minTextWidth=200)
+        kate.gui.popup('You must save the file first', 3,
+                        icon='dialog-warning', minTextWidth=200)
         return
     path = unicode(currentDocument.url().path())
     mark_key = '%s-pep8' % unicode(currentDocument.url().path())
@@ -55,8 +54,7 @@ def checkPep8(currentDocument=None, refresh=True, show_popup=True):
     errors = checker.get_errors()
 
     if len(errors) == 0:
-        if show_popup:
-            commons.showOk('Pep8 Ok')
+        commons.showOk('Pep8 Ok')
         return
 
     errors_to_show = []
@@ -71,5 +69,4 @@ def checkPep8(currentDocument=None, refresh=True, show_popup=True):
             })
     commons.showErrors('Pep8 Errors:', errors_to_show,
                        mark_key, currentDocument,
-                       show_popup=show_popup,
                        move_cursor=move_cursor)

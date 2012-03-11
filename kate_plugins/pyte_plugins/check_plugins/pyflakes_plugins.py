@@ -38,7 +38,7 @@ def pyflakes(codeString, filename):
 
 
 @kate.action(**KATE_ACTIONS['checkPyflakes'])
-def checkPyflakes(currentDocument=None, refresh=True, show_popup=True):
+def checkPyflakes(currentDocument=None, refresh=True):
     if not commons.canCheckDocument(currentDocument):
         return
     if refresh:
@@ -55,8 +55,7 @@ def checkPyflakes(currentDocument=None, refresh=True, show_popup=True):
     errors_to_show = []
 
     if len(errors) == 0:
-        if show_popup:
-            commons.showOk("Pyflakes Ok")
+        commons.showOk("Pyflakes Ok")
         return
 
     # Prepare errors found for painting
@@ -69,4 +68,4 @@ def checkPyflakes(currentDocument=None, refresh=True, show_popup=True):
 
     commons.showErrors('Pyflakes Errors:', errors_to_show,
                        mark_key, currentDocument,
-                       show_popup=show_popup, move_cursor=move_cursor)
+                       move_cursor=move_cursor)

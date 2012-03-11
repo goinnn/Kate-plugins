@@ -33,28 +33,25 @@ def checkAll(doc=None, excludes=None, exclude_all=False):
         mark_iface = currentDoc.markInterface()
         clearMarksOfError(currentDoc, mark_iface)
         hideOldPopUps()
-        show_popup = not excludes
         if not exclude_all:
             if not 'parseCode' in excludes:
-                parseCode(currentDoc, refresh=False, show_popup=show_popup)
+                parseCode(currentDoc, refresh=False)
             if not 'checkPyflakes' in excludes:
                 try:
                     from pyte_plugins.check_plugins.pyflakes_plugins import checkPyflakes
-                    checkPyflakes(currentDoc, refresh=False,
-                                  show_popup=show_popup)
+                    checkPyflakes(currentDoc, refresh=False)
                 except ImportError:
                     pass
             if not 'checkPep8' in excludes:
                 try:
                     from pyte_plugins.check_plugins.pep8_plugins import checkPep8
-                    checkPep8(currentDoc, refresh=False, show_popup=show_popup)
+                    checkPep8(currentDoc, refresh=False)
                 except ImportError:
                     pass
             if not 'checkJslint' in excludes:
                 try:
                     from jste_plugins.jslint_plugins import checkJslint
-                    checkJslint(currentDoc, refresh=False,
-                                show_popup=show_popup)
+                    checkJslint(currentDoc, refresh=False)
                 except ImportError:
                     pass
 

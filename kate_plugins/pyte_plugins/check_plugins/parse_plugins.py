@@ -10,7 +10,7 @@ from pyte_plugins.check_plugins.check_all_plugins import checkAll
 
 
 @kate.action(**KATE_ACTIONS['parseCode'])
-def parseCode(doc=None, refresh=True, show_popup=True):
+def parseCode(doc=None, refresh=True):
     if not canCheckDocument(doc):
         return
     if refresh:
@@ -22,13 +22,11 @@ def parseCode(doc=None, refresh=True, show_popup=True):
     mark_key = '%s-parse-python' % unicode(doc.url().path())
     try:
         compiler.parse(text)
-        if show_popup:
-            showOk('Parse code Ok')
+        showOk('Parse code Ok')
     except SyntaxError, e:
         error = {}
         error['filename'] = e.filename
         error['text'] = e.text
         error['line'] = e.lineno
         showErrors('Parse code Errors:', [error], mark_key, doc,
-                    show_popup=show_popup,
                     move_cursor=move_cursor)

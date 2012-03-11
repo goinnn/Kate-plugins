@@ -15,7 +15,7 @@ pattern = re.compile(r"Lint at line (\d+) character (\d+): (.*)")
 
 
 @kate.action(**KATE_ACTIONS['checkJslint'])
-def checkJslint(currentDocument=None, refresh=True, show_popup=True):
+def checkJslint(currentDocument=None, refresh=True):
     if not (not currentDocument or (is_mymetype_js(currentDocument) and
                                     not currentDocument.isModified())):
         return
@@ -43,10 +43,9 @@ def checkJslint(currentDocument=None, refresh=True, show_popup=True):
                 })
 
     if len(errors_to_show) == 0:
-        if show_popup:
-            commons.showOk("JSLint Ok")
+        commons.showOk("JSLint Ok")
         return
 
     commons.showErrors('JSLint Errors:',
                        errors_to_show, mark_key, currentDocument,
-                       show_popup=show_popup, move_cursor=move_cursor)
+                       move_cursor=move_cursor)
