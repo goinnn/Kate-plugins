@@ -4,7 +4,7 @@ import kate
 
 from pyjslint import check_JSLint
 
-from utils import is_mymetype_js
+from kate_core_plugins import is_mymetype_js
 
 from kate_settings_plugins import KATE_ACTIONS
 from pyte_plugins.check_plugins import commons

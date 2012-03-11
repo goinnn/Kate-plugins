@@ -2,7 +2,7 @@ import kate
 
 from PyKDE4.ktexteditor import KTextEditor
 
-from utils import is_mymetype_python
+from kate_core_plugins import is_mymetype_python
 
 
 def showOk(message="Ok", time=3, icon='dialog-ok'):

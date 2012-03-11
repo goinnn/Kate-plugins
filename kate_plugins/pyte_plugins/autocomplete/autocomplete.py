@@ -12,7 +12,7 @@ from pyte_plugins.autocomplete.parse import (import_complete,
                                              from_first_imporable,
                                              from_other_imporables,
                                              from_complete)
-from utils import get_session
+from kate_core_plugins import get_session
 
 global pyplete
 global python_path

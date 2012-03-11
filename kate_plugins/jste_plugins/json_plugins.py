@@ -1,8 +1,8 @@
 import kate
 import simplejson
 import pprint
-import utils
 
+from kate_core_plugins import insertText
 from kate_settings_plugins import KATE_ACTIONS
 
 from simplejson import JSONDecodeError
@@ -23,7 +23,7 @@ def togglePrettyJsonFormat():
     try:
         target = pp.pformat(simplejson.loads(source))
         view.removeSelectionText()
-        utils.insertText(target.replace("'", '"'))
+        insertText(target.replace("'", '"'))
     except JSONDecodeError:
         kate.gui.popup('This text is not a valid json text', 2,
                        icon='dialog-warning',

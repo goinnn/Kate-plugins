@@ -1,8 +1,8 @@
 import kate
 import re
 
+from kate_core_plugins import insertText
 from kate_settings_plugins import KATE_ACTIONS
-from utils import insertText
 
 
 TEXT_INIT = """

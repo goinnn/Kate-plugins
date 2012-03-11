@@ -1,7 +1,7 @@
 import kate
 
+from kate_core_plugins import insertText, setSelectionFromCurrentPosition
 from kate_settings_plugins import KATE_ACTIONS
-from utils import insertText, setSelectionFromCurrentPosition
 
 TEXT_JQUERY = """<script type="text/javascript">
     (function($){
