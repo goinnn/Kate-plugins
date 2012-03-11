@@ -1,11 +1,12 @@
 Releases
 ========
 
-0.0.9  (2012-03-??)
+0.0.9  (2012-03-12)
 -------------------
 
 * Add jQuery autocomplete plugin
 * Add XML pretty plugin
+* Add call recursive plugin
 
 * Other settings: PYTHON_AUTOCOMPLETE_ENABLED, JAVASCRIPT_AUTOCOMPLETE_ENABLED, JQUERY_AUTOCOMPLETE_ENABLED, CHECKALL_TO_SAVE
 

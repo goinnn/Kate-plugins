@@ -11,11 +11,13 @@ TEXT_INIT = """
 """
 
 TEXT_SUPER = """%ssuper(%s, %s).%s(%s)"""
+TEXT_RECURSIVE_CLASS = """%s%s.%s(%s)"""
+TEXT_RECURSIVE_NO_CLASS = """%s%s(%s)"""
 
 str_blank = "(?:\ |\t|\n)*"
 str_espaces = "([\ |\t|\n]*)"
 pattern_espaces = re.compile("%s(.*)" % str_espaces)
-pattern_class = re.compile("%(str_blank)sclass %(str_blank)s(\w+)\(([\w|., ]+)\):" % {'str_blank': str_blank})
+pattern_class = re.compile("%(str_blank)sclass %(str_blank)s(\w+)\(([\w|., ]*)\):" % {'str_blank': str_blank})
 
 str_params = "(.*)"
 str_def_init = "%(espaces)sdef %(blank)s(\w+)%(blank)s\(%(param)s" % {
@@ -90,20 +92,20 @@ def get_number_espaces(currentDocument, currentLine,
     return PYTHON_SPACES * 2
 
 
-@kate.action(**KATE_ACTIONS['insertSuper'])
-def insertSuper():
+def get_prototype_of_current_func():
+    espaces = ' ' * PYTHON_SPACES
+    number_espaces = PYTHON_SPACES * 2
+    parentheses = 0
     class_name = 'XXX'
     function_name = 'XXX'
     params = ['self', '*args', '**kwargs']
-    espaces = ' ' * PYTHON_SPACES
+    text_def = ''
+    find_finish_def = False
+    view = kate.activeView()
     currentDocument = kate.activeDocument()
-    view = currentDocument.activeView()
     currentPosition = view.cursorPosition()
     currentLine = currentPosition.line()
-    find_finish_def = False
-    number_espaces = PYTHON_SPACES * 2
-    parentheses = 0
-    text_def = ''
+    func_def_espaces = None
     while currentLine >= 0:
         text = unicode(currentDocument.line(currentLine))
         if find_finish_def:
@@ -119,6 +121,7 @@ def insertSuper():
                                                     currentPosition.line())
                 if not number_espaces:
                     number_espaces = len(match.groups()[0]) + 1
+                func_def_espaces = match.groups()[0]
                 espaces = ' ' * number_espaces
                 function_name = match.groups()[1]
                 params = match.groups()[2].split(',')
@@ -132,15 +135,52 @@ def insertSuper():
                 find_finish_def = False
         match = pattern_class.match(text)
         if match:
-            class_name = match.groups()[0]
-            break
+            if func_def_espaces:
+                current_spaces = len(text) - len(text.lstrip())
+                if current_spaces < func_def_espaces:
+                    class_name = match.groups()[0]
+                    break
         currentLine = currentLine - 1
-    text = unicode(currentDocument.line(currentPosition.line())).strip()
+    return (espaces, class_name, function_name, params)
+
+
+@kate.action(**KATE_ACTIONS['insertSuper'])
+def insertSuper():
+    currentDocument = kate.activeDocument()
+    view = currentDocument.activeView()
+    currentPosition = view.cursorPosition()
+    currentLine = currentPosition.line()
+    espaces, class_name, func_name, params = get_prototype_of_current_func()
+    text = unicode(currentDocument.line(currentLine)).strip()
     text_super_template = TEXT_SUPER
     if not text:
         text_super_template = text_super_template + '\n'
         currentDocument.removeLine(currentPosition.line())
     else:
         espaces = ''
+    if currentLine == currentDocument.lines():
+        text_super_template = '\n%s' % text_super_template
     insertText(text_super_template % (espaces, class_name, params[0],
-                                      function_name, ', '.join(params[1:])))
+                                      func_name, ', '.join(params[1:])))
+
+
+@kate.action(**KATE_ACTIONS['callRecursive'])
+def callRecursive():
+    currentDocument = kate.activeDocument()
+    view = currentDocument.activeView()
+    currentPosition = view.cursorPosition()
+    currentLine = currentPosition.line()
+    espaces, class_name, func_name, params = get_prototype_of_current_func()
+    text = unicode(currentDocument.line(currentLine)).strip()
+    if class_name != 'XXX':
+        text_recursive_template = TEXT_RECURSIVE_CLASS % (espaces, params[0], func_name, ', '.join(params[1:]))
+    else:
+        text_recursive_template = TEXT_RECURSIVE_NO_CLASS % (espaces, func_name, ', '.join(params))
+    if not text:
+        text_recursive_template = text_recursive_template + '\n'
+        currentDocument.removeLine(currentPosition.line())
+    else:
+        espaces = ''
+    if currentLine == currentDocument.lines():
+        text_recursive_template = '\n%s' % text_recursive_template
+    insertText(text_recursive_template)

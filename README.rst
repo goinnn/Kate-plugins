@@ -100,6 +100,12 @@ insert super (python)
  * Shortcut: Alt+-
  * Smart insert a call to super of the function
 
+insert call recursive (python)
+------------------------
+
+ * Shortcut: Ctrl+Alt+-
+ * Smart insert a call to the current function recursively
+
 PEP8 (python)
 -------------
  * Shortcut: Alt+8
@@ -180,7 +186,7 @@ Pretty XML (xhtml)
 Future Plugins
 ==============
 
- * Call recursive
+ * Clean code
  * Improve autocompletes plugins
  * Integration with rope
 

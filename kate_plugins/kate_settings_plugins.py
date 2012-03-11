@@ -5,6 +5,8 @@ KATE_ACTIONS = {
                    'menu': 'Edit', 'icon': None},
     'insertSuper': {'text': 'super', 'shortcut': 'Alt+-',
                     'menu': 'Edit', 'icon': None},
+    'callRecursive': {'text': 'call recursive', 'shortcut': 'Ctrl+Alt+-',
+                    'menu': 'Edit', 'icon': None},
     'checkAll': {'text': 'Check all', 'shortcut': 'Alt+5',
                  'menu': 'Edit', 'icon': None},
     'checkPyflakes': {'text': 'pyflakes', 'shortcut': 'Alt+7',
