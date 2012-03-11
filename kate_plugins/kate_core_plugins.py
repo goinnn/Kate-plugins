@@ -73,10 +73,15 @@ def setSelectionFromCurrentPosition(pos, start, end):
 
 
 def ipdb(with_position=True):
+    import os
     import sys
-    sys.path.insert(-1, '/usr/lib/pymodules/python2.6/IPython/Extensions')
-    sys.path.insert(-1, '/home/pmartin/.ipython')
-    sys.argv = ['/usr/bin/ipython']
+    home = os.getenv("HOME")
+    version = sys.version_info
+    prefix = sys.prefix
+    version = '%s%s' % (version[0], version[1])
+    sys.path.insert(-1, os.path.join(prefix, 'lib/pymodules/python%s/IPython/Extensions' % version))
+    sys.path.insert(-1, os.path.join(home, '.ipython'))
+    sys.argv = [os.path.join(prefix, 'bin/ipython')]
     if with_position:
         currentDocument = kate.activeDocument()
         view = currentDocument.activeView()
