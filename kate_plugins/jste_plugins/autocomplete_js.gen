@@ -79,9 +79,10 @@ result = JSON.stringify(kateGetJSAutocomplete(window, 2))
 /* After in a python shell: */
 import simplejson
 import pprint
-json_text = open("./autocomplete_js.json").read()
+file_path = "./autocomplete_js.json"
+json_text = open(file_path).read()
 pp = pprint.PrettyPrinter(indent=1)
-file = open("./autocomplete_js.json", "w")
+file = open(file_path, "w")
 target = pp.pformat(simplejson.loads(json_text))
 file.write(target.replace("'", '"'))
 file.close()

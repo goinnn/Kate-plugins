@@ -123,8 +123,9 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
 
         return self.createIndex(row, column, 1)
 
-    def getLastExpression(self, line):
-        opmax = max(self.OPERATORS, key=lambda e: line.rfind(e))
+    def getLastExpression(self, line, operators=None):
+        operators = operators or self.OPERATORS
+        opmax = max(operators, key=lambda e: line.rfind(e))
         opmax_index = line.rfind(opmax)
         if line.find(opmax) != -1:
             line = line[opmax_index + 1:]
@@ -145,12 +146,15 @@ class AbstractJSONFileCodeCompletionModel(AbstractCodeCompletionModel):
         json_str = open(abs_file_path).read()
         self.json = loads(json_str)
 
+    def getJSON(self, lastExpression, line):
+        return self.json
+
     def completionInvoked(self, view, word, invocationType):
         line = super(AbstractJSONFileCodeCompletionModel, self).completionInvoked(view, word, invocationType)
         if not line:
             return
-        line = self.getLastExpression(line)
-        children = self.getChildrenInJSON(line, self.json)
+        lastExpression = self.getLastExpression(line)
+        children = self.getChildrenInJSON(lastExpression, self.getJSON(lastExpression, line))
         if not children:
             return
         for child, attrs in children.items():
