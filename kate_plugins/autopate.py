@@ -158,10 +158,13 @@ class AbstractJSONFileCodeCompletionModel(AbstractCodeCompletionModel):
         if not children:
             return
         for child, attrs in children.items():
-            self.resultList.append(self.createItemAutoComplete(text=child,
-                                            icon=attrs.get('icon', 'unknown'),
-                                            args=attrs.get('args', None),
-                                            description=attrs.get('description', None)))
+            index = self.createItemAutoComplete(text=child,
+                                    icon=attrs.get('icon', 'unknown'),
+                                    args=attrs.get('args', None),
+                                    description=attrs.get('description', None))
+            if not index:
+                continue
+            self.resultList.append(index)
 
     def getChildrenInJSON(self, keys, json):
         if not self.SEPARATOR in keys:

@@ -17,22 +17,43 @@ class StaticJSCodeCompletionModel(AbstractJSONFileCodeCompletionModel):
     OPERATORS = ["=", " ", "[", "]", "(", ")", "{", "}", ":", ">", "<",
                  "+", "-", "*", "/", "%", " && ", " || ", ","]
 
+    def __init__(self, *args, **kwargs):
+        super(StaticJSCodeCompletionModel, self).__init__(*args, **kwargs)
+        self.json['window'] = {'icon': 'module', 'children': {}}
+
+    def getLastExpression(self, line, operators=None):
+        expr = super(StaticJSCodeCompletionModel, self).getLastExpression(line,
+                                                           operators=operators)
+        if expr.startswith("window."):
+            expr = expr.replace('window.', '', 1)
+        return expr
+
 
 class StaticJQueryCompletionModel(StaticJSCodeCompletionModel):
     TITLE_AUTOCOMPLETATION = "jQuery Auto Complete"
     FILE_PATH = 'jste_plugins/autocomplete_jquery.json'
 
     def __init__(self, *args, **kwargs):
-        super(StaticJQueryCompletionModel, self).__init__(*args, **kwargs)
+        super(StaticJSCodeCompletionModel, self).__init__(*args, **kwargs)
         self.expr = re.compile('(?:.)*[$|jQuery]\(["|\'](?P<dom_id>\w+)["|\']\)\.(?P<query>[\.\w]+)*$')
         self.object_jquery = False
+
+    @classmethod
+    def createItemAutoComplete(cls, text, *args, **kwargs):
+        if text == '___object':
+            return None
+        return super(StaticJQueryCompletionModel, cls).createItemAutoComplete(text, *args, **kwargs)
 
     def getLastExpression(self, line, operators=None):
         m = self.expr.match(line)
         self.object_jquery = m
         if m:
             return m.groups()[1] or ''
-        return super(StaticJQueryCompletionModel, self).getLastExpression(line, operators=operators)
+        expr = super(StaticJSCodeCompletionModel, self).getLastExpression(line,
+                                                           operators=operators)
+        if expr.startswith("$."):
+            expr = expr.replace('$.', 'jQuery.', 1)
+        return expr
 
     def getJSON(self, lastExpression, line):
         if self.object_jquery:
