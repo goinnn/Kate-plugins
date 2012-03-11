@@ -97,6 +97,8 @@ def showErrors(message, errors, key_mark, doc, time=10, icon='dialog-warning',
         first_error, messages_show = getErrorMessagesOrder(messages, max_errors)
     if show_popup:
         message = '%s\n%s' % (message, '\n'.join(messages_show))
+        if len(messages_show) < len(errors):
+            message += '\n\nAnd other errors'
         kate.gui.popup(message, time, icon, minTextWidth=300)
 
 
