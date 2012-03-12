@@ -38,7 +38,7 @@ def checkJslint(currentDocument=None, refresh=True):
             errors_to_show.append({
                 "filename": path,
                 "message": matches.groups()[2],
-                "line": int(matches.groups()[0]) - 1,
+                "line": int(matches.groups()[0]),
                 "column": int(matches.groups()[1]),
                 })
 
