@@ -95,13 +95,13 @@ insert __init__ (python)
  * Smart insert a function __init__
 
 insert super (python)
-------------------------
+---------------------
 
  * Shortcut: Alt+-
  * Smart insert a call to super of the function
 
 insert call recursive (python)
-------------------------
+------------------------------
 
  * Shortcut: Ctrl+Alt+-
  * Smart insert a call to the current function recursively
