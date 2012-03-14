@@ -1,10 +1,11 @@
 Releases
 ========
 
-0.1.0  (2012-03-??)
+0.1.0  (2012-03-15)
 -------------------
 
 * A new settings to ignore pep8 errors
+* Now is possible move between various errors in the same line
 * Fix jslint errors line number
 * Fix callRecursive error, when to call the plugin with text in this line
 * Fix a little error in autocomplete

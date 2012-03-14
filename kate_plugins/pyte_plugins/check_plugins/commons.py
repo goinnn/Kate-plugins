@@ -30,7 +30,7 @@ def generateErrorMessage(error, key_line='line', key_column='column', header=Tru
     return message
 
 
-def getErrorMessagesOrder(messages, max_errors, current_line=None):
+def getErrorMessagesOrder(messages, max_errors, current_line=None, current_column=None):
     messages_order = []
     first_error = None
     messages_items = messages.items()
@@ -44,9 +44,9 @@ def getErrorMessagesOrder(messages, max_errors, current_line=None):
                 break
         return (0, messages_order)
     for i, error in enumerate(messages_items):
-        line = error[0]
+        line, column = _uncompress_key(error[0])
         message = error[1]
-        if line > current_line:
+        if line > current_line or (line == current_line and column > current_column):
             if first_error is None:
                 first_error = i
             num_messages += 1
@@ -56,7 +56,7 @@ def getErrorMessagesOrder(messages, max_errors, current_line=None):
     if len(messages_order) == max_errors:
         return (first_error, messages_order)
     for i, error in enumerate(messages_items):
-        line = error[0]
+        line, column = _uncompress_key(error[0])
         message = error[1]
         if line <= current_line:
             if first_error is None:
@@ -78,20 +78,24 @@ def showErrors(message, errors, key_mark, doc, time=10, icon='dialog-warning',
     view = kate.activeView()
     pos = view.cursorPosition()
     current_line = pos.line() + 1
+    current_column = pos.column() + 1
     for error in errors:
         header = False
         line = error[key_line]
+        column = error.get(key_column, 0)
+        pos = _compress_key(line, column)
         if not messages.get(line, None):
             header = True
-            messages[line] = []
+            messages[pos] = []
         error_message = generateErrorMessage(error, key_line, key_column, header)
-        messages[line].append(error_message)
+        messages[pos].append(error_message)
         mark_iface.setMark(line - 1, mark_iface.Error)
 
     if move_cursor:
         first_error, messages_show = getErrorMessagesOrder(messages,
                                                            max_errors,
-                                                           current_line)
+                                                           current_line,
+                                                           current_column)
         error = errors[first_error]
         moveCursorTFirstError(error[key_line], error.get(key_column, 0))
     else:
@@ -101,6 +105,19 @@ def showErrors(message, errors, key_mark, doc, time=10, icon='dialog-warning',
         if len(messages_show) < len(errors):
             message += '\n\nAnd other errors'
         kate.gui.popup(message, time, icon, minTextWidth=300)
+
+
+def _compress_key(line, column):
+    doc = kate.activeDocument()
+    cipher = len('%s' % doc.lines())
+    key_template = '%%%sd' % cipher
+    key_template += '__%3d'
+    return key_template % (line, column)
+
+
+def _uncompress_key(key):
+    line, column = key.split('__')
+    return (int(line), int(column))
 
 
 def canCheckDocument(doc, text_plain=False):
