@@ -56,6 +56,7 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
     def completionInvoked(self, view, word, invocationType):
         line_start = word.start().line()
         line_end = word.end().line()
+        column_end = word.end().column()
         self.resultList = []
         self.invocationType = invocationType
         if line_start != line_end:
@@ -67,7 +68,7 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
         line = unicode(doc.line(line_start))
         if not line:
             return line
-        return self.parseLine(line)
+        return self.parseLine(line, column_end)
 
     def data(self, index, role, *args, **kwargs):
         #http://api.kde.org/4.5-api/kdelibs-apidocs/kate/html/katewordcompletion_8cpp_source.html
@@ -131,8 +132,8 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
             line = line[opmax_index + 1:]
         return line.strip()
 
-    def parseLine(self, line):
-        return line.strip()
+    def parseLine(self, line, col_num):
+        return line[:col_num].lstrip()
 
 
 class AbstractJSONFileCodeCompletionModel(AbstractCodeCompletionModel):

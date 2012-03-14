@@ -63,8 +63,8 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
         if not is_auto and line and line_rough and not self.SEPARATOR in line_rough:
             is_auto = self.autoCompleteFile(view, word, line)
 
-    def parseLine(self, line):
-        line = super(PythonCodeCompletionModel, self).parseLine(line)
+    def parseLine(self, line, col_num):
+        line = super(PythonCodeCompletionModel, self).parseLine(line, col_num)
         if "'" in line or '"' in line:
             return line
         if ";" in line:
