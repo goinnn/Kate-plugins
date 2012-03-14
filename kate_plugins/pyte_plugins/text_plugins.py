@@ -10,9 +10,9 @@ TEXT_INIT = """
         super(%s, self).__init__(*args, **kwargs)
 """
 
-TEXT_SUPER = """%ssuper(%s, %s).%s(%s)"""
-TEXT_RECURSIVE_CLASS = """%s%s.%s(%s)"""
-TEXT_RECURSIVE_NO_CLASS = """%s%s(%s)"""
+TEXT_SUPER = """%ssuper(%s, %s).%s(%s)\n"""
+TEXT_RECURSIVE_CLASS = """%s%s.%s(%s)\n"""
+TEXT_RECURSIVE_NO_CLASS = """%s%s(%s)\n"""
 
 str_blank = "(?:\ |\t|\n)*"
 str_espaces = "([\ |\t|\n]*)"
@@ -154,7 +154,6 @@ def insertSuper():
     text = unicode(currentDocument.line(currentLine)).strip()
     text_super_template = TEXT_SUPER
     if not text:
-        text_super_template = text_super_template + '\n'
         currentDocument.removeLine(currentPosition.line())
     else:
         espaces = ''
@@ -177,10 +176,9 @@ def callRecursive():
     else:
         text_recursive_template = TEXT_RECURSIVE_NO_CLASS % (espaces, func_name, ', '.join(params))
     if not text:
-        text_recursive_template = text_recursive_template + '\n'
         currentDocument.removeLine(currentPosition.line())
     else:
-        espaces = ''
+        text_recursive_template = text_recursive_template.lstrip()
     if currentLine == currentDocument.lines():
         text_recursive_template = '\n%s' % text_recursive_template
     insertText(text_recursive_template)

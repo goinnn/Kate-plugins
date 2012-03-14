@@ -5,6 +5,7 @@ Releases
 -------------------
 
 * Fix jslint errors line number
+* Fix callRecursive error, when to call the plugin with text in this line
 
 0.0.9  (2012-03-12)
 -------------------
