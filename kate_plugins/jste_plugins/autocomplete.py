@@ -35,7 +35,7 @@ class StaticJQueryCompletionModel(StaticJSCodeCompletionModel):
 
     def __init__(self, *args, **kwargs):
         super(StaticJSCodeCompletionModel, self).__init__(*args, **kwargs)
-        self.expr = re.compile('(?:.)*[$|jQuery]\(["|\'](?P<dom_id>\w+)["|\']\)\.(?P<query>[\.\w]+)*$')
+        self.expr = re.compile('(?:.)*[$|jQuery]\(["|\']?(?P<dom_id>\w+)["|\']?\)\.(?P<query>[\.\w]+)*$')
         self.object_jquery = False
 
     @classmethod

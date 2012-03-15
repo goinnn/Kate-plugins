@@ -1,6 +1,11 @@
 Releases
 ========
 
+0.1.1  (2012-03-??)
+-------------------
+
+* Fix a little error in the jQuery plugin regex
+
 0.1.0  (2012-03-15)
 -------------------
 
