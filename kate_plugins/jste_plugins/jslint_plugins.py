@@ -39,7 +39,7 @@ def checkJslint(currentDocument=None, refresh=True):
                 "filename": path,
                 "message": matches.groups()[2],
                 "line": int(matches.groups()[0]),
-                "column": int(matches.groups()[1]),
+                "column": int(matches.groups()[1]) + 1,
                 })
 
     if len(errors_to_show) == 0:

@@ -30,11 +30,9 @@ def generateErrorMessage(error, key_line='line', key_column='column', header=Tru
     return message
 
 
-def getErrorMessagesOrder(messages, max_errors, current_line=None, current_column=None):
+def getErrorMessagesOrder(messages_items, max_errors, current_line=None, current_column=None):
     messages_order = []
     first_error = None
-    messages_items = messages.items()
-    messages_items.sort()
     num_messages = 0
     if not current_line:
         for line, message in messages_items:
@@ -92,12 +90,14 @@ def showErrors(message, errors, key_mark, doc, time=10, icon='dialog-warning',
         mark_iface.setMark(line - 1, mark_iface.Error)
 
     if move_cursor:
-        first_error, messages_show = getErrorMessagesOrder(messages,
+        messages_items = messages.items()
+        messages_items.sort()
+        first_error, messages_show = getErrorMessagesOrder(messages_items,
                                                            max_errors,
                                                            current_line,
                                                            current_column)
-        error = errors[first_error]
-        moveCursorTFirstError(error[key_line], error.get(key_column, 0))
+        line_to_move, column_to_move = _uncompress_key(messages_items[first_error][0])
+        moveCursorTFirstError(line_to_move, column_to_move)
     else:
         first_error, messages_show = getErrorMessagesOrder(messages, max_errors)
     if show_popup:
