@@ -5,6 +5,7 @@ Releases
 -------------------
 
 * Fix a little error in the jQuery plugin regex
+* Fix a little error in the python plugin, when the lines contains ";"
 
 0.1.0  (2012-03-15)
 -------------------

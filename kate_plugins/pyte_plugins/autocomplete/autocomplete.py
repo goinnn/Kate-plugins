@@ -68,7 +68,7 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
         if "'" in line or '"' in line:
             return line
         if ";" in line:
-            return self.parseLine(line.split(";")[-1])
+            return self.parseLine(line.split(";")[-1], col_num)
         return line
 
     def autoCompleteImport(self, view, word, line):
