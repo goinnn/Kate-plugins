@@ -1,3 +1,8 @@
+import kate
+
+from PyKDE4 import kdeui
+from PyQt4 import QtGui
+
 KATE_ACTIONS = {
     'insertIPDB': {'text': 'ipdb', 'shortcut': 'Ctrl+I',
                    'menu': 'python-templates', 'icon': None},
@@ -28,9 +33,9 @@ KATE_ACTIONS = {
     'checkJslint': {'text': 'JSLint', 'shortcut': 'Alt+J',
                     'menu': 'checkers', 'icon': None},
     'togglePrettyJsonFormat': {'text': 'Pretty Json', 'shortcut': 'Ctrl+Alt+J',
-                               'menu': 'utils', 'icon': None},
+                               'menu': 'pretty-print', 'icon': None},
     'togglePrettyXMLFormat': {'text': 'Pretty XML', 'shortcut': 'Ctrl+Alt+X',
-                              'menu': 'utils', 'icon': None},
+                              'menu': 'pretty-print', 'icon': None},
 }
 
 PYTHON_AUTOCOMPLETE_ENABLED = True
@@ -38,6 +43,34 @@ JAVASCRIPT_AUTOCOMPLETE_ENABLED = True
 JQUERY_AUTOCOMPLETE_ENABLED = True
 CHECKALL_TO_SAVE = True
 IGNORE_PEP8_ERRORS = []
+
+
+def create_menu(name_menu, slug_menu, menu_parent_slug):
+    windowInterface = kate.application.activeMainWindow()
+    window = windowInterface.window()
+    menu_parent = None
+
+    for menu in window.findChildren(QtGui.QMenu):
+        if str(menu.objectName()) == menu_parent_slug:
+            menu_parent = menu
+            break
+    if not menu_parent:
+        return
+    new_menu = kdeui.KMenu(name_menu, window)
+    new_menu.setObjectName(slug_menu)
+
+    action = QtGui.QAction(name_menu, new_menu)
+    action.setObjectName(slug_menu)
+    action.setMenu(new_menu)
+    menu_parent.addAction(action)
+
+
+create_menu('Django Templates', 'django-templates', 'edit')
+create_menu('Python Templates', 'python-templates', 'edit')
+create_menu('Js Templates', 'js-templates', 'edit')
+create_menu('Checkers', 'checkers', 'tools')
+create_menu('Pretty print', 'pretty-print', 'tools')
+
 
 try:
     from kate_settings_local import *

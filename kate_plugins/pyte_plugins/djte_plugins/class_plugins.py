@@ -8,6 +8,9 @@ PATTERN_MODEL_FORM = """
 
 class %(class_name)s(forms.ModelForm):
 
+    class Meta:
+        model = %(class_model)s
+
     def __init__(self, *args, **kwargs):
         super(%(class_name)s, self).__init__(*args, **kwargs)
 
@@ -17,26 +20,24 @@ class %(class_name)s(forms.ModelForm):
     def save(self, commit=True):
         return super(%(class_name)s, self).save(commit)
 
-    class Meta:
-        model = %(class_model)s
-
-    """
+"""
 
 PATTERN_MODEL = """
 
 class %(class_name)s(models.Model):
 
-    def __unicode__(self):
-        pass
+    class Meta:
+        verbose_name = _('%(class_name)s')
+        verbose_name_plural = _('%(class_name)ss')
 
     @permalink
     def get_absolute_url(self):
         pass
 
-    class Meta:
+    def __unicode__(self):
         pass
 
-    """
+"""
 
 
 def create_frame(pattern_str='', title='', name_field=''):
