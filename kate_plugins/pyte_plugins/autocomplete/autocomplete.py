@@ -16,6 +16,7 @@ from kate_core_plugins import get_session
 
 global pyplete
 global python_path
+pyplete = None
 python_path = []
 
 
@@ -140,10 +141,10 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
         kate.gui.popup(message, 2, icon='dialog-warning', minTextWidth=200)
 
     def setSession(self, session):
-        if session == self.session:
+        global pyplete
+        if pyplete and session == self.session:
             return
         self.session = session
-        global pyplete
         pyplete = PyPlete(PythonCodeCompletionModel.createItemAutoComplete,
                           PythonCodeCompletionModel.getPythonPath(recalculeSession=self.session))
 
@@ -174,8 +175,6 @@ def createSignalAutocompleteDocument(view, *args, **kwargs):
     global pyplete
     session = get_session()
     codecompletationmodel.setSession(session)
-    pyplete = PyPlete(PythonCodeCompletionModel.createItemAutoComplete,
-                      PythonCodeCompletionModel.getPythonPath(recalculeSession=session))
     cci = view.codeCompletionInterface()
     cci.registerCompletionModel(codecompletationmodel)
 
