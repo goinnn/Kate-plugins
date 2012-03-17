@@ -4,6 +4,7 @@ Releases
 0.1.1  (2012-03-??)
 -------------------
 
+* Created a menu structure to the plugins, before they were all in edit menu
 * Fix a little error in the jQuery plugin regex
 * Fix a little error in the python plugin, when the lines contains ";"
 
