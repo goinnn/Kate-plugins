@@ -1,7 +1,10 @@
 import kate
 
+from PyKDE4 import kdeui
 from PyKDE4.kdecore import KConfig, KConfigGroup
 from PyKDE4.ktexteditor import KTextEditor
+
+from PyQt4 import QtGui
 
 
 def insertText(text, strip_line=False,
@@ -70,6 +73,26 @@ def setSelectionFromCurrentPosition(pos, start, end):
     cursor2 = KTextEditor.Cursor(pos.line() + end[0], pos.column() + end[1])
     view.setSelection(KTextEditor.Range(cursor1, cursor2))
     view.setCursorPosition(cursor1)
+
+
+def create_submenu(name_menu, slug_menu, menu_parent_slug):
+    windowInterface = kate.application.activeMainWindow()
+    window = windowInterface.window()
+    menu_parent = None
+    for menu in window.findChildren(QtGui.QMenu):
+        if str(menu.objectName()) == menu_parent_slug:
+            menu_parent = menu
+            break
+    if not menu_parent:
+        return ''
+    new_menu = kdeui.KMenu(name_menu, window)
+    new_menu.setObjectName(slug_menu)
+
+    action = QtGui.QAction(name_menu, new_menu)
+    action.setObjectName(slug_menu)
+    action.setMenu(new_menu)
+    menu_parent.addAction(action)
+    return slug_menu
 
 
 def ipdb(with_position=True):

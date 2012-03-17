@@ -1,41 +1,45 @@
-import kate
+from kate_core_plugins import create_submenu
 
-from PyKDE4 import kdeui
-from PyQt4 import QtGui
+DJ_MENU = create_submenu('Django Templates', 'django-templates', 'edit')
+PY_MENU = create_submenu('Python Templates', 'python-templates', 'edit')
+JS_MENU = create_submenu('Js Templates', 'js-templates', 'edit')
+CH_MENU = create_submenu('Checkers', 'checkers', 'tools')
+PR_MENU = create_submenu('Pretty print', 'pretty-print', 'tools')
+
 
 KATE_ACTIONS = {
     'insertIPDB': {'text': 'ipdb', 'shortcut': 'Ctrl+I',
-                   'menu': 'python-templates', 'icon': None},
+                   'menu': PY_MENU, 'icon': None},
     'insertInit': {'text': '__init__', 'shortcut': 'Ctrl+-',
-                   'menu': 'python-templates', 'icon': None},
+                   'menu': PY_MENU, 'icon': None},
     'insertSuper': {'text': 'super', 'shortcut': 'Alt+-',
-                    'menu': 'python-templates', 'icon': None},
+                    'menu': PY_MENU, 'icon': None},
     'callRecursive': {'text': 'call recursive', 'shortcut': 'Ctrl+Alt+-',
-                    'menu': 'python-templates', 'icon': None},
+                    'menu': PY_MENU, 'icon': None},
     'checkAll': {'text': 'Check all', 'shortcut': 'Alt+5',
-                 'menu': 'checkers', 'icon': None},
+                 'menu': CH_MENU, 'icon': None},
     'checkPyflakes': {'text': 'pyflakes', 'shortcut': 'Alt+7',
-                      'menu': 'checkers', 'icon': None},
+                      'menu': CH_MENU, 'icon': None},
     'parseCode': {'text': 'Parse code python', 'shortcut': 'Alt+6',
-                  'menu': 'checkers', 'icon': None},
+                  'menu': CH_MENU, 'icon': None},
     'checkPep8': {'text': 'Pep8', 'shortcut': 'Alt+8',
-                  'menu': 'checkers', 'icon': None},
+                  'menu': CH_MENU, 'icon': None},
     'createForm': {'text': 'Create Django Form', 'shortcut': 'Ctrl+Alt+F',
-                   'menu': 'django-templates', 'icon': None},
+                   'menu': DJ_MENU, 'icon': None},
     'createModel': {'text': 'Create Django Model', 'shortcut': 'Ctrl+Alt+M',
-                    'menu': 'django-templates', 'icon': None},
+                    'menu': DJ_MENU, 'icon': None},
     'importUrls': {'text': 'Template Django urls', 'shortcut': 'Ctrl+Alt+7',
-                   'menu': 'django-templates', 'icon': None},
+                   'menu': DJ_MENU, 'icon': None},
     'importViews': {'text': 'Template import views', 'shortcut': 'Ctrl+Alt+v',
-                    'menu': 'django-templates', 'icon': None},
+                    'menu': DJ_MENU, 'icon': None},
     'insertReady': {'text': 'jQuery Ready', 'shortcut': 'Ctrl+J',
-                    'menu': 'js-templates', 'icon': None},
+                    'menu': JS_MENU, 'icon': None},
     'checkJslint': {'text': 'JSLint', 'shortcut': 'Alt+J',
-                    'menu': 'checkers', 'icon': None},
+                    'menu': CH_MENU, 'icon': None},
     'togglePrettyJsonFormat': {'text': 'Pretty Json', 'shortcut': 'Ctrl+Alt+J',
-                               'menu': 'pretty-print', 'icon': None},
+                               'menu': PR_MENU, 'icon': None},
     'togglePrettyXMLFormat': {'text': 'Pretty XML', 'shortcut': 'Ctrl+Alt+X',
-                              'menu': 'pretty-print', 'icon': None},
+                              'menu': PR_MENU, 'icon': None},
 }
 
 PYTHON_AUTOCOMPLETE_ENABLED = True
@@ -43,33 +47,6 @@ JAVASCRIPT_AUTOCOMPLETE_ENABLED = True
 JQUERY_AUTOCOMPLETE_ENABLED = True
 CHECKALL_TO_SAVE = True
 IGNORE_PEP8_ERRORS = []
-
-
-def create_menu(name_menu, slug_menu, menu_parent_slug):
-    windowInterface = kate.application.activeMainWindow()
-    window = windowInterface.window()
-    menu_parent = None
-
-    for menu in window.findChildren(QtGui.QMenu):
-        if str(menu.objectName()) == menu_parent_slug:
-            menu_parent = menu
-            break
-    if not menu_parent:
-        return
-    new_menu = kdeui.KMenu(name_menu, window)
-    new_menu.setObjectName(slug_menu)
-
-    action = QtGui.QAction(name_menu, new_menu)
-    action.setObjectName(slug_menu)
-    action.setMenu(new_menu)
-    menu_parent.addAction(action)
-
-
-create_menu('Django Templates', 'django-templates', 'edit')
-create_menu('Python Templates', 'python-templates', 'edit')
-create_menu('Js Templates', 'js-templates', 'edit')
-create_menu('Checkers', 'checkers', 'tools')
-create_menu('Pretty print', 'pretty-print', 'tools')
 
 
 try:

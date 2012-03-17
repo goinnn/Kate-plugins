@@ -67,7 +67,7 @@ def checkPep8(currentDocument=None, refresh=True):
             continue
         errors_to_show.append({
             "line": error[0],
-            "column": error[1],
+            "column": error[1] + 1,
             "filename": path,
             "message": error[3],
             })

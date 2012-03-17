@@ -128,7 +128,7 @@ def canCheckDocument(doc, text_plain=False):
 def moveCursorTFirstError(line, column=None):
     try:
         column = column or 0
-        cursor = KTextEditor.Cursor(line - 1, column)
+        cursor = KTextEditor.Cursor(line - 1, column - 1)
         view = kate.activeView()
         view.setCursorPosition(cursor)
     except KeyError:
