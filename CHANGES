@@ -1,10 +1,11 @@
 Releases
 ========
 
-0.1.1  (2012-03-??)
+0.1.1  (2012-03-17)
 -------------------
 
 * Created a menu structure to the plugins, before they were all in edit menu
+* Refactor an clean the code, if you insert a text with XXX, the cursor move here
 * Fix a little error in the jQuery plugin regex
 * Fix a little error in the python plugin, when the lines contains ";"
 
