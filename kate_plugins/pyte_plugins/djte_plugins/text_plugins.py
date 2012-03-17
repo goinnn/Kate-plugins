@@ -1,13 +1,13 @@
 import kate
 
-from kate_core_plugins import insertText, setSelectionFromCurrentPosition
+from kate_core_plugins import insertText, TEXT_TO_CHANGE
 from kate_settings_plugins import KATE_ACTIONS
 
 TEXT_URLS = """from django.conf.urls.defaults import patterns, url
 
 
-urlpatterns = patterns('%s.views',
-    url(r'^$', 'XXX', name='XXX'),
+urlpatterns = patterns('%(app)s.views',
+    url(r'^$', '%(change)s', name='%(change)s'),
 )
 """
 
@@ -21,13 +21,11 @@ from django.template import RequestContext
 @kate.action(**KATE_ACTIONS['importUrls'])
 def importUrls():
     currentDocument = kate.activeDocument()
-    view = kate.activeView()
-    pos = view.cursorPosition()
     path = unicode(currentDocument.url().directory())
     path_split = path.split('/')
-    application = path_split[len(path_split) - 1]
-    insertText(TEXT_URLS % application)
-    setSelectionFromCurrentPosition(pos, (4, 16), (4, 19))
+    application = path_split[len(path_split) - 1] or TEXT_TO_CHANGE
+    insertText(TEXT_URLS % {'app': application,
+                            'change': TEXT_TO_CHANGE})
 
 
 @kate.action(**KATE_ACTIONS['importViews'])

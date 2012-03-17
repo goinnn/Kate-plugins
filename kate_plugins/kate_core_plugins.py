@@ -6,13 +6,17 @@ from PyKDE4.ktexteditor import KTextEditor
 
 from PyQt4 import QtGui
 
+TEXT_TO_CHANGE = 'XXX'
+
 
 def insertText(text, strip_line=False,
                start_in_current_column=False,
-               delete_spaces_initial=False):
+               delete_spaces_initial=False,
+               move_to=True):
     currentDocument = kate.activeDocument()
     view = currentDocument.activeView()
     currentPosition = view.cursorPosition()
+    spaces = ''
     if strip_line:
         text = '\n'.join([line.strip() for line in text.splitlines()])
     if start_in_current_column:
@@ -23,6 +27,13 @@ def insertText(text, strip_line=False,
     if delete_spaces_initial:
         currentPosition.setColumn(0)
     currentDocument.insertText(currentPosition, text)
+    text_to_change_len = len(TEXT_TO_CHANGE)
+    if move_to and TEXT_TO_CHANGE in text:
+        currentPosition = view.cursorPosition()
+        pos_xxx = text.index(TEXT_TO_CHANGE)
+        lines = text[pos_xxx + text_to_change_len:].count('\n')
+        column = len(text[:pos_xxx].split('\n')[-1]) - currentPosition.column()
+        setSelectionFromCurrentPosition((-lines, column), (-lines, column + text_to_change_len))
 
 
 def is_mymetype_python(doc, text_plain=False):
@@ -67,8 +78,9 @@ def get_last_session():
     return None
 
 
-def setSelectionFromCurrentPosition(pos, start, end):
+def setSelectionFromCurrentPosition(start, end, pos=None):
     view = kate.activeView()
+    pos = pos or view.cursorPosition()
     cursor1 = KTextEditor.Cursor(pos.line() + start[0], pos.column() + start[1])
     cursor2 = KTextEditor.Cursor(pos.line() + end[0], pos.column() + end[1])
     view.setSelection(KTextEditor.Range(cursor1, cursor2))

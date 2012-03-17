@@ -1,7 +1,7 @@
 import kate
 import re
 
-from kate_core_plugins import insertText
+from kate_core_plugins import insertText, TEXT_TO_CHANGE
 from kate_settings_plugins import KATE_ACTIONS
 
 
@@ -44,7 +44,7 @@ def insertIPDB():
 
 @kate.action(**KATE_ACTIONS['insertInit'])
 def insertInit():
-    class_name = 'XXX'
+    class_name = TEXT_TO_CHANGE
     currentDocument = kate.activeDocument()
     view = currentDocument.activeView()
     currentPosition = view.cursorPosition()
@@ -96,8 +96,8 @@ def get_prototype_of_current_func():
     espaces = ' ' * PYTHON_SPACES
     number_espaces = PYTHON_SPACES * 2
     parentheses = 0
-    class_name = 'XXX'
-    function_name = 'XXX'
+    class_name = TEXT_TO_CHANGE
+    function_name = TEXT_TO_CHANGE
     params = ['self', '*args', '**kwargs']
     text_def = ''
     find_finish_def = False
@@ -112,7 +112,7 @@ def get_prototype_of_current_func():
             text_def = '%s\n%s' % (text, text_def)
         else:
             text_def = text
-        if function_name == 'XXX':
+        if function_name == TEXT_TO_CHANGE:
             match_finish = pattern_def_finish.match(text_def)
             match_init = pattern_def_init.match(text_def)
             if match_finish and match_init:
@@ -171,7 +171,7 @@ def callRecursive():
     currentLine = currentPosition.line()
     espaces, class_name, func_name, params = get_prototype_of_current_func()
     text = unicode(currentDocument.line(currentLine)).strip()
-    if class_name != 'XXX':
+    if class_name != TEXT_TO_CHANGE:
         text_recursive_template = TEXT_RECURSIVE_CLASS % (espaces, params[0], func_name, ', '.join(params[1:]))
     else:
         text_recursive_template = TEXT_RECURSIVE_NO_CLASS % (espaces, func_name, ', '.join(params))
