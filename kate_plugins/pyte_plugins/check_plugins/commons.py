@@ -89,9 +89,9 @@ def showErrors(message, errors, key_mark, doc, time=10, icon='dialog-warning',
         messages[pos].append(error_message)
         mark_iface.setMark(line - 1, mark_iface.Error)
 
+    messages_items = messages.items()
+    messages_items.sort()
     if move_cursor:
-        messages_items = messages.items()
-        messages_items.sort()
         first_error, messages_show = getErrorMessagesOrder(messages_items,
                                                            max_errors,
                                                            current_line,
@@ -99,7 +99,7 @@ def showErrors(message, errors, key_mark, doc, time=10, icon='dialog-warning',
         line_to_move, column_to_move = _uncompress_key(messages_items[first_error][0])
         moveCursorTFirstError(line_to_move, column_to_move)
     else:
-        first_error, messages_show = getErrorMessagesOrder(messages, max_errors)
+        first_error, messages_show = getErrorMessagesOrder(messages_items, max_errors)
     if show_popup:
         message = '%s\n%s' % (message, '\n'.join(messages_show))
         if len(messages_show) < len(errors):
