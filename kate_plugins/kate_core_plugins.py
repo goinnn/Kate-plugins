@@ -87,16 +87,19 @@ def setSelectionFromCurrentPosition(start, end, pos=None):
     view.setCursorPosition(cursor1)
 
 
-def create_submenu(name_menu, slug_menu, menu_parent_slug):
-    windowInterface = kate.application.activeMainWindow()
-    window = windowInterface.window()
-    menu_parent = None
+def findMenu(menu_parent_slug):
+    window = kate.mainWindow()
     for menu in window.findChildren(QtGui.QMenu):
         if str(menu.objectName()) == menu_parent_slug:
-            menu_parent = menu
-            break
+            return menu
+    return None
+
+
+def create_submenu(name_menu, slug_menu, menu_parent_slug):
+    menu_parent = findMenu(menu_parent_slug)
     if not menu_parent:
         return ''
+    window = kate.mainWindow()
     new_menu = kdeui.KMenu(name_menu, window)
     new_menu.setObjectName(slug_menu)
 
@@ -105,6 +108,12 @@ def create_submenu(name_menu, slug_menu, menu_parent_slug):
     action.setMenu(new_menu)
     menu_parent.addAction(action)
     return slug_menu
+
+
+def separated_menu(menu_parent_slug):
+    menu_parent = findMenu(menu_parent_slug)
+    action = QtGui.QAction('', None)
+    menu_parent.insertSeparator(action)
 
 
 def ipdb(with_position=True):

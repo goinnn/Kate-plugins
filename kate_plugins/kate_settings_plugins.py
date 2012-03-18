@@ -1,11 +1,14 @@
-from kate_core_plugins import create_submenu
+from kate_core_plugins import create_submenu, separated_menu
 
+separated_menu('edit')
 DJ_MENU = create_submenu('Django Templates', 'django-templates', 'edit')
 PY_MENU = create_submenu('Python Templates', 'python-templates', 'edit')
 JS_MENU = create_submenu('Js Templates', 'js-templates', 'edit')
+separated_menu('edit')
+separated_menu('tools')
 CH_MENU = create_submenu('Checkers', 'checkers', 'tools')
 PR_MENU = create_submenu('Pretty print', 'pretty-print', 'tools')
-
+separated_menu('tools')
 
 KATE_ACTIONS = {
     'insertIPDB': {'text': 'ipdb', 'shortcut': 'Ctrl+I',
