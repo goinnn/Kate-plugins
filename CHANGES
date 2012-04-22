@@ -1,10 +1,13 @@
 Releases
 ========
 
-0.1.2  (2012-03-??)
+0.1.2  (2012-04-22)
 -------------------
 
 * Insert separators in the menu, before and after, of the plugins
+* Add Close Template tag plugin
+* Add Template block plugin
+
 
 0.1.1  (2012-03-17)
 -------------------

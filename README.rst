@@ -138,7 +138,7 @@ Template Django urls (django)
 
 Template import views (django)
 ------------------------------
- * Shortcut: Ctrl+Alt+v
+ * Shortcut: Ctrl+Alt+V
  * Insert the tipical imports in a view
 
 
@@ -153,6 +153,16 @@ Create Django model (django)
  * Shortcut: Ctrl+Alt+M
  * Template to model class
 
+
+Close Template tag (django)
+----------------------------
+ * Shortcut: Ctrl+Alt+C
+ * Close the last open templatetag (block, if, for, etc)
+
+Template block (django)
+----------------------------
+ * Shortcut: Ctrl+Alt+B
+ * Insert a struncture like this: {% block content %}XXX{% endblock %} or {% if x > 3 %} {% endif %}
 
 Autocomplete static to javascript (javascript)
 ----------------------------------------------
@@ -186,9 +196,10 @@ Pretty XML (xhtml)
 Future Plugins
 ==============
 
- * Clean code
- * Improve autocompletes plugins
- * Integration with rope
+ * Clean code (core)
+ * Improve autocompletes plugins (core)
+ * Template tags autocomplete (django)
+ * Integration with rope (python)
 
 Other repositories of Plugins to Kate
 =====================================

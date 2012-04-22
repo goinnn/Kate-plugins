@@ -35,6 +35,10 @@ KATE_ACTIONS = {
                    'menu': DJ_MENU, 'icon': None},
     'importViews': {'text': 'Template import views', 'shortcut': 'Ctrl+Alt+v',
                     'menu': DJ_MENU, 'icon': None},
+    'createBlock': {'text': 'Template block', 'shortcut': 'Ctrl+Alt+B',
+                              'menu': DJ_MENU, 'icon': None},
+    'closeTemplateTag': {'text': 'Close Template tag', 'shortcut': 'Ctrl+Alt+C',
+                              'menu': DJ_MENU, 'icon': None},
     'insertReady': {'text': 'jQuery Ready', 'shortcut': 'Ctrl+J',
                     'menu': JS_MENU, 'icon': None},
     'checkJslint': {'text': 'JSLint', 'shortcut': 'Alt+J',
@@ -50,6 +54,8 @@ JAVASCRIPT_AUTOCOMPLETE_ENABLED = True
 JQUERY_AUTOCOMPLETE_ENABLED = True
 CHECKALL_TO_SAVE = True
 IGNORE_PEP8_ERRORS = []
+TEMPLATE_TAGS_CLOSE = ["autoescape", "block", "comment", "filter", "for", "if",
+                       "ifchanged", "ifequal", "spaceless", "with"]
 
 
 try:
