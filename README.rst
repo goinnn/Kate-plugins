@@ -207,5 +207,4 @@ Other repositories of Plugins to Kate
  * http://github.com/mtorromeo/kate-plugin-zencoding (Very recomended)
  * https://github.com/pag/pate/tree/master/src/plugins
  * https://github.com/emyller/pate-plugins
- * http://code.google.com/p/kate-pate-plugins/
  * https://github.com/zaufi/kate-pate-plugins
