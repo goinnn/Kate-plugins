@@ -1,6 +1,12 @@
 Releases
 ========
 
+0.1.4  (2012-06-15)
+-------------------
+
+* Detail to jQuery autocomplete. This do not accept something kile this: jQuery("a.class-with-dash")
+
+
 0.1.3  (2012-04-24)
 -------------------
 
