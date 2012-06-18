@@ -18,7 +18,6 @@ def closeTemplateTag():
         match = pattern_close.match(text)
         if match:
             tag = match.groups()[1]
-            print match.groups()
             break
         currentLine = currentLine - 1
     insertText("{%% end%s %%}" % tag)
