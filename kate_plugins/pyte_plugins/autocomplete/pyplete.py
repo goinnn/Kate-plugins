@@ -51,7 +51,9 @@ class PyPlete(object):
         return list_autocomplete and bool(len(list_autocomplete))
 
     def get_importables_rest_level(self, list_autocomplete, imp_name, subimportables=None, into_module=True):
-        imp_path = self.importables_path[imp_name][0]
+        if not self.importables_path.get(imp_name):
+            return False
+        imp_path = self.importables_path.get(imp_name)[0]
         subimportables = subimportables or []
         subimportables = [subimportable for subimportable in subimportables if subimportable]
         if subimportables:
