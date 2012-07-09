@@ -30,8 +30,7 @@ setup(
     author="Pablo Martin",
     author_email="goinnn@gmail.com",
     url="https://github.com/goinnn/Kate-plugins",
-    license="Apache Software License",
-
+    license="GNU Lesser General Public License",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Plugins",

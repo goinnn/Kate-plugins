@@ -21,6 +21,7 @@ Installation
 * Extra dependencies for extra and super nice features. Optional, but **very recomended** :)
 
     * Install `Pysmell <http://pypi.python.org/pypi/pysmell>`_
+    * Install `PyPlete <http://pypi.python.org/pypi/pyplete>`_
     * Install `PEP8 <http://pypi.python.org/pypi/pep8>`_
     * Install `PyFlakes <http://pypi.python.org/pypi/pyflakes>`_
     * Install `pyjslint <http://pypi.python.org/pypi/pyjslint>`_ (it requires `NodeJS <http://nodejs.org/>`_, read the pyjslint readme)

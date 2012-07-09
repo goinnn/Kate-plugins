@@ -1,3 +1,19 @@
+# -*- coding: utf-8 -*-
+# Copyright (c) 2011 by Pablo Martín <goinnn@gmail.com>
+#
+# This software is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This software is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
 import sys
 
 import kate
@@ -7,7 +23,7 @@ from PyQt4 import QtCore
 
 from autopate import AbstractCodeCompletionModel
 from kate_settings_plugins import PYTHON_AUTOCOMPLETE_ENABLED
-from pyte_plugins.autocomplete.pyplete import PyPlete
+from pyplete import PyPlete
 from pyte_plugins.autocomplete.parse import (import_complete,
                                              from_first_imporable,
                                              from_other_imporables,
