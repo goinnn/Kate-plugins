@@ -4,7 +4,7 @@ Releases
 0.1.5  (2012-07-09)
 -------------------
 
-* Liberate pyplete
+* Liberate `PyPlete <http://pypi.python.org/pypi/pyplete>`_ (You need install this egg if you want python autocomplete)
 * Add Copyright
 
 
