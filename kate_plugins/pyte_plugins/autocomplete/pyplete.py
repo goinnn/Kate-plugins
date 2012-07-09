@@ -68,8 +68,9 @@ class PyPlete(object):
             into_module = imp_path.split(os.sep)[-1].replace('.py', '').replace('.pyc', '')
             importer = pkgutil.get_importer(into_dir)
             imp = importer.find_module(into_module)
-            if imp:
-                self.get_importables_from_text(list_autocomplete, imp.get_source())
+            source = imp and imp.get_source()
+            if source:
+                self.get_importables_from_text(list_autocomplete, source)
         return list_autocomplete and bool(len(list_autocomplete))
 
     def get_importables_from_text(self, list_autocomplete, text, line=None):
@@ -227,5 +228,7 @@ class PyPlete(object):
             if len(submodules_undone) != 1:
                 return None
             cls_name = '%s%s' % (PYSMELL_PREFIX, submodules_undone[0])
-            base_info = self.get_pysmell_modules_to_text(imp_loader.get_source())['CLASSES'].get(cls_name, None)
+            source = imp_loader.get_source()
+            if source:
+                base_info = self.get_pysmell_modules_to_text(imp_loader.get_source())['CLASSES'].get(cls_name, None)
         return base_info
