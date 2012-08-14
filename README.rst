@@ -20,6 +20,7 @@ Installation
 * Install Pate
 
 ::
+
     mkdir -p ~/build;cd ~/build
     git clone git://github.com/pag/pate.git pate
     cd pate
@@ -32,6 +33,7 @@ Installation
 * Install Kate-plugins
 
 ::
+
     cd ~/build
     pip install pysmell pyplete pep8 pyflakes pyjslint
     git clone https://github.com/phrearch/Kate-plugins
