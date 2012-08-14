@@ -19,24 +19,24 @@ Installation
 
 * Install Pate
 
-```bash
-mkdir -p ~/build;cd ~/build
-git clone git://github.com/pag/pate.git pate
-cd pate
-cmake . -DCMAKE_INSTALL_PREFIX=$(kde4-config --prefix)
-sudo make install 
-cp -r src/plugins $(kde4-config --localprefix)/share/apps/kate/pate
-sudo cp -r src/kate /usr/lib/python2.7/site-packages
-```
+::
+    mkdir -p ~/build;cd ~/build
+    git clone git://github.com/pag/pate.git pate
+    cd pate
+    cmake . -DCMAKE_INSTALL_PREFIX=$(kde4-config --prefix)
+    sudo make install 
+    cp -r src/plugins $(kde4-config --localprefix)/share/apps/kate/pate
+    sudo cp -r src/kate /usr/lib/python2.7/site-packages
+
 
 * Install Kate-plugins
 
-```bash
-cd ~/build
-pip install pysmell pyplete pep8 pyflakes pyjslint
-git clone https://github.com/phrearch/Kate-plugins
-ln -s ~/build/Kate-plugins/kate_plugins/ $(kde4-config --localprefix)/share/apps/kate/pate
-```
+::
+    cd ~/build
+    pip install pysmell pyplete pep8 pyflakes pyjslint
+    git clone https://github.com/phrearch/Kate-plugins
+    ln -s ~/build/Kate-plugins/kate_plugins/ $(kde4-config --localprefix)/share/apps/kate/pate
+
 
 Plugins
 =======
