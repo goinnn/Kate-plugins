@@ -7,49 +7,31 @@ Kate Plugins
 Information
 ===========
 
-These are plugins to `Kate <http://kate-editor.org  />`_ editor. Plugins to make coding easier in `Python <http://python.org/>`_, `Django <https://docs.djangoproject.com>`_ and JavaScript
+These are Pate plugins for `Kate <http://kate-editor.org  />`_ editor. Plugins to make coding easier in `Python <http://python.org/>`_, `Django <https://docs.djangoproject.com>`_ and JavaScript
 
-Requeriments
+Requirements
 ============
 
- * `Pâté <http://paul.giannaros.org/pate/>`_
+ * `Pâté <https://github.com/pag/pate/>`_
 
 Installation
 ============
 
-* `Install Pâté <https://github.com/pag/pate/blob/master/INSTALL.txt>`_
-* Extra dependencies for extra and super nice features. Optional, but **very recomended** :)
+* Install Pate
+ mkdir -p ~/build;cd ~/build
+ git clone git://github.com/pag/pate.git pate
+ cd pate
+ cmake . -DCMAKE_INSTALL_PREFIX=$(kde4-config --prefix)
+ sudo make install 
+ cp -r src/plugins $(kde4-config --localprefix)/share/apps/kate/pate
+ sudo cp -r src/kate /usr/lib/python2.7/site-packages
+ 
+* Install Kate-plugins
+ cd ~/build
+ pip install pysmell pyplete pep8 pyflakes pyjslint
+ git clone https://github.com/phrearch/Kate-plugins
+ ln -s ~/build/Kate-plugins/kate_plugins/ $(kde4-config --localprefix)/share/apps/kate/pate
 
-    * Install `Pysmell <http://pypi.python.org/pypi/pysmell>`_
-    * Install `PyPlete <http://pypi.python.org/pypi/pyplete>`_
-    * Install `PEP8 <http://pypi.python.org/pypi/pep8>`_
-    * Install `PyFlakes <http://pypi.python.org/pypi/pyflakes>`_
-    * Install `pyjslint <http://pypi.python.org/pypi/pyjslint>`_ (it requires `NodeJS <http://nodejs.org/>`_, read the pyjslint readme)
-
-::
-
- easy_install pysmell==0.7.3
- easy_install pep8==0.6.1
- easy_install pyflakes==0.5.0
- easy_install pyjslint==0.3.3
-
-* Install the plugins:
-
-::
-
- easy_install Kate-plugins
- cd ~/.kde/share/apps/kate/pate/
- ln -s /PATH/OF/THE/EGG/kate_plugins/ .
-
-
-or
-
-::
-
- cd ~/
- git clone git://github.com/goinnn/Kate-plugins.git
- cd ~/.kde/share/apps/kate/pate/
- ln -s ~/Kate-plugins/kate_plugins/ .
 
 Plugins
 =======
