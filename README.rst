@@ -20,22 +20,22 @@ Installation
 * Install Pate
 
 ::
-
     mkdir -p ~/build;cd ~/build
     git clone git://github.com/pag/pate.git pate
     cd pate
+    #make sure your system's default python executable is version 2 - not 3
     cmake . -DCMAKE_INSTALL_PREFIX=$(kde4-config --prefix)
+    make
     sudo make install 
-    cp -r src/plugins $(kde4-config --localprefix)/share/apps/kate/pate
-    sudo cp -r src/kate /usr/lib/python2.7/site-packages
-
+    export PYTHONPATH=$PYTHONPATH:/usr/share/apps/kate/plugins/pate/
+    #add the environment above to /etc/profile to make it stick on reboot
 
 * Install Kate-plugins
 
 ::
 
     cd ~/build
-    pip install pysmell pyplete pep8 pyflakes pyjslint
+    pip install pysmell pyplete pep8 pyflakes pyjslint simplejson
     git clone https://github.com/phrearch/Kate-plugins
     ln -s ~/build/Kate-plugins/kate_plugins/ $(kde4-config --localprefix)/share/apps/kate/pate
 
