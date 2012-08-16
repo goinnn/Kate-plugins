@@ -20,6 +20,7 @@ Installation
 * Install Pate
 
 ::
+
     mkdir -p ~/build;cd ~/build
     git clone git://github.com/pag/pate.git pate
     cd pate
@@ -38,6 +39,10 @@ Installation
     pip install pysmell pyplete pep8 pyflakes pyjslint simplejson
     git clone https://github.com/phrearch/Kate-plugins
     ln -s ~/build/Kate-plugins/kate_plugins/ $(kde4-config --localprefix)/share/apps/kate/pate
+
+* Startup Kate and enable Pate in Settings > Configure Kate > Plugins
+
+You should now see two additional menu items: "Python" and "Javascript".
 
 
 Plugins
