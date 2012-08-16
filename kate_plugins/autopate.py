@@ -84,22 +84,9 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
     
     
     def data(self, index, role):
-        if index.column() == KTextEditor.CodeCompletionModel.Name:
-            if role == Qt.DisplayRole:
-                print self.resultList[index.row()]
-                return self.resultList[index.row()]['text']
-            try:
-                return self.roles[role]
-            except KeyError:
-                pass
-
-    def _data(self, index, role, *args, **kwargs):
-        #http://api.kde.org/4.5-api/kdelibs-apidocs/kate/html/katewordcompletion_8cpp_source.html
         if not index.parent().isValid():
             return self.TITLE_AUTOCOMPLETION
         item = self.resultList[index.row()]
-        #item 0/3
-        #KTextEditor.CodeCompletionModel.Name == 3
         if index.column() == KTextEditor.CodeCompletionModel.Name:
             if role == Qt.DisplayRole:
                 return item['text']
@@ -118,7 +105,7 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
             item_description = item.get("description", None)
             if role == Qt.DisplayRole and item_description:
                 return item_description
-        return 'foo'
+        return None
 
     def parent(self, index):
         if index.internalId():
