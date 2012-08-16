@@ -14,15 +14,18 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
-from kate_core_plugins import create_submenu, separated_menu
+from kate_core_plugins import create_mainmenu, create_submenu, separated_menu
 
-separated_menu('edit')
-DJ_MENU = create_submenu('Django Templates', 'django-templates', 'edit')
-PY_MENU = create_submenu('Python Templates', 'python-templates', 'edit')
-JS_MENU = create_submenu('Js Templates', 'js-templates', 'edit')
-separated_menu('edit')
+PY_MENU = create_mainmenu('Python','python')
+DJ_MENU = create_submenu('Django', 'django', PY_MENU)
+separated_menu('python')
+PY_CHECKERS = create_submenu('Checkers', 'py_checkers', PY_MENU)
+
+JS_MENU = create_mainmenu('Javascript','javascript')
+JS_CHECKERS = create_submenu('Checkers', 'js_checkers', JS_MENU)
+separated_menu('javascript')
 separated_menu('tools')
-CH_MENU = create_submenu('Checkers', 'checkers', 'tools')
+
 PR_MENU = create_submenu('Pretty print', 'pretty-print', 'tools')
 separated_menu('tools')
 
@@ -36,13 +39,13 @@ KATE_ACTIONS = {
     'callRecursive': {'text': 'call recursive', 'shortcut': 'Ctrl+Alt+-',
                     'menu': PY_MENU, 'icon': None},
     'checkAll': {'text': 'Check all', 'shortcut': 'Alt+5',
-                 'menu': CH_MENU, 'icon': None},
+                 'menu': PY_CHECKERS, 'icon': None},
     'checkPyflakes': {'text': 'pyflakes', 'shortcut': 'Alt+7',
-                      'menu': CH_MENU, 'icon': None},
+                      'menu': PY_CHECKERS, 'icon': None},
     'parseCode': {'text': 'Parse code python', 'shortcut': 'Alt+6',
-                  'menu': CH_MENU, 'icon': None},
+                  'menu': PY_CHECKERS, 'icon': None},
     'checkPep8': {'text': 'Pep8', 'shortcut': 'Alt+8',
-                  'menu': CH_MENU, 'icon': None},
+                  'menu': PY_CHECKERS, 'icon': None},
     'createForm': {'text': 'Create Django Form', 'shortcut': 'Ctrl+Alt+F',
                    'menu': DJ_MENU, 'icon': None},
     'createModel': {'text': 'Create Django Model', 'shortcut': 'Ctrl+Alt+M',
@@ -58,7 +61,7 @@ KATE_ACTIONS = {
     'insertReady': {'text': 'jQuery Ready', 'shortcut': 'Ctrl+J',
                     'menu': JS_MENU, 'icon': None},
     'checkJslint': {'text': 'JSLint', 'shortcut': 'Alt+J',
-                    'menu': CH_MENU, 'icon': None},
+                    'menu': JS_CHECKERS, 'icon': None},
     'togglePrettyJsonFormat': {'text': 'Pretty Json', 'shortcut': 'Ctrl+Alt+J',
                                'menu': PR_MENU, 'icon': None},
     'togglePrettyXMLFormat': {'text': 'Pretty XML', 'shortcut': 'Ctrl+Alt+X',
