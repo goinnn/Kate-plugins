@@ -19,40 +19,35 @@ from simplejson import loads
 
 from PyKDE4.kdeui import KIcon
 from PyKDE4.ktexteditor import KTextEditor
-from PyQt4.QtCore import QModelIndex, QSize, Qt, QVariant
+from PyQt4.QtCore import QModelIndex, QSize, Qt
 
 
 class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
 
-    TITLE_AUTOCOMPLETATION = 'Autopate'
+    TITLE_AUTOCOMPLETION = 'Autopate'
     MIMETYPES = []
     OPERATORS = []
     SEPARATOR = '.'
 
-    def __init__(self, *args, **kwargs):
-        super(AbstractCodeCompletionModel, self).__init__(*args, **kwargs)
+    def __init__(self, model, resultList=None):
+        self.model = model
+        super(AbstractCodeCompletionModel, self).__init__(model)
         self.resultList = []
 
     roles = {
         KTextEditor.CodeCompletionModel.CompletionRole:
-            QVariant(
-                KTextEditor.CodeCompletionModel.FirstProperty |
-                KTextEditor.CodeCompletionModel.Public |
-                KTextEditor.CodeCompletionModel.LastProperty |
-                KTextEditor.CodeCompletionModel.Prefix),
-        KTextEditor.CodeCompletionModel.ScopeIndex:
-            QVariant(0),
-        KTextEditor.CodeCompletionModel.MatchQuality:
-            QVariant(10),
-        KTextEditor.CodeCompletionModel.HighlightingMethod:
-            QVariant(QVariant.Invalid),
-        KTextEditor.CodeCompletionModel.InheritanceDepth:
-            QVariant(0),
+            KTextEditor.CodeCompletionModel.FirstProperty |
+            KTextEditor.CodeCompletionModel.Public |
+            KTextEditor.CodeCompletionModel.LastProperty |
+            KTextEditor.CodeCompletionModel.Prefix,
+        KTextEditor.CodeCompletionModel.ScopeIndex: 0,
+        KTextEditor.CodeCompletionModel.MatchQuality: 10,
+        KTextEditor.CodeCompletionModel.HighlightingMethod: None,
+        KTextEditor.CodeCompletionModel.InheritanceDepth: 0,
     }
 
     @classmethod
-    def createItemAutoComplete(cls, text, icon='unknown', args=None,
-                               description=None):
+    def createItemAutoComplete(cls, text, icon='unknown', args=None, description=None):
         icon_converter = {'package': 'code-block',
                           'module': 'code-context',
                           'unknown': 'unknown',
@@ -86,30 +81,29 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
             return line
         return self.parseLine(line, column_end)
 
-    def data(self, index, role, *args, **kwargs):
-        #http://api.kde.org/4.5-api/kdelibs-apidocs/kate/html/katewordcompletion_8cpp_source.html
+    def data(self, index, role):
         if not index.parent().isValid():
-            return self.TITLE_AUTOCOMPLETATION
+            return self.TITLE_AUTOCOMPLETION
         item = self.resultList[index.row()]
         if index.column() == KTextEditor.CodeCompletionModel.Name:
             if role == Qt.DisplayRole:
-                return QVariant(item['text'])
+                return item['text']
             try:
                 return self.roles[role]
             except KeyError:
                 pass
         elif index.column() == KTextEditor.CodeCompletionModel.Icon:
             if role == Qt.DecorationRole:
-                return QVariant(KIcon(item["icon"]).pixmap(QSize(16, 16)))
+                return KIcon(item["icon"]).pixmap(QSize(16, 16))
         elif index.column() == KTextEditor.CodeCompletionModel.Arguments:
             item_args = item.get("args", None)
             if role == Qt.DisplayRole and item_args:
-                return QVariant(item_args)
+                return item_args
         elif index.column() == KTextEditor.CodeCompletionModel.Postfix:
             item_description = item.get("description", None)
             if role == Qt.DisplayRole and item_description:
-                return QVariant(item_description)
-        return QVariant()
+                return item_description
+        return None
 
     def parent(self, index):
         if index.internalId():

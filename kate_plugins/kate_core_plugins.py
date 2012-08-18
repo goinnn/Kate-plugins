@@ -109,6 +109,15 @@ def findMenu(menu_parent_slug):
         if str(menu.objectName()) == menu_parent_slug:
             return menu
     return None
+    
+    
+def create_mainmenu(name_menu, slug_menu):
+    window = kate.mainWindow()
+    menubar = window.findChildren(QtGui.QMenuBar)[0]
+    new_menu = kdeui.KMenu(name_menu, window)
+    new_menu.setObjectName(slug_menu)
+    menubar.addMenu(new_menu)
+    return slug_menu
 
 
 def create_submenu(name_menu, slug_menu, menu_parent_slug):

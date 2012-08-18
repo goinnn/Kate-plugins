@@ -35,10 +35,9 @@ global python_path
 pyplete = None
 python_path = []
 
-
 class PythonCodeCompletionModel(AbstractCodeCompletionModel):
 
-    TITLE_AUTOCOMPLETATION = "Python Auto Complete"
+    TITLE_AUTOCOMPLETION = "Python Auto Complete"
     MIMETYPES = ['text/plain', 'text/x-python']
     OPERATORS = ["=", " ", "[", "]", "(", ")", "{", "}", ":", ">", "<",
                  "+", "-", "*", "/", "%", " and ", " or ", ","]
