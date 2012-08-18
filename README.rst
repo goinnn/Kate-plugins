@@ -13,11 +13,17 @@ Requirements
 ============
 
  * `Pâté <https://github.com/pag/pate/>`_
+ * Extra dependencies for extra and super nice features. Optional, but **very recomended** :)
+     * `pysmell <http://pypi.python.org/pypi/pysmell>`_
+     * `pyplete <http://pypi.python.org/pypi/pyplete>`_
+     * `pyflakes <http://pypi.python.org/pypi/pyflakes>`_
+     * `pyjslint <http://pypi.python.org/pypi/pyjslint>`_
+     * `simplejson <http://pypi.python.org/pypi/simplejson>`_
 
 Installation
 ============
 
-* Install Pate
+* `Install Pate <https://github.com/pag/pate/blob/master/INSTALL.txt>`_:
 
 ::
 
@@ -31,13 +37,28 @@ Installation
     export PYTHONPATH=$PYTHONPATH:/usr/share/apps/kate/plugins/pate/
     #add the environment above to /etc/profile to make it stick on reboot
 
-* Install Kate-plugins
+* Install optional requirements:
+
+::
+
+    # Kate plugins has been tested with these versions but is very probably that works with later versions
+    pip install pysmell==0.7.3 pyplete==0.0.1 pep8==0.6.1 pyflakes==0.5.0 pyjslint==0.3.3 simplejson==2.6.1
+
+
+* Install Kate-plugins:
+
+
+
+::
+    pip install Kate-plugins
+    ln -s /PATH/OF/THE/EGG/kate_plugins/ $(kde4-config --localprefix)/share/apps/kate/pate
+
+Or
 
 ::
 
     cd ~/build
-    pip install pysmell pyplete pep8 pyflakes pyjslint simplejson
-    git clone https://github.com/phrearch/Kate-plugins
+    git clone https://github.com/goinnn/Kate-plugins
     ln -s ~/build/Kate-plugins/kate_plugins/ $(kde4-config --localprefix)/share/apps/kate/pate
 
 * Startup Kate and enable Pate in Settings > Configure Kate > Plugins

@@ -35,6 +35,7 @@ global python_path
 pyplete = None
 python_path = []
 
+
 class PythonCodeCompletionModel(AbstractCodeCompletionModel):
 
     TITLE_AUTOCOMPLETION = "Python Auto Complete"

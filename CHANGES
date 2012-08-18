@@ -1,6 +1,15 @@
 Releases
 ========
 
+0.1.6  (2012-08-18)
+-------------------
+
+* Fix for autocomplete in the last KDE 
+* Restructuring of menus
+* Refactor
+* Thank you to <https://github.com/phrearch Jeroen van Veen>`_ to the changes
+
+
 0.1.5  (2012-07-09)
 -------------------
 

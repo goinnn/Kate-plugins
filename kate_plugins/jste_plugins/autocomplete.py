@@ -27,7 +27,7 @@ from kate_settings_plugins import (JAVASCRIPT_AUTOCOMPLETE_ENABLED,
 class StaticJSCodeCompletionModel(AbstractJSONFileCodeCompletionModel):
 
     MIMETYPES = ['application/javascript', 'text/html']
-    TITLE_AUTOCOMPLETATION = "JS Auto Complete"
+    TITLE_AUTOCOMPLETION = "JS Auto Complete"
     # generated with jste_plugins/autocomplete_js.gen
     FILE_PATH = 'jste_plugins/autocomplete_js.json'
     OPERATORS = ["=", " ", "[", "]", "(", ")", "{", "}", ":", ">", "<",
@@ -46,7 +46,7 @@ class StaticJSCodeCompletionModel(AbstractJSONFileCodeCompletionModel):
 
 
 class StaticJQueryCompletionModel(StaticJSCodeCompletionModel):
-    TITLE_AUTOCOMPLETATION = "jQuery Auto Complete"
+    TITLE_AUTOCOMPLETION = "jQuery Auto Complete"
     FILE_PATH = 'jste_plugins/autocomplete_jquery.json'
 
     def __init__(self, *args, **kwargs):

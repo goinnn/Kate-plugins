@@ -109,8 +109,8 @@ def findMenu(menu_parent_slug):
         if str(menu.objectName()) == menu_parent_slug:
             return menu
     return None
-    
-    
+
+
 def create_mainmenu(name_menu, slug_menu):
     window = kate.mainWindow()
     menubar = window.findChildren(QtGui.QMenuBar)[0]
