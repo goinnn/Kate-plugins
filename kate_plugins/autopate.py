@@ -54,7 +54,7 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
                           'constant': 'code-variable',
                           'class': 'code-class',
                           'function': 'code-function'}
-        max_description = 30
+        max_description = 50
         if description and len(description) > max_description:
             description = description.strip()
             description = '%s...' % description[:max_description]

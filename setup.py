@@ -44,7 +44,8 @@ setup(
         "pep8 ==0.6.1",
         "pyflakes ==0.5.0",
         "pyjslint ==0.3.3",
-        "pyplete >= 0.0.1"
+        "pyplete >= 0.0.1",
+        "simplejson"
     ],
     packages=('kate_plugins', ),
     keywords="kate,pate,plugins,kate plugins,pate plugins,python,autocomplete,autocomplete python,django,jquery,js,checker,pep8,pyflakes,jslint",
