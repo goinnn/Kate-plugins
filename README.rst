@@ -17,8 +17,8 @@ Requirements
      * `pysmell <http://pypi.python.org/pypi/pysmell>`_
      * `pyplete <http://pypi.python.org/pypi/pyplete>`_
      * `pyflakes <http://pypi.python.org/pypi/pyflakes>`_
-     * `pyjslint <http://pypi.python.org/pypi/pyjslint>`_
      * `simplejson <http://pypi.python.org/pypi/simplejson>`_
+     * `pyjslint <http://pypi.python.org/pypi/pyjslint>`_ (it requires `NodeJS <http://nodejs.org/>`_, read the pyjslint readme)
 
 Installation
 ============
@@ -50,6 +50,7 @@ Installation
 
 
 ::
+
     pip install Kate-plugins
     ln -s /PATH/OF/THE/EGG/kate_plugins/ $(kde4-config --localprefix)/share/apps/kate/pate
 
