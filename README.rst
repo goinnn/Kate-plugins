@@ -64,7 +64,7 @@ Or
 
 * Startup Kate and enable Pate in Settings > Configure Kate > Plugins
 
-You should now see two additional menu items: "Python" and "Javascript".
+You should now see two additional menu items: "Python" and "Javascript", and one submenu item of the "Tools": "Pretty print". You can change the menu configuration of easy way change the `settings <https://github.com/goinnn/Kate-plugins/blob/master/kate_plugins/kate_settings_plugins.py>`_
 
 
 Plugins

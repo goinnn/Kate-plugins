@@ -23,6 +23,7 @@ from PyKDE4.ktexteditor import KTextEditor
 from PyQt4 import QtGui
 
 TEXT_TO_CHANGE = 'XXX'
+PREFIX_MENU = 'kate_plugins'
 
 
 def insertText(text, strip_line=False,
@@ -111,21 +112,29 @@ def findMenu(menu_parent_slug):
     return None
 
 
-def create_mainmenu(name_menu, slug_menu):
+def get_slug_menu(slug_menu, prefix=PREFIX_MENU):
+    if prefix and not slug_menu.startswith(PREFIX_MENU):
+        slug_menu = '%s_%s' % (prefix, slug_menu)
+    return slug_menu
+
+
+def create_mainmenu(name_menu, slug_menu, prefix=PREFIX_MENU):
     window = kate.mainWindow()
     menubar = window.findChildren(QtGui.QMenuBar)[0]
     new_menu = kdeui.KMenu(name_menu, window)
+    slug_menu = get_slug_menu(slug_menu, prefix=prefix)
     new_menu.setObjectName(slug_menu)
     menubar.addMenu(new_menu)
     return slug_menu
 
 
-def create_submenu(name_menu, slug_menu, menu_parent_slug):
+def create_submenu(name_menu, slug_menu, menu_parent_slug, prefix=PREFIX_MENU):
     menu_parent = findMenu(menu_parent_slug)
     if not menu_parent:
         return ''
     window = kate.mainWindow()
     new_menu = kdeui.KMenu(name_menu, window)
+    slug_menu = get_slug_menu(slug_menu, prefix=prefix)
     new_menu.setObjectName(slug_menu)
 
     action = QtGui.QAction(name_menu, new_menu)

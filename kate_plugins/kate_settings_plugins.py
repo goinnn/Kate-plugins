@@ -16,18 +16,20 @@
 
 from kate_core_plugins import create_mainmenu, create_submenu, separated_menu
 
-PY_MENU = create_mainmenu('Python','python')
+PY_MENU = create_mainmenu('Python', 'python')
 DJ_MENU = create_submenu('Django', 'django', PY_MENU)
-separated_menu('python')
+separated_menu(PY_MENU)
 PY_CHECKERS = create_submenu('Checkers', 'py_checkers', PY_MENU)
 
-JS_MENU = create_mainmenu('Javascript','javascript')
+JS_MENU = create_mainmenu('Javascript', 'javascript')
 JS_CHECKERS = create_submenu('Checkers', 'js_checkers', JS_MENU)
-separated_menu('javascript')
-separated_menu('tools')
+separated_menu(JS_MENU)
 
-PR_MENU = create_submenu('Pretty print', 'pretty-print', 'tools')
-separated_menu('tools')
+TOOLS_MENU = 'tools'
+separated_menu(TOOLS_MENU)
+PR_MENU = create_submenu('Pretty print', 'pretty-print', TOOLS_MENU)
+separated_menu(TOOLS_MENU)
+
 
 KATE_ACTIONS = {
     'insertIPDB': {'text': 'ipdb', 'shortcut': 'Ctrl+I',
