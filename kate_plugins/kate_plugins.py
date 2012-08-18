@@ -13,9 +13,6 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with this software.  If not, see <http://www.gnu.org/licenses/>.
-import sip
-sip.setapi('QVariant', 2)
-
 from jste_plugins.autocomplete import *
 from jste_plugins.jquery_plugins import *
 from jste_plugins.json_plugins import *
