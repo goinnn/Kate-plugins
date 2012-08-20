@@ -62,7 +62,7 @@ KATE_ACTIONS = {
                               'menu': DJ_MENU, 'icon': None},
     'insertReady': {'text': 'jQuery Ready', 'shortcut': 'Ctrl+J',
                     'menu': JS_MENU, 'icon': None},
-    'checkJslint': {'text': 'JSLint', 'shortcut': 'Alt+J',
+    'checkJslint': {'text': 'JSLint', 'shortcut': 'Alt+4',
                     'menu': JS_CHECKERS, 'icon': None},
     'togglePrettyJsonFormat': {'text': 'Pretty Json', 'shortcut': 'Ctrl+Alt+J',
                                'menu': PR_MENU, 'icon': None},
