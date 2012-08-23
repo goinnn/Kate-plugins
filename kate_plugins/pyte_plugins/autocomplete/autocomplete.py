@@ -134,9 +134,9 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
             self.treatmentException(e)
         return False
 
-    def getImportablesFromText(self, list_autocomplete, text, line=None):
+    def getImportablesFromText(self, list_autocomplete, text):
         try:
-            return pyplete.get_importables_from_text(list_autocomplete, text, line)
+            return pyplete.get_importables_from_text(list_autocomplete, text)
         except SyntaxError, e:
             self.treatmentException(e)
         return False
