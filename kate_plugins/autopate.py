@@ -47,21 +47,23 @@ class AbstractCodeCompletionModel(KTextEditor.CodeCompletionModel):
     }
 
     @classmethod
-    def createItemAutoComplete(cls, text, icon='unknown', args=None, description=None):
+    def createItemAutoComplete(cls, text, category='unknown', args=None, description=None):
         icon_converter = {'package': 'code-block',
                           'module': 'code-context',
                           'unknown': 'unknown',
                           'constant': 'code-variable',
                           'class': 'code-class',
-                          'function': 'code-function'}
+                          'function': 'code-function',
+                          'pointer': 'unknown'}
         max_description = 50
         if description and len(description) > max_description:
             description = description.strip()
             description = '%s...' % description[:max_description]
         return {'text': text,
-                'icon': icon_converter[icon],
+                'icon': icon_converter[category],
+                'category': category,
                 'args': args or '',
-                'type': icon,
+                'type': category,
                 'description': description or ''}
 
     def completionInvoked(self, view, word, invocationType):
