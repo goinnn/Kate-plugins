@@ -24,7 +24,7 @@ def read(*rnames):
 
 setup(
     name='Kate-plugins',
-    version="0.1.6",
+    version="0.1.7",
     description="Plugins to Kate editor to develop faster python projects, django projects and something of javascript",
     long_description=(read('README.rst') + '\n\n' + read('CHANGES')),
     author="Pablo Martin",
@@ -44,7 +44,7 @@ setup(
         "pep8==0.6.1",
         "pyflakes==0.5.0",
         "pyjslint==0.3.3",
-        "pyplete==0.0.1",
+        "pyplete==0.0.2",
         "simplejson==2.6.1"
     ],
     packages=('kate_plugins', ),

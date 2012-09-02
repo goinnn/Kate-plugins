@@ -42,7 +42,7 @@ Installation
 ::
 
     # Kate plugins has been tested with these versions but is very probably that works with later versions
-    pip install pysmell==0.7.3 pyplete==0.0.1 pep8==0.6.1 pyflakes==0.5.0 pyjslint==0.3.3 simplejson==2.6.1
+    pip install pysmell==0.7.3 pyplete==0.0.2 pep8==0.6.1 pyflakes==0.5.0 pyjslint==0.3.3 simplejson==2.6.1
 
 
 * Install Kate-plugins:

@@ -1,6 +1,22 @@
 Releases
 ========
 
+0.1.7  (2012-09-02)
+-------------------
+
+* Adapt the code to the last version of pyplete. Now the python autocomplete plugin can autocomplete the relative imports, something like this:
+
+::
+
+   from models import MyModel # from the same directory of the models.py
+
+And this:
+
+::
+
+   from .models import MyModel # from the same directory of the models.py
+
+
 0.1.6  (2012-08-18)
 -------------------
 
