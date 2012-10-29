@@ -1,5 +1,5 @@
 /* File generated with this script: */
-function kateGetIcon(child, childKey) {
+function kateGetCategory(child, childKey) {
     if (!child) {
         return "constant";
     }
@@ -58,16 +58,16 @@ function kateGetJSAutocomplete(obj, levelmax, level, dict) {
             }
             dict[childKey] = {"children": children};
             if (child != undefined) {
-                var icon = kateGetIcon(child, childKey);
-                dict[childKey]["icon"] = icon;
-                if (icon == "function") {
+                var category = kateGetCategory(child, childKey);
+                dict[childKey]["category"] = category;
+                if (category == "function") {
                     var args = kateGetArgs(child);
                     if (args) {
                         dict[childKey]["args"] = kateGetArgs(child);
                     }
                 }
             } else {
-                dict[childKey]["icon"] = "constant";
+                dict[childKey]["category"] = "constant";
             }
         }
     }

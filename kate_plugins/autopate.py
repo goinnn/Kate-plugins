@@ -172,7 +172,7 @@ class AbstractJSONFileCodeCompletionModel(AbstractCodeCompletionModel):
             return
         for child, attrs in children.items():
             index = self.createItemAutoComplete(text=child,
-                                    icon=attrs.get('icon', 'unknown'),
+                                    category=attrs.get('category', None),
                                     args=attrs.get('args', None),
                                     description=attrs.get('description', None))
             if not index:

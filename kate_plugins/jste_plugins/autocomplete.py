@@ -35,7 +35,7 @@ class StaticJSCodeCompletionModel(AbstractJSONFileCodeCompletionModel):
 
     def __init__(self, *args, **kwargs):
         super(StaticJSCodeCompletionModel, self).__init__(*args, **kwargs)
-        self.json['window'] = {'icon': 'module', 'children': {}}
+        self.json['window'] = {'category': 'module', 'children': {}}
 
     def getLastExpression(self, line, operators=None):
         expr = super(StaticJSCodeCompletionModel, self).getLastExpression(line,

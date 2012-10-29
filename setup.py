@@ -24,7 +24,7 @@ def read(*rnames):
 
 setup(
     name='Kate-plugins',
-    version="0.1.7",
+    version="0.1.8",
     description="Plugins to Kate editor to develop faster python projects, django projects and something of javascript",
     long_description=(read('README.rst') + '\n\n' + read('CHANGES')),
     author="Pablo Martin",

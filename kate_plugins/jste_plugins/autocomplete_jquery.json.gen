@@ -10,7 +10,7 @@ to these:
         $(document).ready(function () {
             result = {}
             result['jQuery']['children'] = kateGetJSAutocomplete(jQuery, 5);
-            result['jQuery']['icon'] = 'module';
+            result['jQuery']['category'] = 'module';
             result['___object'] = kateGetJSAutocomplete(jQuery('body'), 3);
             result = JSON.stringify(result);
         });
