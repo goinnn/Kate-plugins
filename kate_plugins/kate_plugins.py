@@ -16,7 +16,10 @@
 
 from jste_plugins.autocomplete import *
 from jste_plugins.jquery_plugins import *
-from jste_plugins.json_plugins import *
+try:
+    from jste_plugins.json_plugins import *
+except ImportError:
+    pass
 try:
     from jste_plugins.jslint_plugins import *
 except ImportError:

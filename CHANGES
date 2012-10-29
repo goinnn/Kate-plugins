@@ -4,7 +4,9 @@ Releases
 0.1.8  (2012-09-02)
 -------------------
 
-* Fix an error in jQuery autocomplete and js autocomplete, broken `in this commit <https://github.com/goinnn/Kate-plugins/commit/de7453f94341f84f5fab36d277a7f8383e961121>`>_
+* Fix an error in jQuery autocomplete and js autocomplete, broken `in this commit <https://github.com/goinnn/Kate-plugins/commit/de7453f94341f84f5fab36d277a7f8383e961121>`_
+* Add try/except for if the user has not simplesjson egg installed
+
 
 0.1.7  (2012-09-02)
 -------------------
