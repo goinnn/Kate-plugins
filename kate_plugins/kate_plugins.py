@@ -36,7 +36,7 @@ from pyte_plugins.text_plugins import *
 from pyte_plugins.check_plugins.parse_plugins import *
 
 try:
-    from pyte_plugins.check_plugins.cheack_all_plugins import *
+    from pyte_plugins.check_plugins.check_all_plugins import *
 except ImportError:
     pass
 try:
