@@ -17,9 +17,7 @@
 import kate
 import re
 
-from PyQt4 import QtCore
-
-from autopate import AbstractJSONFileCodeCompletionModel
+from autopate import AbstractJSONFileCodeCompletionModel, reset
 from kate_settings_plugins import (JAVASCRIPT_AUTOCOMPLETE_ENABLED,
                                    JQUERY_AUTOCOMPLETE_ENABLED)
 
@@ -77,25 +75,32 @@ class StaticJQueryCompletionModel(StaticJSCodeCompletionModel):
         return self.json
 
 
-def createSignalAutocompleteJS(view, *args, **kwargs):
+@kate.init
+@kate.viewCreated
+def createSignalAutocompleteJS(view=None, *args, **kwargs):
+    if not JAVASCRIPT_AUTOCOMPLETE_ENABLED:
+        return
+    view = view or kate.activeView()
     cci = view.codeCompletionInterface()
     cci.registerCompletionModel(jscodecompletationmodel)
 
 
-def createSignalAutocompletejQuery(view, *args, **kwargs):
+@kate.init
+@kate.viewCreated
+def createSignalAutocompletejQuery(view=None, *args, **kwargs):
+    if not JQUERY_AUTOCOMPLETE_ENABLED:
+        return
+    view = view or kate.activeView()
     cci = view.codeCompletionInterface()
     cci.registerCompletionModel(jquerycodecompletationmodel)
 
 
 if JAVASCRIPT_AUTOCOMPLETE_ENABLED or JQUERY_AUTOCOMPLETE_ENABLED:
-    windowInterface = kate.application.activeMainWindow()
     if JAVASCRIPT_AUTOCOMPLETE_ENABLED:
-        jscodecompletationmodel = StaticJSCodeCompletionModel(windowInterface)
-        windowInterface.connect(windowInterface,
-                              QtCore.SIGNAL('viewCreated(KTextEditor::View*)'),
-                              createSignalAutocompleteJS)
+        jscodecompletationmodel = StaticJSCodeCompletionModel(kate.application)
+        jscodecompletationmodel.modelReset.connect(reset)
+
     if JQUERY_AUTOCOMPLETE_ENABLED:
-        jquerycodecompletationmodel = StaticJQueryCompletionModel(windowInterface)
-        windowInterface.connect(windowInterface,
-                              QtCore.SIGNAL('viewCreated(KTextEditor::View*)'),
-                              createSignalAutocompletejQuery)
+        jquerycodecompletationmodel = StaticJQueryCompletionModel(kate.application)
+        jquerycodecompletationmodel.modelReset.connect(reset)
+

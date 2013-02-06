@@ -19,9 +19,8 @@ import sys
 import kate
 
 from PyKDE4.ktexteditor import KTextEditor
-from PyQt4 import QtCore
 
-from autopate import AbstractCodeCompletionModel
+from autopate import AbstractCodeCompletionModel, reset
 from kate_settings_plugins import PYTHON_AUTOCOMPLETE_ENABLED
 from pyplete import PyPlete
 from pyte_plugins.autocomplete.parse import (import_complete,
@@ -180,7 +179,9 @@ class PythonCodeCompletionModel(AbstractCodeCompletionModel):
         return text
 
 
-def createSignalAutocompleteDocument(view, *args, **kwargs):
+@kate.init
+@kate.viewCreated
+def createSignalAutocompleteDocument(view=None, *args, **kwargs):
     # https://launchpad.net/ubuntu/precise/+source/pykde4
     # https://launchpad.net/ubuntu/precise/+source/pykde4/4:4.7.97-0ubuntu1/+files/pykde4_4.7.97.orig.tar.bz2
     # http://doc.trolltech.com/4.6/qabstractitemmodel.html
@@ -188,6 +189,9 @@ def createSignalAutocompleteDocument(view, *args, **kwargs):
     # http://code.google.com/p/lilykde/source/browse/trunk/frescobaldi/python/frescobaldi_app/mainapp.py#1391
     # http://api.kde.org/4.0-api/kdelibs-apidocs/kate/html/katecompletionmodel_8cpp_source.html
     # https://svn.reviewboard.kde.org/r/1640/diff/?expand=1
+    if not PYTHON_AUTOCOMPLETE_ENABLED:
+        return
+    view = view or kate.activeView()
     global pyplete
     session = get_session()
     codecompletationmodel.setSession(session)
@@ -196,9 +200,6 @@ def createSignalAutocompleteDocument(view, *args, **kwargs):
 
 
 if PYTHON_AUTOCOMPLETE_ENABLED:
-    windowInterface = kate.application.activeMainWindow()
-    session = get_session()
-    codecompletationmodel = PythonCodeCompletionModel(session, windowInterface)
-    windowInterface.connect(windowInterface,
-                    QtCore.SIGNAL('viewCreated(KTextEditor::View*)'),
-                    createSignalAutocompleteDocument)
+    session = None
+    codecompletationmodel = PythonCodeCompletionModel(session, kate.application)
+    codecompletationmodel.modelReset.connect(reset)

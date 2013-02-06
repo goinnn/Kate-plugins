@@ -187,3 +187,7 @@ class AbstractJSONFileCodeCompletionModel(AbstractCodeCompletionModel):
             keys = self.SEPARATOR.join(keys_split[1:])
             return self.getChildrenInJSON(keys, json[keys_split[0]].get('children', None))
         return None
+
+
+def reset(*args, **kwargs):
+    pass
