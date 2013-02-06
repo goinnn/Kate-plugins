@@ -51,7 +51,7 @@ Or
     git clone https://github.com/goinnn/Kate-plugins
     ln -s ~/build/Kate-plugins/kate_plugins/ $(kde4-config --localprefix)/share/apps/kate/pate
 
-* Startup Kate and enable Python Plugins in Settings > Configure Kate > Plugins
+* Startup Kate and enable "Python Plugins" in: Settings > Configure Kate > Plugins
 
 You should now see three additional menu items: "Python", "Javascript", and "XML". You can change the menu configuration of easy way change the `settings <https://github.com/goinnn/Kate-plugins/blob/master/kate_plugins/kate_settings_plugins.py>`_
 
