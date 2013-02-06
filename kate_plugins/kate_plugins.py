@@ -1,7 +1,7 @@
 '''These are Pate plugins for Kate editor. Plugins to make coding easier in Python, Django  and JavaScript'''
 
 # -*- coding: utf-8 -*-
-# Copyright (c) 2011 by Pablo Martin <goinnn@gmail.com>
+# Copyright (c) 2013 by Pablo Martin <goinnn@gmail.com>
 #
 # This software is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
