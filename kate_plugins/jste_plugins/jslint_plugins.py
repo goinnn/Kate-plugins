@@ -36,7 +36,7 @@ def checkJslint(currentDocument=None, refresh=True):
                                     not currentDocument.isModified())):
         return
     if refresh:
-        checkAll(currentDocument, ['checkJslint'],
+        checkAll.f(currentDocument, ['checkJslint'],
                  exclude_all=not currentDocument)
     move_cursor = not currentDocument
     currentDocument = currentDocument or kate.activeDocument()

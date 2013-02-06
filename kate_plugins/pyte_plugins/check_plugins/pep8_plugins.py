@@ -19,7 +19,6 @@ import sys
 import kate
 import pep8
 
-
 from kate_settings_plugins import KATE_ACTIONS, IGNORE_PEP8_ERRORS
 from pyte_plugins.check_plugins import commons
 from pyte_plugins.check_plugins.check_all_plugins import checkAll
@@ -47,20 +46,28 @@ class StoreErrorsChecker(pep8.Checker):
         return result
 
 
+def saveFirst():
+    kate.gui.popup('You must save the file first', 3,
+                    icon='dialog-warning', minTextWidth=200)
+
+
 @kate.action(**KATE_ACTIONS['checkPep8'])
 def checkPep8(currentDocument=None, refresh=True):
     if not commons.canCheckDocument(currentDocument):
         return
     if refresh:
-        checkAll(currentDocument, ['checkPep8'],
+        checkAll.f(currentDocument, ['checkPep8'],
                  exclude_all=not currentDocument)
     move_cursor = not currentDocument
     currentDocument = currentDocument or kate.activeDocument()
+
     if currentDocument.isModified():
-        kate.gui.popup('You must save the file first', 3,
-                        icon='dialog-warning', minTextWidth=200)
+        saveFirst()
         return
     path = unicode(currentDocument.url().path())
+    if not path:
+        saveFirst()
+        return
     mark_key = '%s-pep8' % unicode(currentDocument.url().path())
     # Check the file for errors with PEP8
     sys.argv = [path]

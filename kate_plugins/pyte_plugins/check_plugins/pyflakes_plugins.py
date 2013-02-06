@@ -58,7 +58,7 @@ def checkPyflakes(currentDocument=None, refresh=True):
     if not commons.canCheckDocument(currentDocument):
         return
     if refresh:
-        checkAll(currentDocument, ['checkPyflakes'],
+        checkAll.f(currentDocument, ['checkPyflakes'],
                  exclude_all=not currentDocument)
     move_cursor = not currentDocument
     currentDocument = currentDocument or kate.activeDocument()

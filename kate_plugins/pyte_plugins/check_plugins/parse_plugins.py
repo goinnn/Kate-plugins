@@ -30,7 +30,7 @@ def parseCode(doc=None, refresh=True):
     if not canCheckDocument(doc):
         return
     if refresh:
-        checkAll(doc, ['parseCode'], exclude_all=not doc)
+        checkAll.f(doc, ['parseCode'], exclude_all=not doc)
     move_cursor = not doc
     doc = doc or kate.activeDocument()
     text = unicode(doc.text())

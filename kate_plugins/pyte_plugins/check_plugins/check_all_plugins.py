@@ -16,8 +16,6 @@
 
 import kate
 
-from PyQt4 import QtCore
-
 from kate_settings_plugins import KATE_ACTIONS, CHECKALL_TO_SAVE
 
 
@@ -51,23 +49,23 @@ def checkAll(doc=None, excludes=None, exclude_all=False):
         hideOldPopUps()
         if not exclude_all:
             if not 'parseCode' in excludes:
-                parseCode(currentDoc, refresh=False)
+                parseCode.f(currentDoc, refresh=False)
             if not 'checkPyflakes' in excludes:
                 try:
                     from pyte_plugins.check_plugins.pyflakes_plugins import checkPyflakes
-                    checkPyflakes(currentDoc, refresh=False)
+                    checkPyflakes.f(currentDoc, refresh=False)
                 except ImportError:
                     pass
             if not 'checkPep8' in excludes:
                 try:
                     from pyte_plugins.check_plugins.pep8_plugins import checkPep8
-                    checkPep8(currentDoc, refresh=False)
+                    checkPep8.f(currentDoc, refresh=False)
                 except ImportError:
                     pass
             if not 'checkJslint' in excludes:
                 try:
                     from jste_plugins.jslint_plugins import checkJslint
-                    checkJslint(currentDoc, refresh=False)
+                    checkJslint.f(currentDoc, refresh=False)
                 except ImportError:
                     pass
         if not doc and currentDoc.isModified() and not excludes:
@@ -75,13 +73,11 @@ def checkAll(doc=None, excludes=None, exclude_all=False):
                             icon='dialog-warning', minTextWidth=200)
 
 
-def createSignalCheckDocument(view, *args, **kwargs):
+@kate.init
+@kate.viewCreated
+def createSignalCheckDocument(view=None, *args, **kwargs):
+    if not CHECKALL_TO_SAVE:
+        return
+    view = view or kate.activeView()
     doc = view.document()
-    doc.modifiedChanged.connect(checkAll)
-
-
-if CHECKALL_TO_SAVE:
-    windowInterface = kate.application.activeMainWindow()
-    windowInterface.connect(windowInterface,
-                            QtCore.SIGNAL('viewCreated(KTextEditor::View*)'),
-                            createSignalCheckDocument)
+    doc.modifiedChanged.connect(checkAll.f)
