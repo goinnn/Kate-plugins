@@ -12,7 +12,7 @@ These are Pate plugins for `Kate <http://kate-editor.org  />`_ editor. Plugins t
 Requirements
 ============
 
- * `Pâté <https://github.com/pag/pate/>`_
+ * `Kate <http://kate-editor.org>`_
  * Extra dependencies for extra and super nice features. Optional, but **very recomended** :)
      * `pysmell <http://pypi.python.org/pypi/pysmell>`_
      * `pyplete <http://pypi.python.org/pypi/pyplete>`_
@@ -23,19 +23,8 @@ Requirements
 Installation
 ============
 
-* `Install Pate <https://github.com/pag/pate/blob/master/INSTALL.txt>`_:
+* `Install Kate <http://kate-editor.org/get-it/>`_ from sources:
 
-::
-
-    mkdir -p ~/build;cd ~/build
-    git clone git://github.com/pag/pate.git pate
-    cd pate
-    #make sure your system's default python executable is version 2 - not 3
-    cmake . -DCMAKE_INSTALL_PREFIX=$(kde4-config --prefix)
-    make
-    sudo make install 
-    export PYTHONPATH=$PYTHONPATH:/usr/share/apps/kate/plugins/pate/
-    #add the environment above to /etc/profile to make it stick on reboot
 
 * Install optional requirements:
 

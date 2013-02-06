@@ -1,6 +1,14 @@
 Releases
 ========
 
+0.1.9  (2012-02-01)
+-------------------
+
+* These changes are **backwards incompatibles**
+* Adapt the plugins to the last Kate (2012-02-01)
+* Fix a little error in the pep8 plugin
+* Improve the JSON plugin
+
 0.1.8  (2012-09-02)
 -------------------
 
