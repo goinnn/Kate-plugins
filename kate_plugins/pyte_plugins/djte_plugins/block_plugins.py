@@ -43,8 +43,7 @@ def closeTemplateTag():
 def createBlock():
     currentDocument = kate.activeDocument()
     view = currentDocument.activeView()
-    encoding = unicode(currentDocument.encoding())
-    source = unicode(view.selectionText(), encoding).encode(encoding)
+    source = view.selectionText()
     try:
         block_type, block_source = source.split("#")
     except ValueError:
