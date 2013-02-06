@@ -1,5 +1,7 @@
+'''These are Pate plugins for Kate editor. Plugins to make coding easier in Python, Django  and JavaScript'''
+
 # -*- coding: utf-8 -*-
-# Copyright (c) 2011 by Pablo Martín <goinnn@gmail.com>
+# Copyright (c) 2011 by Pablo Martin <goinnn@gmail.com>
 #
 # This software is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -33,19 +35,21 @@ from pyte_plugins.djte_plugins.class_plugins import *
 from pyte_plugins.djte_plugins.text_plugins import *
 from pyte_plugins.djte_plugins.block_plugins import *
 from pyte_plugins.text_plugins import *
+
 from pyte_plugins.check_plugins.parse_plugins import *
 
 try:
-    from pyte_plugins.check_plugins.check_all_plugins import *
+    from pyte_plugins.check_plugins.pyflakes_plugins import *
 except ImportError:
     pass
+
 try:
     from pyte_plugins.check_plugins.pep8_plugins import *
 except ImportError:
     pass
 
 try:
-    from pyte_plugins.check_plugins.pyflakes_plugins import *
+    from pyte_plugins.check_plugins.check_all_plugins import *
 except ImportError:
     pass
 

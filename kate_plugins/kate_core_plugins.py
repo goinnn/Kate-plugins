@@ -16,7 +16,6 @@
 
 import kate
 
-from PyKDE4 import kdeui
 from PyKDE4.kdecore import KConfig, KConfigGroup
 from PyKDE4.ktexteditor import KTextEditor
 
@@ -118,30 +117,23 @@ def get_slug_menu(slug_menu, prefix=PREFIX_MENU):
     return slug_menu
 
 
-def create_mainmenu(name_menu, slug_menu, prefix=PREFIX_MENU):
-    window = kate.mainWindow()
-    menubar = window.findChildren(QtGui.QMenuBar)[0]
-    new_menu = kdeui.KMenu(name_menu, window)
-    slug_menu = get_slug_menu(slug_menu, prefix=prefix)
-    new_menu.setObjectName(slug_menu)
-    menubar.addMenu(new_menu)
-    return slug_menu
+def move_menu_submenu(menu_slug, submenu_slug):
+    menu = findMenu(menu_slug)
+    submenu = findMenu(submenu_slug)
+    action_menubar = action_of_menu(submenu)
+    action = QtGui.QAction(action_menubar.text(), submenu)
+    action.setObjectName(action_menubar.text())
+    action.setMenu(submenu)
+    if action_menubar:
+        action_menubar.deleteLater()
+    menu.addAction(action)
 
 
-def create_submenu(name_menu, slug_menu, menu_parent_slug, prefix=PREFIX_MENU):
-    menu_parent = findMenu(menu_parent_slug)
-    if not menu_parent:
-        return ''
-    window = kate.mainWindow()
-    new_menu = kdeui.KMenu(name_menu, window)
-    slug_menu = get_slug_menu(slug_menu, prefix=prefix)
-    new_menu.setObjectName(slug_menu)
-
-    action = QtGui.QAction(name_menu, new_menu)
-    action.setObjectName(slug_menu)
-    action.setMenu(new_menu)
-    menu_parent.addAction(action)
-    return slug_menu
+def action_of_menu(menu):
+    actions = [action for action in menu.parent().actions() if action.menu() and action.menu().objectName() == menu.objectName()]
+    if len(actions) == 1:
+        return actions[0]
+    return None
 
 
 def separated_menu(menu_parent_slug):

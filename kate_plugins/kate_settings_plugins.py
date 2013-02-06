@@ -14,21 +14,27 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
-from kate_core_plugins import create_mainmenu, create_submenu, separated_menu
+import kate
 
-PY_MENU = create_mainmenu('Python', 'python')
-DJ_MENU = create_submenu('Django', 'django', PY_MENU)
-separated_menu(PY_MENU)
-PY_CHECKERS = create_submenu('Checkers', 'py_checkers', PY_MENU)
+from kate_core_plugins import move_menu_submenu, separated_menu
 
-JS_MENU = create_mainmenu('Javascript', 'javascript')
-JS_CHECKERS = create_submenu('Checkers', 'js_checkers', JS_MENU)
-separated_menu(JS_MENU)
+PY_MENU = "Python"
+DJ_MENU = "Django"
+PY_CHECKERS = "Checkers"
+JS_MENU = "JavaScript"
+TOOLS_MENU = "Tools"
+JS_CHECKERS = "JavaScript"
 
-TOOLS_MENU = 'tools'
-separated_menu(TOOLS_MENU)
-PR_MENU = create_submenu('Pretty print', 'pretty-print', TOOLS_MENU)
-separated_menu(TOOLS_MENU)
+
+@kate.init
+def move_menus():
+    py_menu_slug = PY_MENU.lower()
+    dj_menu_slug = DJ_MENU.lower()
+    py_checkers_slug = PY_CHECKERS.lower()
+    separated_menu(py_menu_slug)
+    move_menu_submenu(py_menu_slug, dj_menu_slug)
+    separated_menu(py_menu_slug)
+    move_menu_submenu(py_menu_slug, py_checkers_slug)
 
 
 KATE_ACTIONS = {
@@ -62,12 +68,12 @@ KATE_ACTIONS = {
                               'menu': DJ_MENU, 'icon': None},
     'insertReady': {'text': 'jQuery Ready', 'shortcut': 'Ctrl+J',
                     'menu': JS_MENU, 'icon': None},
-    'checkJslint': {'text': 'JSLint', 'shortcut': 'Alt+4',
+    'checkJslint': {'text': 'JSLint', 'shortcut': 'Alt+9',
                     'menu': JS_CHECKERS, 'icon': None},
     'togglePrettyJsonFormat': {'text': 'Pretty Json', 'shortcut': 'Ctrl+Alt+J',
-                               'menu': PR_MENU, 'icon': None},
+                               'menu': JS_MENU, 'icon': None},
     'togglePrettyXMLFormat': {'text': 'Pretty XML', 'shortcut': 'Ctrl+Alt+X',
-                              'menu': PR_MENU, 'icon': None},
+                              'menu': 'XML', 'icon': None},
 }
 
 PYTHON_AUTOCOMPLETE_ENABLED = True
