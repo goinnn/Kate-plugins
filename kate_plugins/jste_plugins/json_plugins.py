@@ -16,7 +16,6 @@
 
 import kate
 import simplejson
-import pprint
 
 from kate_core_plugins import insertText
 from kate_settings_plugins import KATE_ACTIONS
@@ -27,17 +26,15 @@ from kate_settings_plugins import KATE_ACTIONS
 def togglePrettyJsonFormat():
     currentDocument = kate.activeDocument()
     view = currentDocument.activeView()
-    encoding = unicode(currentDocument.encoding())
-    source = unicode(view.selectionText(), encoding).encode(encoding)
+    source = view.selectionText()
     if not source:
         kate.gui.popup('Select a json text', 2,
                        icon='dialog-warning',
                        minTextWidth=200)
-    pp = pprint.PrettyPrinter(indent=1)
     try:
-        target = pp.pformat(simplejson.loads(source))
+        target = simplejson.dumps(simplejson.loads(source), indent=2)
         view.removeSelectionText()
-        insertText(target.replace("'", '"'))
+        insertText(target.replace("u'", '"'))
     except simplejson.JSONDecodeError:
         kate.gui.popup('This text is not a valid json text', 2,
                        icon='dialog-warning',
