@@ -7,12 +7,12 @@ Kate Plugins
 Information
 ===========
 
-These are Pate plugins for `Kate <http://kate-editor.org  />`_ editor. Plugins to make coding easier in `Python <http://python.org/>`_, `Django <https://docs.djangoproject.com>`_ and JavaScript
+These are Pate plugins for `Kate <http://kate-editor.org/>`_ editor. Plugins to make coding easier in `Python <http://python.org/>`_, `Django <https://docs.djangoproject.com>`_ and JavaScript
 
 Requirements
 ============
 
- * `Kate <http://kate-editor.org>`_
+ * `Kate <http://kate-editor.org/>`_
  * Extra dependencies for extra and super nice features. Optional, but **very recomended** :)
      * `pysmell <http://pypi.python.org/pypi/pysmell>`_
      * `pyplete <http://pypi.python.org/pypi/pyplete>`_
@@ -23,7 +23,7 @@ Requirements
 Installation
 ============
 
-* `Install Kate <http://kate-editor.org/get-it/>`_ from sources:
+* `Install Kate <http://kate-editor.org/get-it/>`_ from sources
 
 
 * Install optional requirements:

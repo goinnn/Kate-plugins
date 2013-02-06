@@ -26,7 +26,7 @@ setup(
     name='Kate-plugins',
     version="0.1.9",
     description="Plugins to Kate editor to develop faster python projects, django projects and something of javascript",
-    long_description=(read('README.rst') + '\n\n' + read('CHANGES')),
+    long_description=(read('README.rst') + '\n\n' + read('CHANGES.rst')),
     author="Pablo Martin",
     author_email="goinnn@gmail.com",
     url="https://github.com/goinnn/Kate-plugins",
