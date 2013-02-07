@@ -23,7 +23,6 @@ DJ_MENU = "Django"
 PY_CHECKERS = "Checkers"
 JS_MENU = "JavaScript"
 TOOLS_MENU = "Tools"
-JS_CHECKERS = "JavaScript"
 
 
 @kate.init
@@ -69,7 +68,7 @@ KATE_ACTIONS = {
     'insertReady': {'text': 'jQuery Ready', 'shortcut': 'Ctrl+J',
                     'menu': JS_MENU, 'icon': None},
     'checkJslint': {'text': 'JSLint', 'shortcut': 'Alt+9',
-                    'menu': JS_CHECKERS, 'icon': None},
+                    'menu': JS_MENU, 'icon': None},
     'togglePrettyJsonFormat': {'text': 'Pretty Json', 'shortcut': 'Ctrl+Alt+J',
                                'menu': JS_MENU, 'icon': None},
     'togglePrettyXMLFormat': {'text': 'Pretty XML', 'shortcut': 'Ctrl+Alt+X',
