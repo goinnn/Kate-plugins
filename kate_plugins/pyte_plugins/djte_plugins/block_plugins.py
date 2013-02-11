@@ -24,17 +24,31 @@ from pyte_plugins.text_plugins import str_blank
 @kate.action(**KATE_ACTIONS['closeTemplateTag'])
 def closeTemplateTag():
     template_tags = '|'.join(TEMPLATE_TAGS_CLOSE)
-    pattern_close = re.compile("(.)*{%%%(espaces)s(%(tags)s)%(espaces)s(.)*%(espaces)s%%}(.)*" % {'espaces': str_blank, 'tags': template_tags})
+    pattern_tag_open = re.compile("(.)*{%%%(espaces)s(%(tags)s)%(espaces)s(.)*%(espaces)s%%}(.)*" % {'espaces': str_blank, 'tags': template_tags})
+    pattern_tag_close = re.compile("(.)*{%%%(espaces)send(%(tags)s)%(espaces)s%(espaces)s%%}(.)*" % {'espaces': str_blank, 'tags': template_tags})
+    tag_closes = {}
     currentDocument = kate.activeDocument()
     view = currentDocument.activeView()
     currentPosition = view.cursorPosition()
     currentLine = currentPosition.line()
+    tag = ''
     while currentLine >= 0:
         text = unicode(currentDocument.line(currentLine))
-        match = pattern_close.match(text)
-        if match:
-            tag = match.groups()[1]
-            break
+        match_open = pattern_tag_open.match(text)
+        if match_open:
+            tag_name = match_open.groups()[1]
+            if tag_name in tag_closes:
+                tag_closes[tag_name] -= 1
+                if tag_closes[tag_name] == 0:
+                    del tag_closes[tag_name]
+            elif not tag_closes:
+                tag = match_open.groups()[1]
+                break
+        else:
+            match_close = pattern_tag_close.match(text)
+            if match_close:
+                tag_name = match_close.groups()[1]
+                tag_closes[tag_name] = tag_closes.get(tag_name, 0) + 1
         currentLine = currentLine - 1
     insertText("{%% end%s %%}" % tag)
 

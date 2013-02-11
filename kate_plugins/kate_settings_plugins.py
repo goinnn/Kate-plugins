@@ -80,8 +80,8 @@ JAVASCRIPT_AUTOCOMPLETE_ENABLED = True
 JQUERY_AUTOCOMPLETE_ENABLED = True
 CHECKALL_TO_SAVE = True
 IGNORE_PEP8_ERRORS = []
-TEMPLATE_TAGS_CLOSE = ["autoescape", "block", "comment", "filter", "for", "if",
-                       "ifchanged", "ifequal", "spaceless", "with"]
+TEMPLATE_TAGS_CLOSE = ["autoescape", "block", "comment", "filter", "for",
+                       "ifchanged", "ifequal", "if", "spaceless", "with"]
 
 
 try:

@@ -1,6 +1,14 @@
 Releases
 ========
 
+0.2.0  (2012-02-12)
+-------------------
+
+* Fix an error in the Close Template tag (django)
+* Details to the JSON plugin
+* Improve in the js autocomplete generator
+
+
 0.1.9  (2012-02-06)
 -------------------
 
