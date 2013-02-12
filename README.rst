@@ -11,12 +11,7 @@ These are Pate plugins for `Kate <http://kate-editor.org/>`_ editor. Plugins to 
 
 .. note::
 
-    This repository is unmaintained, because these plugins have been added to the official repository:
-        * `Python utils <https://projects.kde.org/projects/kde/kde-baseapps/kate/repository/revisions/master/show/kate/plugins/pate/src/plugins/python_utils>`_
-        * `Javascript utils <https://projects.kde.org/projects/kde/kde-baseapps/kate/repository/revisions/master/show/kate/plugins/pate/src/plugins/js_utils>`_
-        * `Django utils <https://projects.kde.org/projects/kde/kde-baseapps/kate/repository/revisions/master/show/kate/plugins/pate/src/plugins/django_utils>`_
-        * `XML pretty <https://projects.kde.org/projects/kde/kde-baseapps/kate/repository/revisions/master/show/kate/plugins/pate/src/plugins/xml_pretty.py>`_
-    The generic functions and generic classes have been added to the `libkatepate <https://projects.kde.org/projects/kde/kde-baseapps/kate/repository/revisions/master/show/kate/plugins/pate/src/plugins/libkatepate>`_
+    This repository is unmaintained, because these plugins have been added to the official repository
 
 
 Requirements
