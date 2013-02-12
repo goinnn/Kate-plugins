@@ -11,7 +11,7 @@ These are Pate plugins for `Kate <http://kate-editor.org/>`_ editor. Plugins to 
 
 .. note::
 
-    This repository is unmaintained, because these plugins have been added to the official repository
+  This repository is unmaintained, because these plugins have been added to the official repository
 
 
 Requirements
