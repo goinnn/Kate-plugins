@@ -1,5 +1,4 @@
 include README.rst
-include AUTHORS
 include CHANGES.rst
 include *.py
 recursive-include kate_plugins/jste_plugins *.py
