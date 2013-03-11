@@ -1,14 +1,14 @@
 Releases
 ========
 
-0.2.1  (2012-03-11)
+0.2.1  (2013-03-11)
 -------------------
 
 * This release is out of support
 * Now works from pypi
 * Improvement to pep8 checker
 
-0.2.0  (2012-02-12)
+0.2.0  (2013-02-12)
 -------------------
 
 * Fix an error in the Close Template tag (django)
@@ -16,11 +16,11 @@ Releases
 * Improve in the js autocomplete generator
 
 
-0.1.9  (2012-02-06)
+0.1.9  (2013-02-06)
 -------------------
 
 * These changes are **backwards incompatibles**.
-* Adapt the plugins to the last Kate (2012-02-06)
+* Adapt the plugins to the last Kate (2013-02-06)
 * Fix a little error in the pep8 plugin
 * Improve the JSON plugin
 
