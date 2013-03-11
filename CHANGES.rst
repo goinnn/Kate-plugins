@@ -1,6 +1,13 @@
 Releases
 ========
 
+0.2.1  (2012-03-11)
+-------------------
+
+* This release is out of support
+* Now works from pypi
+* Improvement to pep8 checker
+
 0.2.0  (2012-02-12)
 -------------------
 
